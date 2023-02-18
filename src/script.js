@@ -28,12 +28,14 @@ for (idx in clean_data) {
 
 var mrt_colour = {
 	'ewl': 'green',
+	'cgl': 'green',
 	'dtl': 'blue',
 	'nsl': 'red',
 	'nel': 'purple',
 	'ccl': 'orange',
 	'tel': 'brown',
-	'crl': 'lime'
+	'crl': 'lime',
+	'cpl': 'lime'
 }
 
 var mrt_path = {
