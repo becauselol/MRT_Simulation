@@ -3,23 +3,30 @@ class Station {
 	/**
      * Create a Station.
      * @param {number} id - unique id of the station
-     * @param {number} start - the unique id of the starting station.
-     * @param {number} target - the unique id of the next station to alight at.
-     * @param {number} end - the unique id of the station wher the user journey ends
-     * @param {Array} path - the path commuters will take. It only stores the locations where users need to change lines
-     * @param {number} location - the unique id of the station/train that it is at 
-     * @param {number} state - the state of the agent
+     * @param {number} x - latitude of the station
+     * @param {number} y - longitude of the station
+     * @param {string} name - the name of the station
+     * @param {Array} codes - code name of the station to understand which line it is part of
+     * @param {Map} neighbours - maps all the neighbours to the respective edge that connects them (key: id, value: Edge)
+     * @param {Array} commuters - list of all commuters at the station
+     * @param {number} waitTime - time trains should spend waiting at each station
      */
-	constructor(id, x, y, name="", codes = []) {
+	constructor(id, x, y, name="", codes = [], waitTime=0) {
 		this.id = id;
 		this.x = x;
 		this.y = y;
 		this.name = name;
-		this.code = codes;
+		this.codes = codes;
 		this.neighbours = {};
+		this.commuters = [];
+		this.waitTime = waitTime;
 	} 
 
-	addNeighbour(id, edge) {
-		this.neighbours[id] = edge
+	/** Add neighbour to the current station 
+	* @param {number} neighbour_id - unique id of the neighbour
+	* @param {Edge} edge - the edge connecting these two 
+	*/
+	addNeighbour(neighbourId, edge) {
+		this.neighbours[neighbourId] = edge
 	}
 }

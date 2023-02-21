@@ -10,19 +10,41 @@ const TrainState = {
 /** Class representing a Train. */
 class Train {
 	/**
-     * Create a Commuter.
-     * @param {number} id - unique id of the commuter
-     * @param {Array} path - the path commuters will take. It only stores the locations where users need to change lines
-     * @param {number} location - the unique id of the station/train that it is at 
+     * Create a Train.
+     * @param {number} id - unique id of the train
+     * @param {Array} path - the path trains will take. Stores every station and edge that the station is required to stop at/travel along
+     * @param {float} lambda - the current position that the train is at (0 or 1 if at stations) (0 < lambda < 1 if travelling)
+     * @param {Edge/Station} currentLocation - if train not moving, it will be at a Station, if it is moving, then it is on an Edge
      * @param {number} state - the state of the agent
+     * @param {number} capacity - the max number of commuters on a train
+     * @param {Array} commuters - stores the commuters that are on a train
      */
-	constructor(id, path, currentStation, state=TrainState.WAITING, capacity=300) {
-		this.id=id;
-		this.path=path;
-		this.curPos=0;
-		this.curStation = path[currentStation]
-		this.nextStation = path[currentStation + 1]
-		this.state=state;
-		this.capacity=capacity;
+	constructor(id, pathCode, currentLocation, direction='FW', state=TrainState.WAITING, capacity=300, lambda=0) {
+		this.id = id;
+		this.pathCode = pathCode;
+		this.direction = direction;
+		this.lambda = lambda;
+		this.curLocation = currentLocation;
+		this.state = state;
+		this.capacity = capacity;
+		this.commuters = [];
+	}
+
+	nextLocation(path) {
+		
+	}
+
+	move() {
+		this.lambda = this.lambda + 0.01
+		this.x = this.lerp(this.initialX, this.target.x, this.lambda);
+      	this.y = this.lerp(this.initialY, this.target.y, this.lambda);
+	}
+
+	lerp(a, b, alpha) {
+		return a + alpha * ( b - a )
+	}
+
+	update() {
+
 	}
 }

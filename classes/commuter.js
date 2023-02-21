@@ -28,6 +28,9 @@ class Commuter {
 		this.state = state;
 	}
 
+	/** 
+	 * Moves Commuter to the next time step
+	 */
 	update() {
 
 	}

@@ -1,4 +1,14 @@
-var stations_data = `Admiralty NS10,103.8010168,1.440645
+var edgeColourString = `ewl,green
+cgl,green
+dtl,blue
+nsl,red
+nel,purple
+ccl,orange
+tel,brown
+crl,lime
+cpl,lime`
+
+var stationString = `Admiralty NS10,103.8010168,1.440645
 Aljunied EW9,103.8830495,1.3164196
 Ang Mo Kio NS16/CR11,103.8495326,1.3700491
 Bartley CC12,103.8799167,1.3427626
@@ -160,17 +170,10 @@ Keppel CC30,103.8301625,1.2709235
 Prince Edward Road MRT Station CC32,103.84835,1.27431
 Cantonment MRT Station CC31,103.83663,1.27278`
 
-stations_data = stations_data.split("\n");
-var clean_data = [];
-for (idx in stations_data) {
-	let row = stations_data[idx].split(",")
-	row[1] = parseFloat(row[1]);
-	row[2] = parseFloat(row[2]);
-	clean_data.push(row);
-}
 
 
-var edges = {
+
+var edgesMap = {
 	'dtl': `DT1,DT2,2
 DT2,DT3,2
 DT3,DT4,3
@@ -359,12 +362,5 @@ TE29,TE30,2
 TE30,TE31,2`
 }
 
-for (const [key, value] of Object.entries(edges)) {
-	edges[key] = value.split("\n");
-	for (idx in edges[key]) {
-		edges[key][idx] = edges[key][idx].split(",");
-		edges[key][idx][2] = parseInt(edges[key][idx][2]);
-	}
-}
 
 
