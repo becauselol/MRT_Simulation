@@ -53,7 +53,7 @@ class MetroGraph {
 
 	update() {
 		for (const [trainId, train] of Object.entries(this.trains)) {
-			train.update();
+			train.update(this.metroPaths);
 		}
 	}
 }

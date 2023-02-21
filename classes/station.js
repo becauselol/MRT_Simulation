@@ -11,7 +11,7 @@ class Station {
      * @param {Array} commuters - list of all commuters at the station
      * @param {number} waitTime - time trains should spend waiting at each station
      */
-	constructor(id, x, y, name="", codes = [], waitTime=0) {
+	constructor(id, x, y, name="", codes = [], waitTime=1) {
 		this.id = id;
 		this.x = x;
 		this.y = y;
