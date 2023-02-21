@@ -72,7 +72,7 @@ for (const [key, value] of Object.entries(edges)) {
 		var b = mrt_code[value[idx][1]];
 		var weight = value[idx][2];
 
-		var line = new Line(weight, colour);
+		var line = new Edge(weight, colour);
 		stations[a].addNeighbour(stations[b].id, line);
 		stations[b].addNeighbour(stations[a].id, line);
 	}

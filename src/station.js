@@ -36,7 +36,7 @@ class Station {
 }
 
 
-class Line {
+class Edge {
 	constructor(weight = 1, colour = "black") {
 		this.weight = weight;
 		this.colour = colour;
