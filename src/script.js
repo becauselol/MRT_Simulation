@@ -19,9 +19,12 @@ var mapDrawer = new MapDrawer(ctx, maxX, maxY);
 
 metroDataProcessor.constructMetroGraph(metroGraph, mapDrawer);
 
+//find all the shortest paths between stations
+metroGraph.floydWarshall();
 //initializes a train at every station
 metroGraph.initTrainAllStations();
-// metroGraph.addTrain(0, new Train(0, "ewl", 0, metroGraph.metroPaths["ewlFW"][0]))
+
+metroGraph.getAllPathPairs();
 
 /** Code to run on initialization of page */
 function init() {

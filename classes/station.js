@@ -20,6 +20,7 @@ class Station {
 		this.neighbours = {};
 		this.commuters = [];
 		this.waitTime = waitTime;
+		this.pathCodes = new Set();
 	} 
 
 	/** Add neighbour to the current station 
