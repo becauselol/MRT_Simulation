@@ -147,54 +147,31 @@ class MetroGraph {
 	}
 
 	convertToCommuterPath(path) {
-		//stores the pathCodes that the commuter needs to take
-		var pathCodes = [];
-		var possiblePathCodes = new Set();
-		for (var i=0; i < path.length; i++) {
-			//if there are no paths it is considering
-			// add all the possible codes it should take
-			if (possiblePathCodes.size == 1 ) {
-				if (possiblePathCodes.entries().next().value[1] != pathCodes[pathCodes.length - 1]) {
-					pathCodes.push(possiblePathCodes.entries().next().value[1]);
-				}
-				possiblePathCodes.clear();
-			} else if (possiblePathCodes.size == 0) {
-				for (const pathCode of path[i].pathCodes) {
-					possiblePathCodes.add(pathCode);
-				}
+		var pathCodes = []
+		var currentCode = path[0].pathCodes;
+		//initialize with previous to know where to board
+		var interchanges = [[path[0]]];
+
+		// add all the interchanges
+		
+		for (var i = 0; i <path.length; i++) {
+			var commonCode = this.intersectSets(currentCode, path[i].pathCodes);
+			if (commonCode.size == 0) {
+				//interchange is between start + 1 and next - 1
+				//possible pathCodes are multiple so i just store both
+				var code = currentCode.entries().next().value[1]
+				pathCodes.push(code)
+				interchanges[interchanges.length - 1].push(code + this.getDirection(code, path[i-2], path[i-1]))
+				currentCode = path[i].pathCodes;
+				interchanges.push([path[i-1]]);
 			} else {
-				//it is currently considering some path
-				//take intersection with the new station
-				possiblePathCodes = this.intersectSets(possiblePathCodes, path[i].pathCodes);
+				currentCode = commonCode;
 			}
 		}
-		console.log(possiblePathCodes);
-		if (possiblePathCodes.size > 0) {
-			pathCodes.push(possiblePathCodes.entries().next().value[1]);
-		}
-		console.log(pathCodes);
-		//interchanges[idx] is stored in the format [station, pathCode]
-		//station means which station the commuter should board the train
-		//pathCode is the pathCode that the commuter should board the train
-		var commuterPath = [[path[0], pathCodes[0] + this.getDirection(pathCodes[0], path[0], path[1])]];
-		var interchanges = [];
-		var j = 1;
-		for (var i=1; i < pathCodes.length; i++) {
-			interchanges = [];
-			var check = new Set([pathCodes[i], pathCodes[i-1]])
-			while (j < path.length && !this.hasSet(path[j].pathCodes, check)) {
-				j++;
-			}
-			var details = [];
-			details.push(path[j]);
-			details.push(pathCodes[i] + this.getDirection(pathCodes[i], path[j], path[j+1]));
-
-			commuterPath.push(details);
-		}
-
-		commuterPath.push([path[path.length - 1], pathCodes[pathCodes.length - 1]]);
-
-		return commuterPath;
+		var code = currentCode.entries().next().value[1]
+		interchanges[interchanges.length - 1].push(code + this.getDirection(code, interchanges[interchanges.length - 1], path[path.length - 1]))
+		interchanges.push([path[path.length - 1], code])
+		return interchanges;
 	}
 
 	// //get all path pairs and store them as commuterPaths
@@ -203,7 +180,6 @@ class MetroGraph {
 
 		for (let i = 0; i < N; i++) {
 	        for (let j = i + 1; j < N; j++) {
-	        	console.log(i, j)
 				var path = this.getPathToStation(i, j)
 
 				this.commuterPaths[i.toString() + "_" + j.toString()] = this.convertToCommuterPath(path);
