@@ -20,8 +20,8 @@ var mapDrawer = new MapDrawer(ctx, maxX, maxY);
 metroDataProcessor.constructMetroGraph(metroGraph, mapDrawer);
 
 //initializes a train at every station
-// metroGraph.initTrainAllStations();
-metroGraph.addTrain(0, new Train(0, "ewl", 0, metroGraph.metroPaths["ewlFW"][0]))
+metroGraph.initTrainAllStations();
+// metroGraph.addTrain(0, new Train(0, "ewl", 0, metroGraph.metroPaths["ewlFW"][0]))
 
 /** Code to run on initialization of page */
 function init() {

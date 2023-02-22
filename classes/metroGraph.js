@@ -13,6 +13,7 @@ class MetroGraph {
 		this.stationCodeMap = {};
 		this.metroPaths = {};
 		this.metroLineColours = {};
+		this.trainCount = 0;
 	}
 
 	/** Add Station to the Metro System
@@ -37,17 +38,22 @@ class MetroGraph {
 	}
 
 	initTrainAllStations() {
-		for (const [pathCode, path] of Object.entries(this.metroPaths)) {
-			for (idx in path) {
-				if (idx == 0 || idx == path.length - 1) {
-					this.trains.push(new Train(idx, path, parseInt(idx)));
-				} else {
-					this.trains.push(new Train(idx, path, parseInt(idx), 1));
-					this.trains.push(new Train(idx, path, parseInt(idx), -1))
+		for (const [pathCodeTotal, path] of Object.entries(this.metroPaths)) {
+
+			var pathCode = pathCodeTotal.substring(0, pathCodeTotal.length - 2);
+			var direction = pathCodeTotal.substring(pathCodeTotal.length - 2, pathCodeTotal.length);
+
+			for (var idx=0;idx < path.length; idx++) {
+				if (!(path[idx] instanceof Station)) {
+					continue;
 				}
 
+				if (idx == path.length - 1) {
+					continue;
+				}
+				this.trains[this.trainCount] = new Train(this.trainCount, pathCode, idx, path[idx], direction);
+				this.trainCount++;
 			}
-			
 		}
 	}
 

@@ -85,7 +85,7 @@ class Train {
 
 	move() {
 		if (this.place instanceof Edge) {
-			this.lambda = this.lambda + 0.01
+			this.lambda = this.lambda + (0.01/this.place.weight)
 			this.x = this.lerp(this.place.head.x, this.place.tail.x, this.lambda);
 	      	this.y = this.lerp(this.place.head.y, this.place.tail.y, this.lambda);
       }
