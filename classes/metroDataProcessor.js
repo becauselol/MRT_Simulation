@@ -81,6 +81,10 @@ class MetroDataProcesser {
 				metroGraph.stations[a].addNeighbour(b, abEdge);
 				metroGraph.stations[b].addNeighbour(a, baEdge);
 
+				//add pathCodes to the stations
+				metroGraph.stations[a].pathCodes.add(edgeCode);
+				metroGraph.stations[b].pathCodes.add(edgeCode);
+
 				//add stations to the path
 				//add start station
 				if (idx == 0) {
