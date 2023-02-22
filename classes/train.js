@@ -34,6 +34,10 @@ class Train {
 		this.getCoords();
 	}
 
+	getCommuterCount() {
+		return this.commuters.length + this.alightingCommuters.length;
+	}
+
 	getCoords() {
 		if (this.place instanceof Edge) {
 			this.x = this.lerp(this.place.head.x, this.place.tail.x, this.lambda);
@@ -51,7 +55,9 @@ class Train {
 	nextLocation(paths) {
 		//check if next location is in bounds
 		var path = paths[this.pathCode + this.direction]
-
+		if (this.place instanceof Station) {
+			this.place.trains.remove(this.id);
+		}
 		// go to next location
 		this.curLocation++
 
@@ -76,6 +82,7 @@ class Train {
 			this.waitTime = 0; //reset waittime
 			this.lambda = 0;
 			this.state = TrainState.WAITING;
+			this.place.trains.push(this.id);
 		}
 
 		//if not, retrieve and change to the other path

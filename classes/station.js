@@ -21,6 +21,10 @@ class Station {
 		this.commuters = [];
 		this.waitTime = waitTime;
 		this.pathCodes = new Set();
+		this.trains = [];
+
+		this.spawnNo = 1;
+		this.spawnProb = 0.2;
 	} 
 
 	/** Add neighbour to the current station 
@@ -29,5 +33,43 @@ class Station {
 	*/
 	addNeighbour(neighbourId, edge) {
 		this.neighbours[neighbourId] = edge
+	}
+
+	spawnNewCommuters() {
+		//code to spawn commuters
+	}
+
+	alightCommuters() {
+		//checks if commuters have reached
+		//transfers them from trains to stations
+	}
+
+	boardCommuters() {
+		var boardingCommuters = this.commuters.filter(x => x.pathCode == this.trains[idx].pathCode)
+		//update target of commuters
+
+		//board commuters accordingly
+	}
+
+	removeReachedCommuters() {
+		//check if commuters have reached end
+		//commuters get removed from system
+	}
+
+	update() {
+		this.spawnNewCommuters();
+
+
+		for (var idx = 0; idx < this.trains.length; idx++) {
+			//alight passengers
+			this.alightCommuters();
+
+			//board passengers
+			this.boardCommuters();
+
+			//handle passenger states
+			//check for any who have reached
+			this.removeReachedCommuters();
+		}
 	}
 }

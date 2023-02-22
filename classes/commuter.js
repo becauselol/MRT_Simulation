@@ -1,9 +1,9 @@
 /* variable containing the various commuterStates */
 const CommuterState = {
-	"WAITING": 101, // moving to the target station
-	"MOVING": 102, // waiting for the train
-	"ALIGHTING": 103, //alighting at the current station
-	"REACHED": 104, // reached the target station
+	"WAITING": 101, // waiting for the train (this is handled by station (can be interchange/just start journey))
+	"MOVING": 102, // moving to the target station  (after waiting, go to moving, also by station)
+	"ALIGHTING": 103, // alighting at the current station (once you reach a station, train flags them as alighting)
+	"REACHED": 104, // reached the target station (if commuter is alighting, then we will toggle to reached by the station)
 }
 
 /** Class representing a Commuter. */
@@ -18,20 +18,29 @@ class Commuter {
      * @param {number} location - the unique id of the station/train that it is at 
      * @param {number} state - the state of the agent
      */
-	constructor(id, start, path, state=CommuterState.WAITING) {
+	constructor(id, path, state=CommuterState.WAITING) {
 		this.id = id;
-		this.start = start;
-		this.target = path[1];
-		this.end - path[-1];
 		this.path = path;
-		this.location = path[0]
 		this.state = state;
 	}
 
-	/** 
-	 * Moves Commuter to the next time step
-	 */
-	update() {
+	isThisMyTrain(pathCode) {
+		return this.path[0][1] == pathCode;
+	}
 
+	updateTarget() {
+		//after boarding
+		//update target
+		this.path.unshift(0);
+	}
+
+	hasReached(stationId) {
+		//check if it reach some interchange
+		return this.path[0][0].id == stationId;
+	}
+
+	hasReachedEnd() {
+		//check if it reached the last item in path
+		return this.path.length == 1;
 	}
 }
