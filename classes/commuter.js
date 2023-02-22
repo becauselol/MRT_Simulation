@@ -18,25 +18,37 @@ class Commuter {
      * @param {number} location - the unique id of the station/train that it is at 
      * @param {number} state - the state of the agent
      */
-	constructor(id, path, state=CommuterState.WAITING) {
-		this.id = id;
+	constructor(path, state=CommuterState.WAITING) {
 		this.path = path;
 		this.state = state;
 	}
 
 	isThisMyTrain(pathCode) {
-		return this.path[0][1] == pathCode;
+		if (this.state == CommuterState.WAITING) {
+			return this.path[0][1] == pathCode;
+		}
+		return false;
 	}
 
 	updateTarget() {
 		//after boarding
 		//update target
-		this.path.unshift(0);
+		this.path.shift();
+		this.state = CommuterState.MOVING;
+	}
+
+	alighted() {
+		this.state = CommuterState.WAITING;
 	}
 
 	hasReached(stationId) {
 		//check if it reach some interchange
-		return this.path[0][0].id == stationId;
+		// console.log(this.state);
+		if (this.state == CommuterState.MOVING) {
+			
+			return this.path[0][0].id == stationId;
+		}		
+		return false
 	}
 
 	hasReachedEnd() {

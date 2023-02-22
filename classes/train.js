@@ -32,10 +32,17 @@ class Train {
 		this.waitTime = 0;
 
 		this.getCoords();
+		this.addToStation();
 	}
 
 	getCommuterCount() {
 		return this.commuters.length + this.alightingCommuters.length;
+	}
+
+	addToStation() {
+		if (this.place instanceof Station) {
+			this.place.trains.push(this);
+		} 
 	}
 
 	getCoords() {
@@ -56,7 +63,7 @@ class Train {
 		//check if next location is in bounds
 		var path = paths[this.pathCode + this.direction]
 		if (this.place instanceof Station) {
-			this.place.trains.remove(this.id);
+			this.place.trains.splice(this.place.trains.indexOf(this), 1);
 		}
 		// go to next location
 		this.curLocation++
@@ -82,7 +89,7 @@ class Train {
 			this.waitTime = 0; //reset waittime
 			this.lambda = 0;
 			this.state = TrainState.WAITING;
-			this.place.trains.push(this.id);
+			this.place.trains.push(this);
 		}
 
 		//if not, retrieve and change to the other path
@@ -92,7 +99,7 @@ class Train {
 
 	move() {
 		if (this.place instanceof Edge) {
-			this.lambda = this.lambda + (0.01/this.place.weight)
+			this.lambda = this.lambda + (0.1/this.place.weight)
 			this.x = this.lerp(this.place.head.x, this.place.tail.x, this.lambda);
 	      	this.y = this.lerp(this.place.head.y, this.place.tail.y, this.lambda);
       }
@@ -106,7 +113,7 @@ class Train {
 		switch (this.state) {
 			case TrainState.WAITING: 
 				//increase wait duration
-				this.waitTime += 0.01;
+				this.waitTime += 0.1;
 				if (this.waitTime >= paths[this.pathCode + this.direction][this.curLocation].waitTime) {
 					this.nextLocation(paths)
 				}

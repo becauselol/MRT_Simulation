@@ -15,6 +15,8 @@ class MetroGraph {
 		this.metroLineColours = {};
 		this.trainCount = 0;
 		this.commuterPaths = {};
+
+		this.completedJourneys = 0;
 	}
 
 	/** Add Station to the Metro System
@@ -192,11 +194,12 @@ class MetroGraph {
 
 	update() {
 		for (const [trainId, train] of Object.entries(this.trains)) {
+			//moves the trains
 			train.update(this.metroPaths);
 		}
 
-		// for (const [stationId, station] of Object.entries(this.stations)) {
-		// 	station.update()
-		// }
+		for (const [stationId, station] of Object.entries(this.stations)) {
+			this.completedJourneys += station.update(Object.keys(this.stations).length, this.commuterPaths)
+		}
 	}
 }
