@@ -12,5 +12,6 @@ class Edge {
 		this.tail = tail;
 		this.weight = weight;
 		this.colour = colour;
+		this.utility = 0;
 	}
 }

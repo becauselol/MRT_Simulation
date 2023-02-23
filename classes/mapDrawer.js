@@ -51,12 +51,12 @@ class MapDrawer {
      * Draws an Edge in the canvas context
      * @param {Edge} edge - edge object to be drawn
      * */
-    drawEdge(edge) {
+    drawEdge(edge, attr = 'colour') {
         this.ctx.beginPath();
         this.ctx.moveTo(edge.head.x, edge.head.y);
         this.ctx.lineTo(edge.tail.x, edge.tail.y);
         this.ctx.lineWidth = 5;
-        this.ctx.strokeStyle = edge.colour;
+        this.ctx.strokeStyle = edge[attr];
         this.ctx.lineCap = 'round';
         this.ctx.stroke();
         this.ctx.closePath();

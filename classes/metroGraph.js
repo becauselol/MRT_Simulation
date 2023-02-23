@@ -17,6 +17,7 @@ class MetroGraph {
 		this.commuterPaths = {};
 
 		this.completedJourneys = 0;
+		this.data = {}
 	}
 
 	/** Add Station to the Metro System

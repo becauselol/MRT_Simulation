@@ -2,6 +2,9 @@
 var canvas = document.getElementById('myCanvas'); 
 var ctx = canvas.getContext('2d');
 
+var canvas = document.getElementById('heatCanvas'); 
+var heatCtx = canvas.getContext('2d');
+
 var maxX = 960;
 var maxY = 540;
 
@@ -16,15 +19,16 @@ metroDataProcessor.parseEdgeColours(edgeColourString)
 //intiialize graph and drawer
 var metroGraph = new MetroGraph("Singapore MRT");
 var mapDrawer = new MapDrawer(ctx, maxX, maxY);
+var heatMapDrawer = new MapDrawer(heatCtx, maxX, maxY);
 
 metroDataProcessor.constructMetroGraph(metroGraph, mapDrawer);
 
 //find all the shortest paths between stations
 metroGraph.floydWarshall();
+metroGraph.getAllPathPairs();
+
 //initializes a train at every station
 metroGraph.initTrainAllStations();
-
-metroGraph.getAllPathPairs();
 
 /** Code to run on initialization of page */
 function init() {
@@ -37,6 +41,8 @@ function draw() {
 	metroGraph.update();
 
 	mapDrawer.drawMap(metroGraph);
+
+	heatMapDrawer.drawHeatMap(metroGraph);
 
 	window.requestAnimationFrame(draw);
 }
