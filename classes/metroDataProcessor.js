@@ -74,12 +74,17 @@ class MetroDataProcesser {
 				var weight = edges[idx][2];
 
 				//create new edges
-				var abEdge = new Edge(metroGraph.stations[a], metroGraph.stations[b], weight, colour);
-				var baEdge = new Edge(metroGraph.stations[b], metroGraph.stations[a], weight, colour);
+				var undirEdge = new Edge(metroGraph.stations[a], metroGraph.stations[b], colour)
+				var abEdge = new DirectedEdge(metroGraph.stations[a], metroGraph.stations[b], weight, colour, undirEdge);
+				var baEdge = new DirectedEdge(metroGraph.stations[b], metroGraph.stations[a], weight, colour, undirEdge);
 
+				metroGraph.undirectedEdges.push(undirEdge);
 				metroGraph.edges.push(abEdge);
 				metroGraph.edges.push(baEdge);
+
 				//add edges to adjacency list
+				metroGraph.stations[a].addNeighbourUndirected(b, undirEdge);
+				metroGraph.stations[b].addNeighbourUndirected(a, undirEdge);
 				metroGraph.stations[a].addNeighbour(b, abEdge);
 				metroGraph.stations[b].addNeighbour(a, baEdge);
 

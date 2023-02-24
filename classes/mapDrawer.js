@@ -127,12 +127,12 @@ class MapDrawer {
     }
     /**
      * Draws the whole MetroGraph in the canvas context
+     * Important is that data needs to draw the undirectedEdge data
      * @param {MetroGraph} metroGraph - draws the metroGraph as required
      * */
     drawHeatMap(metroGraph) {
         //for all edges, assign a 
-
-        var edgeStats = metroGraph.getEdgeStats();
+        var edgeStats = metroGraph.getUndirectedEdgeStats();
 
         this.ctx.clearRect(0, 0, this.width, this.height);
         // technically the code should grab a random ass 
@@ -145,7 +145,7 @@ class MapDrawer {
             var curr = metroGraph.stations[currId];
 
             // console.log(curr);
-            for (const [stationId, edge] of Object.entries(curr["neighbours"])) {
+            for (const [stationId, edge] of Object.entries(curr["neighboursUndirected"])) {
                 var n = metroGraph.stations[stationId];
                 if (stationId == currId) {
                     continue;

@@ -11,6 +11,7 @@ class MetroGraph {
 		// this.trainController = trainController; //KIV not sure how to implement the trainController rn
 		this.trains = {};
 		this.edges = [];
+		this.undirectedEdges = [];
 		this.stationCodeMap = {};
 		this.metroPaths = {};
 		this.metroLineColours = {};
@@ -229,13 +230,13 @@ class MetroGraph {
 		this.commuterData['currentActive'] = this.commuterData['currentActive'] + stationUpdate['spawned'] - stationUpdate['completedJourneys']
 	}
 
-	getEdgeStats() {
+	getUndirectedEdgeStats() {
 		var min = Number.MAX_SAFE_INTEGER;
 		var max = Number.MIN_SAFE_INTEGER;
 
-		for (var i = 0; i < this.edges.length; i++) {
-			max = Math.max(max, this.edges[i].commuterData.allTimeTotal)
-			min = Math.min(min, this.edges[i].commuterData.allTimeTotal)
+		for (var i = 0; i < this.undirectedEdges.length; i++) {
+			max = Math.max(max, this.undirectedEdges[i].commuterData.allTimeTotal)
+			min = Math.min(min, this.undirectedEdges[i].commuterData.allTimeTotal)
 		}
 
 		return [min, max]

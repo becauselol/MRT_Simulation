@@ -18,6 +18,7 @@ class Station {
 		this.name = name;
 		this.codes = codes;
 		this.neighbours = {};
+		this.neighboursUndirected = {};
 		this.commuters = [];
 		this.waitTime = waitTime;
 		this.pathCodes = new Set();
@@ -43,6 +44,9 @@ class Station {
 	*/
 	addNeighbour(neighbourId, edge) {
 		this.neighbours[neighbourId] = edge
+	}
+	addNeighbourUndirected(neighbourId, edge) {
+		this.neighboursUndirected[neighbourId] = edge
 	}
 
 	spawnNewCommuters(stationLength, paths) {
