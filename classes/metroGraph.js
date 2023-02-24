@@ -10,13 +10,29 @@ class MetroGraph {
 		this.stations = {};
 		// this.trainController = trainController; //KIV not sure how to implement the trainController rn
 		this.trains = {};
+		this.edges = [];
+		this.undirectedEdges = [];
 		this.stationCodeMap = {};
 		this.metroPaths = {};
 		this.metroLineColours = {};
 		this.trainCount = 0;
 		this.commuterPaths = {};
 
+		/**
+		* Stats to track
+		* - all time passengers
+		* - number that have completed their journeys
+		* - currentActive should be allTimeTotal - completedJourneys
+		* - when people get spawned, we increment currentActive and allTimeTotal
+		* - then when people exit the system, we decrement currentActive and increment completed Journeys
+		*/
+		this.commuterData = {
+			"allTimeTotal": 0,
+			"completedJourneys": 0,
+			"currentActive": 0
+		};
 		this.completedJourneys = 0;
+		this.data = {}
 	}
 
 	/** Add Station to the Metro System
@@ -193,13 +209,36 @@ class MetroGraph {
 	}
 
 	update() {
+		var stationUpdate = {
+			"spawned": 0,
+			"completedJourneys": 0
+		}
 		for (const [trainId, train] of Object.entries(this.trains)) {
 			//moves the trains
 			train.update(this.metroPaths);
 		}
 
 		for (const [stationId, station] of Object.entries(this.stations)) {
-			this.completedJourneys += station.update(Object.keys(this.stations).length, this.commuterPaths)
+			var updateData = station.update(Object.keys(this.stations).length, this.commuterPaths)
+			for (const [key, value] of Object.entries(stationUpdate)) {
+				stationUpdate[key] += updateData[key];
+			}
 		}
+
+		this.commuterData['allTimeTotal'] += stationUpdate['spawned']
+		this.commuterData['completedJourneys'] += stationUpdate['completedJourneys']
+		this.commuterData['currentActive'] = this.commuterData['currentActive'] + stationUpdate['spawned'] - stationUpdate['completedJourneys']
+	}
+
+	getUndirectedEdgeStats() {
+		var min = Number.MAX_SAFE_INTEGER;
+		var max = Number.MIN_SAFE_INTEGER;
+
+		for (var i = 0; i < this.undirectedEdges.length; i++) {
+			max = Math.max(max, this.undirectedEdges[i].commuterData.allTimeTotal)
+			min = Math.min(min, this.undirectedEdges[i].commuterData.allTimeTotal)
+		}
+
+		return [min, max]
 	}
 }

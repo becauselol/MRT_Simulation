@@ -18,6 +18,7 @@ class Station {
 		this.name = name;
 		this.codes = codes;
 		this.neighbours = {};
+		this.neighboursUndirected = {};
 		this.commuters = [];
 		this.waitTime = waitTime;
 		this.pathCodes = new Set();
@@ -25,6 +26,16 @@ class Station {
 
 		this.spawnNo = 1;
 		this.spawnProb = 0.05;
+
+		//commuter data of each station
+		/**
+		 * We want to track a few things
+		 * - all time usage of the station
+		 * - rest is idk yet, up to the ideas
+		 * */
+		this.commuterData = {
+			"allTimeTotal": 0
+		}
 	} 
 
 	/** Add neighbour to the current station 
@@ -34,9 +45,14 @@ class Station {
 	addNeighbour(neighbourId, edge) {
 		this.neighbours[neighbourId] = edge
 	}
+	addNeighbourUndirected(neighbourId, edge) {
+		this.neighboursUndirected[neighbourId] = edge
+	}
 
 	spawnNewCommuters(stationLength, paths) {
 		//code to spawn commuters
+		var spawnCount = 0
+
 		for (var i = 0; i < this.spawnNo; i++) {
 			if (Math.random() < this.spawnProb) {
 				var to = Math.floor(Math.random() * stationLength)
@@ -47,8 +63,11 @@ class Station {
 				var pathCopy = [...path]
 				var commuter = new Commuter(pathCopy)
 				this.commuters.push(commuter)
+				spawnCount++;
 			}
 		}
+
+		return spawnCount;
 	}
 
 	alightCommuters() {
@@ -122,20 +141,25 @@ class Station {
 	}
 
 	update(stationLength, paths) {
-		this.spawnNewCommuters(stationLength, paths);
+		var updateData = {
+			"spawned": 0,
+			"completedJourneys": 0
+		}
+
+		updateData["spawned"] += this.spawnNewCommuters(stationLength, paths);
 
 		var completedPeople = 0;
 			//alight passengers
 		this.alightCommuters();
 		//handle passenger states
 		//check for any who have reached
-		completedPeople += this.removeReachedCommuters();
+		updateData["completedJourneys"] += this.removeReachedCommuters();
 
 
 		//board passengers
 		this.boardCommuters();
 
-		return completedPeople;
+		return updateData;
 
 	}
 }

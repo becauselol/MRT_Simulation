@@ -85,6 +85,8 @@ class Train {
 			this.waitTime = 0;
 			this.lambda = 0; //reset lambda
 			this.state = TrainState.MOVING;
+			this.place.undirectedEdge.commuterData['allTimeTotal'] += this.commuters.length;
+			this.place.commuterData['allTimeTotal'] += this.commuters.length;
 		} else if (this.place instanceof Station) {
 			this.waitTime = 0; //reset waittime
 			this.lambda = 0;
@@ -99,7 +101,7 @@ class Train {
 
 	move() {
 		if (this.place instanceof Edge) {
-			this.lambda = this.lambda + (0.1/this.place.weight)
+			this.lambda = this.lambda + (0.1 /this.place.weight)
 			this.x = this.lerp(this.place.head.x, this.place.tail.x, this.lambda);
 	      	this.y = this.lerp(this.place.head.y, this.place.tail.y, this.lambda);
       }
