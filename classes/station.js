@@ -25,7 +25,7 @@ class Station {
 		this.trains = [];
 
 		this.spawnNo = 1;
-		this.spawnProb = 0.05;
+		this.spawnProb = 0.01;
 
 		//commuter data of each station
 		/**
