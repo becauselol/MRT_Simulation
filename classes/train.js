@@ -85,6 +85,7 @@ class Train {
 			this.waitTime = 0;
 			this.lambda = 0; //reset lambda
 			this.state = TrainState.MOVING;
+			this.place.commuterData['allTimeTotal'] += this.commuters.length;
 		} else if (this.place instanceof Station) {
 			this.waitTime = 0; //reset waittime
 			this.lambda = 0;

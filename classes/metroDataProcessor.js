@@ -77,6 +77,8 @@ class MetroDataProcesser {
 				var abEdge = new Edge(metroGraph.stations[a], metroGraph.stations[b], weight, colour);
 				var baEdge = new Edge(metroGraph.stations[b], metroGraph.stations[a], weight, colour);
 
+				metroGraph.edges.push(abEdge);
+				metroGraph.edges.push(baEdge);
 				//add edges to adjacency list
 				metroGraph.stations[a].addNeighbour(b, abEdge);
 				metroGraph.stations[b].addNeighbour(a, baEdge);

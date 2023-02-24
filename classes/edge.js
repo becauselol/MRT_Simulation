@@ -12,6 +12,10 @@ class Edge {
 		this.tail = tail;
 		this.weight = weight;
 		this.colour = colour;
-		this.utility = 0;
+		this.commuterData = {
+			"allTimeTotal": 0
+		}
+		this.heatScale = 0;
+		this.heatColour = "hsl(240, 100%, 50%)"
 	}
 }
