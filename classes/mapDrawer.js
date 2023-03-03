@@ -68,31 +68,16 @@ class MapDrawer {
      * */
     drawMap(metroGraph) {
         this.ctx.clearRect(0, 0, this.width, this.height);
-        // technically the code should grab a random ass 
-        var q = [0];
-        var visited = new Set();
-        visited.add(0);
+        // technically the code should grab a random ass station?
+	// DFS is kind of excessive
+	// var q = [0];
+        // var visited = new Set();
+        // visited.add(0);
 
-        while (q.length > 0) {
-            var currId = q.pop();
-            var curr = metroGraph.stations[currId];
-
-            // console.log(curr);
-            for (const [stationId, edge] of Object.entries(curr["neighbours"])) {
-                var n = metroGraph.stations[stationId];
-                if (stationId == currId) {
-                    continue;
-                }
-                this.drawEdge(edge)
-
-                if (!visited.has(n.id)) {
-                    visited.add(n.id);
-                    q.push(n.id);
-
-                }
-            }
-        }
-
+	//Iterate over all the objects and draw them as required
+	for (var i = 0; i < metroGraph.edges.length; i++) {
+	    this.drawEdge(metroGraph.edges[i]);
+	}
         for (const [stationId, station] of Object.entries(metroGraph.stations)) {
             this.drawStation(station);
         }
@@ -102,7 +87,7 @@ class MapDrawer {
     }
 
 
-    /**
+    /**  
      * Takes a value from 0 to 1 and converts it to a HSL colour to input into the map
      * Taken from: https://stackoverflow.com/questions/12875486/what-is-the-algorithm-to-create-colors-for-a-heatmap
      * */
@@ -111,7 +96,13 @@ class MapDrawer {
         return "hsl(" + h + ", 100%, 50%)";
     }
 
-    drawHeatEdge(edge, min, max, commuterData) {
+    /*
+     * Takes an edge and considering the min and max values of the commuterData
+     * @param {Edge} edge - the edge to draw
+     * @param {number} min - the minimum number to scale by
+     * @param {number} max - the maximum number to scale by
+     * */
+    drawHeatEdge(edge, min, max) {
         //update edgeData
         edge.heatScale = ((edge.commuterData.allTimeTotal - min) / (max - min)).toFixed(6);
         edge.heatColour = this.heatMapColorforValue(edge.heatScale);
@@ -125,6 +116,7 @@ class MapDrawer {
         this.ctx.stroke();
         this.ctx.closePath();
     }
+
     /**
      * Draws the whole MetroGraph in the canvas context
      * Important is that data needs to draw the undirectedEdge data
@@ -135,31 +127,12 @@ class MapDrawer {
         var edgeStats = metroGraph.getUndirectedEdgeStats();
 
         this.ctx.clearRect(0, 0, this.width, this.height);
-        // technically the code should grab a random ass 
-        var q = [0];
-        var visited = new Set();
-        visited.add(0);
-
-        while (q.length > 0) {
-            var currId = q.pop();
-            var curr = metroGraph.stations[currId];
-
-            // console.log(curr);
-            for (const [stationId, edge] of Object.entries(curr["neighboursUndirected"])) {
-                var n = metroGraph.stations[stationId];
-                if (stationId == currId) {
-                    continue;
-                }
-                this.drawHeatEdge(edge, edgeStats[0], edgeStats[1], metroGraph.commuterData)
-
-                if (!visited.has(n.id)) {
-                    visited.add(n.id);
-                    q.push(n.id);
-
-                }
-            }
-        }
-
+	
+	//Iterate over all the objects and draw them as required
+	for (var i = 0; i < metroGraph.undirectedEdges.length; i++) {
+	    this.drawHeatEdge(metroGraph.undirectedEdges[i], edgeStats[0], edgeStats[1]);
+	}
+	
         for (const [stationId, station] of Object.entries(metroGraph.stations)) {
             this.drawStation(station);
         }
