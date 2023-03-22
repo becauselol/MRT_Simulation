@@ -6,20 +6,41 @@
 		
 		
 		<!-- custom styles for this application -->
+		<link rel="stylesheet" href="styles/MRT_style.css" media="screen">
 		<!-- <link rel="stylesheet" href="styles/basicagentmodel.css" media="screen"> -->
+		<!-- plotly is for drawing graphs -->
+		<script type="text/javascript" src="classes/plotly.min.js"></script>
+		
 
 </head>
 <!-- Set class to official for more formal font; unofficial for informal font -->
 <body class="official bgColor0">
-	
-	<canvas id="myCanvas" height="560" width="980">
-	</canvas>
 
-	<canvas id="heatCanvas" height="560" width="980">
-	</canvas>
+	<!-- Tab links -->
+	<div class="tab">
+		
+		<button class="tablinks" onclick="tabswitch(event, 'MRT Map')">MRT Map</button>
+		<button class="tablinks" onclick="tabswitch(event, 'Edge Map')">Edge Map</button>
+
+	</div>
 	
-	<!-- Anything below this line should be a popup window or dialog or a late-loading library -->
+	<!-- Tab content -->
+	<div id="MRT Map" class="tabcontent" style="display:block">
+		<h3>MRT Map</h3>
+		<canvas id="myCanvas" height="560" width="980">
+		</canvas>
+	</div>
 	
+	<div id="Edge Map" class="tabcontent">
+		<h3>Edge Map</h3>
+		
+	
+		<canvas id="heatCanvas" height="560" width="980">
+		</canvas>
+	</div>
+	<script type="text/javascript" src="classes/mrtTab.js"></script>
+	
+		
 	<!-- <script type="text/javascript" src="src/kmlparse.js"></script> -->
 	<script type="text/javascript" src="classes/metroDataProcessor.js"></script>
 	<script type="text/javascript" src="classes/metroGraph.js"></script>
@@ -33,5 +54,17 @@
 	<script type="text/javascript" src="src/station_data.js"></script>
 	<script type="text/javascript" src="src/script.js"></script>
 	
+	<!-- Anything below this line should be a popup window or dialog or a late-loading library -->
+	
+
+
+
+	<p style="position:absolute;top:80%; font-size:25px">Simulation Parameters</p>
+	<p style="position:absolute;top:90%; font-size:25px">Graphs</p>
+
+	<!-- Add in Charts -->	
+	<div id="chart1" style="position:absolute; top: 100%; "></div>
+
+	<script type="text/javascript" src="classes/PlotGraph.js"></script>
 </body>
 </html>
