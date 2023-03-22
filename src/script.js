@@ -28,7 +28,7 @@ metroGraph.floydWarshall();
 metroGraph.getAllPathPairs();
 
 //initializes a train at every station
-metroGraph.initTrainAllStations();
+metroGraph.initTrainAtStation();
 
 /** Code to run on initialization of page */
 function init() {
