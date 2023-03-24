@@ -71,8 +71,9 @@ metro.trainDict["train1"] = train1
 var pos = {"x": 0, "y": 0}
 window.addEventListener('mousemove',() => {
 	var rect = canvas.getBoundingClientRect();
-  pos.x = event.clientX - rect.left
-  pos.y = event.clientY - rect.top
+  pos.x = (event.clientX - cameraOffset.x - rect.left) * cameraZoom
+  pos.y = (event.clientY - cameraOffset.y - rect.top) * cameraZoom
+  console.log(pos)
 }, false);
 
 
@@ -81,9 +82,9 @@ function draw_map() {
 		canvas.height = window.innerHeight
 
 		// Translate to the canvas centre before zooming - so you'll always zoom on what you're looking directly at
-		// ctx.translate( window.innerWidth / 2, window.innerHeight / 2 )
+		ctx.translate( window.innerWidth / 2, window.innerHeight / 2 )
 		// ctx.scale(cameraZoom, cameraZoom)
-		// ctx.translate( -window.innerWidth / 2 + cameraOffset.x, -window.innerHeight / 2 + cameraOffset.y )
+		ctx.translate( -window.innerWidth / 2 + cameraOffset.x, -window.innerHeight / 2 + cameraOffset.y )
 		ctx.clearRect(0,0, window.innerWidth, window.innerHeight)
 
 
