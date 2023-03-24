@@ -27,7 +27,7 @@ class Metro {
 		switch (train.state) {
 			// if it is moving
 			case TrainState.MOVING:
-				console.log("moving")
+				// console.log("moving")
 				// get edge weight
 				var weight = this.edgeDict[`${train.prevId}_${train.nextId}`]
 
@@ -38,7 +38,7 @@ class Metro {
 
 				// if lambda > 1 train has reached
 				if (train.lambda >= 1) {
-					console.log("switch to alighting")
+					// console.log("switch to alighting")
 					train.state = TrainState.ALIGHTING
 					train.lambda = 0;
 
@@ -49,7 +49,7 @@ class Metro {
 				break;
 
 			case TrainState.ALIGHTING:
-				console.log("alighting")
+				// console.log("alighting")
 				// increment the timestamp of waiting (lambda)
 				train.lambda += timestep
 
@@ -63,12 +63,12 @@ class Metro {
 				break;
 
 			case TrainState.WAITING:
-				console.log("waiting")
+				// console.log("waiting")
 				train.lambda += timestep
 
 				var currStation = this.stationDict[train.prevId]
 				if (train.lambda >= currStation.waitTime) {
-					console.log("switch to boarding")
+					// console.log("switch to boarding")
 					train.state = TrainState.BOARDING;
 				}
 				break;

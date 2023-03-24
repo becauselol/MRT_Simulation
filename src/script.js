@@ -20,19 +20,19 @@ var timestep = 1/fps;
 var metro = new Metro("Singapore MRT");
 var drawer = new MapDrawer(ctx, maxX, maxY);
 
-var midX = Math.floor(window.innerWidth / 10)
-var midY = Math.floor(window.innerHeight / 10)
+var midX = Math.floor(window.innerWidth / 10) + 200
+var midY = Math.floor(window.innerHeight / 10) + 200
 console.log(midX, midY)
-var station1 = new Station("station1", midX - 50, midY, name="station1", codes = ["red"], waitTime=1)
+var station1 = new Station("station1", midX - 100, midY, name="station1", codes = ["red"], waitTime=1)
 var station2 = new Station("station2", midX, midY, name="station2", codes = ["red", "purple"], waitTime=1)
-var station3 = new Station("station3", midX + 50, midY, name="station3", codes = ["red"], waitTime=1)
+var station3 = new Station("station3", midX + 100, midY, name="station3", codes = ["red"], waitTime=1)
 station1.addNeighbour("red", "FW", "station2")
 station2.addNeighbour("red", "FW", "station3")
 station3.addNeighbour("red", "BW", "station2")
 station2.addNeighbour("red", "BW", "station1")
 
-var station4 = new Station("station4", midX, midY - 50, name="station4", codes = "purple", waitTime=1)
-var station5 = new Station("station5", midX, midY + 50, name="station5", codes = "purple", waitTime=1)
+var station4 = new Station("station4", midX, midY - 100, name="station4", codes = "purple", waitTime=1)
+var station5 = new Station("station5", midX, midY + 100, name="station5", codes = "purple", waitTime=1)
 station4.addNeighbour("purple", "FW", "station2")
 station2.addNeighbour("purple", "FW", "station5")
 station5.addNeighbour("purple", "BW", "station2")
@@ -68,6 +68,12 @@ var train1 = new Train("train1",
 	prevId="station1")
 
 metro.trainDict["train1"] = train1
+var pos = {"x": 0, "y": 0}
+window.addEventListener('mousemove',() => {
+	var rect = canvas.getBoundingClientRect();
+  pos.x = event.clientX - rect.left
+  pos.y = event.clientY - rect.top
+}, false);
 
 
 function draw_map() {
@@ -75,9 +81,9 @@ function draw_map() {
 		canvas.height = window.innerHeight
 
 		// Translate to the canvas centre before zooming - so you'll always zoom on what you're looking directly at
-		ctx.translate( window.innerWidth / 2, window.innerHeight / 2 )
-		ctx.scale(cameraZoom, cameraZoom)
-		ctx.translate( -window.innerWidth / 2 + cameraOffset.x, -window.innerHeight / 2 + cameraOffset.y )
+		// ctx.translate( window.innerWidth / 2, window.innerHeight / 2 )
+		// ctx.scale(cameraZoom, cameraZoom)
+		// ctx.translate( -window.innerWidth / 2 + cameraOffset.x, -window.innerHeight / 2 + cameraOffset.y )
 		ctx.clearRect(0,0, window.innerWidth, window.innerHeight)
 
 
@@ -87,15 +93,15 @@ function draw_map() {
 
 			// draw map
 			drawer.drawMap(metro);
-
+			drawer.drawDisplay(metro, pos)
 		// } else if (creatorMode) {
 		// 	// else if in creator mode (draw creator map)
 		// 	drawer.drawCreatorMap(metro, mouseX, mouseY);
 
 		} else {
-			// console.log("loop")
 			// if it is paused, just draw the map with no additional input
 			drawer.drawMap(metro);
+			drawer.drawDisplay(metro, pos)
 			
 		}
 

@@ -16,6 +16,7 @@ class MapDrawer {
         this.height = height;
         this.x_padding = x_padding;
         this.y_padding = y_padding;
+        this.HOVER_RADIUS = 10;
 	}
 
     /**
@@ -93,5 +94,25 @@ class MapDrawer {
         for (const [trainId, train] of Object.entries(metroGraph.trainDict)) {
             this.drawTrain(train);
         }
+    }
+
+    drawDisplay(metroGraph, pos) {
+        // tell the browser we're handling this event
+        // console.log(pos)
+        var mouseX = pos.x
+        var mouseY = pos.y
+
+        this.drawMap(metroGraph);
+        for (const [stationId, station] of Object.entries(metroGraph.stationDict)) {
+            var h = station
+            var dx = mouseX - h.coords.x;
+            var dy = mouseY - h.coords.y;
+            if (dx * dx + dy * dy < this.HOVER_RADIUS * this.HOVER_RADIUS) {
+                // console.log("true")
+                ctx.fillText(station.commuters.length, h.coords.x - 10, h.coords.y - 10);
+            }
+        }
+
+        
     }
 }
