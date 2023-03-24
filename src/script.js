@@ -8,6 +8,16 @@ var heatCtx = canvas.getContext('2d');
 var maxX = 960;
 var maxY = 540;
 
+var isRunning = false;
+var isPaused = true;
+
+function pause() {
+  isRunning = false;
+  isPaused = true;
+  clearInterval(simTimer);
+}
+
+// function runsim()
 //process all the station data
 var metroDataProcessor = new MetroDataProcesser();
 metroDataProcessor.parseStationString(stationString);
@@ -28,7 +38,7 @@ metroGraph.floydWarshall();
 metroGraph.getAllPathPairs();
 
 //initializes a train at every station
-metroGraph.initTrainAllStations();
+metroGraph.initTrainAtStation();
 
 /** Code to run on initialization of page */
 function init() {

@@ -10,19 +10,18 @@ class Commuter {
 
 	 /**
      * Create a Commuter.
-     * @param {number} id - unique id of the commuter
-     * @param {number} start - the unique id of the starting station.
-     * @param {number} target - the unique id of the next station to alight at.
-     * @param {number} end - the unique id of the station wher the user journey ends
      * @param {Array} path - the path commuters will take. It only stores the locations where users need to change lines
      * 				path items are stored in the form [stationId, pathCode]
      * 				lets Commuters know which stationId to be at and which pathCode to take
      * @param {number} location - the unique id of the station/train that it is at 
      * @param {number} state - the state of the agent
+     * @param {number} arrivalTime - the time the agent arrived at a certain station
      */
-	constructor(path, state=CommuterState.WAITING) {
+	constructor(path, spawnTime=0, state=CommuterState.WAITING) {
 		this.path = path;
 		this.state = state;
+		this.arrivalTime = spawnTime;
+		this.spawnTime = spawnTime;
 	}
 
 	/**

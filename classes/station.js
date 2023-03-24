@@ -30,10 +30,11 @@ class Station {
 		this.waitTime = waitTime;
 		this.pathCodes = new Set();
 		this.trains = [];
+		this.commuterWaitTime = {};
 
 		// parameters that deal with the spawn rate of Commuters
 		this.spawnNo = 1;
-		this.spawnProb = 0.01;
+		this.spawnProb = 0.05;
 
 		//commuter data of each station
 		/**
@@ -67,7 +68,7 @@ class Station {
 	 * @param {Object} paths - the object that has all the possible Commuter paths
 	 * @return {number} spawnCount is the number of commuters spawned in this time step
 	 * */
-	spawnNewCommuters(stationLength, paths) {
+	spawnNewCommuters(sysTime, stationLength, paths, spawnTime) {
 		//code to spawn commuters
 		var spawnCount = 0
 		
@@ -87,7 +88,7 @@ class Station {
 				var path = paths[this.id.toString() + "_" + to.toString()]
 				//copy it to the commuter
 				var pathCopy = [...path]
-				var commuter = new Commuter(pathCopy)
+				var commuter = new Commuter(pathCopy, sysTime)
 
 				//add commuter to the station and increment spawnCount
 				this.commuters.push(commuter)
@@ -133,16 +134,33 @@ class Station {
 		// var boardingCommuters = this.commuters.filter(x => x.pathCode == this.trains[idx].pathCode)
 		//update target of commuters
 		var idxToBoard = [];
+		let con = false;
 		//check who needs to be boarded
 		for (var i = 0; i < this.commuters.length; i++) {
 			for (var train = 0; train < this.trains.length; train++) {
+				// if the train reaches capacity
+				if (this.trains[train].commuters.length >= this.trains[train].capacity) {
+					// stop boarding commuters for this train
+					// console.log("some train is at capacity")
+					// console.log(this.trains[train].commuters.length>=this.trains[train].capacity)
+					// console.log(this.trains[train].commuters.length, this.trains[train].capacity)
+					let con = true;
+					// console.log(con)
+					break;
+				}
+				if (con) {
+					console.log("nani")
+				}
 				//using isThisMyTrain() method, we will check whether to board the train
 				var board = this.commuters[i].isThisMyTrain(this.trains[train].pathCode + this.trains[train].direction)
 
 				//if so then we add them to boarding and include what train they need to board
 				if (board) {
+					// console.log(this.trains[train].capacity)
+					// console.log(this.trains[train].commuters.length >= this.trains[train].capacity)
 					idxToBoard.push([i, train]);
 				}
+				con = false;
 			}
 		}
 
@@ -183,14 +201,14 @@ class Station {
 
 	/* Update Station to move to next timestep
 	 * */
-	update(stationLength, paths) {
+	update(sysTime, stationLength, paths) {
 		var updateData = {
 			"spawned": 0,
 			"completedJourneys": 0
 		}
 
 		//spawn new commuters
-		updateData["spawned"] += this.spawnNewCommuters(stationLength, paths);
+		updateData["spawned"] += this.spawnNewCommuters(sysTime, stationLength, paths);
 
 		var completedPeople = 0;
 		
