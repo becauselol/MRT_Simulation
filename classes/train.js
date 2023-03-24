@@ -9,122 +9,61 @@ const TrainState = {
 
 /** Class representing a Train. */
 class Train {
+
 	/**
      * Create a Train.
-     * @param {number} id - unique id of the train
-     * @param {Array} path - the path trains will take. Stores every station and edge that the station is required to stop at/travel along
+     * @param {String} id - unique id of the train
+     * @param {String} pathCode - the path code of the train e.g. "ccl"
+     * @param {String} direction - the direction the train will take "FW" or "BW"
      * @param {float} lambda - the current position that the train is at (0 or 1 if at stations) (0 < lambda < 1 if travelling)
-     * @param {Edge/Station} currentLocation - if train not moving, it will be at a Station, if it is moving, then it is on an Edge
+     * @param {Object} prevId/nextId - Station id of previous and next stations
+     * @param {Object} prev/next - Object of x and y values of the previous and next location (if prev == next then not moving)
      * @param {number} state - the state of the agent
      * @param {number} capacity - the max number of commuters on a train
      * @param {Array} commuters - stores the commuters that are on a train
      */
-	constructor(id, pathCode, currentLocation, place, direction='FW', state=TrainState.WAITING, capacity=300, lambda=0) {
+	constructor(id, pathCode, prev, prevId, next=null, nextId=null, direction='FW', state=TrainState.WAITING, capacity=300, lambda=0) {
 		this.id = id;
+
+		// stuff that handles the line and direction
 		this.pathCode = pathCode;
 		this.direction = direction;
+
+		this.prevId = prevId
+		if (nextId === null) {
+			this.nextId = prevId;
+		} else {
+			this.nextId = nextId
+		}
+		
+		// stuff that handles coordinates
 		this.lambda = lambda;
-		this.curLocation = currentLocation;
-		this.place = place;
+		this.prev = prev;
+		if (next === null) {
+			this.next = prev;
+		} else {
+			this.next = next
+		}
+		this.getCoords();
+
+		// state
 		this.state = state;
+
+		//commuter related
 		this.capacity = capacity;
 		this.commuters = [];
-		this.waitTime = 0;
-
-		this.getCoords();
-		this.addToStation();
-	}
-
-	getCommuterCount() {
-		return this.commuters.length + this.alightingCommuters.length;
-	}
-
-	addToStation() {
-		if (this.place instanceof Station) {
-			this.place.trains.push(this);
-		} 
-	}
-
-	getCoords() {
-		if (this.place instanceof Edge) {
-			this.x = this.lerp(this.place.head.x, this.place.tail.x, this.lambda);
-      		this.y = this.lerp(this.place.head.y, this.place.tail.y, this.lambda);
-		} else if (this.place instanceof Station) {
-			this.x = this.place.x;
-			this.y = this.place.y;
-		}
-	}
-
-	hasReached() {
-		return (this.lambda >= 1);
-	}
-
-	nextLocation(paths) {
-		//check if next location is in bounds
-		var path = paths[this.pathCode + this.direction]
-		if (this.place instanceof Station) {
-			this.place.trains.splice(this.place.trains.indexOf(this), 1);
-		}
-		// go to next location
-		this.curLocation++
-
-		// if we go past the list
-		if (this.curLocation >= path.length) {
-			//change directions
-			this.direction = (this.direction == "FW") ? "BW" : "FW"
-			var path = paths[this.pathCode + this.direction]
-			this.curLocation = 1;
-		}
-
-		//check where the next location is now
-		this.place = path[this.curLocation];
-
-		// if it is an edge
-		if (this.place instanceof Edge) {
-			//we move
-			this.waitTime = 0;
-			this.lambda = 0; //reset lambda
-			this.state = TrainState.MOVING;
-			this.place.undirectedEdge.commuterData['allTimeTotal'] += this.commuters.length;
-			this.place.commuterData['allTimeTotal'] += this.commuters.length;
-		} else if (this.place instanceof Station) {
-			this.waitTime = 0; //reset waittime
-			this.lambda = 0;
-			this.state = TrainState.WAITING;
-			this.place.trains.push(this);
-		}
-
-		//if not, retrieve and change to the other path
-		//if next location is edge
-
-	}
-
-	move() {
-		if (this.place instanceof Edge) {
-			this.lambda = this.lambda + (0.1 /this.place.weight)
-			this.x = this.lerp(this.place.head.x, this.place.tail.x, this.lambda);
-	      	this.y = this.lerp(this.place.head.y, this.place.tail.y, this.lambda);
-      }
 	}
 
 	lerp(a, b, alpha) {
 		return a + alpha * ( b - a )
 	}
 
-	update(paths) {
-		switch (this.state) {
-			case TrainState.WAITING: 
-				//increase wait duration
-				this.waitTime += 0.1;
-				if (this.waitTime >= paths[this.pathCode + this.direction][this.curLocation].waitTime) {
-					this.nextLocation(paths)
-				}
+	getCoords() {
+		this.x = this.lerp(this.prev.x, this.next.x, this.lambda);
+  		this.y = this.lerp(this.prev.y, this.next.y, this.lambda);
+	}
 
-			case TrainState.MOVING:
-				this.move();
-				if (this.hasReached()) {
-					this.nextLocation(paths);
-				}
-		}
+	hasReached() {
+		return (this.lambda >= 1);
 	}
 }
