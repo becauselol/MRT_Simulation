@@ -1,6 +1,6 @@
 /** Class representing a Station. */
 class Station {
-	
+
 	/**
 	* Create a Station.
 	* @param {String} id - unique id of the station
@@ -30,5 +30,13 @@ class Station {
 		// parameters that deal with the spawn rate of Commuters
 		this.spawnNo = 1;
 		this.spawnProb = 0.05;
+	}
+
+	/** Add neighbour to the current station 
+	* @param {number} neighbour_id - unique id of the neighbour
+	* @param {DirectedEdge} edge - the edge connecting these two 
+	*/
+	addNeighbour(line, direction, neighbourId) {
+		this.neighbours[`${line}_${direction}`] = neighbourId
 	}
 }

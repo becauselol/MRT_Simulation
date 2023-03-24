@@ -1,9 +1,9 @@
 /* variable containing the various TrainStates */
 const TrainState = {
-	"WAITING": 101, // train is waiting for people to board
-	"MOVING": 102, // train is moving from one place to the next
-	"TERMINATED": 103, //train is to be removed from the system
-	"REACHED": 104, // reached the target station
+	"WAITING": 201, // train is waiting for people to board
+	"MOVING": 202, // train is moving from one place to the next
+	"ALIGHTING": 203, //train is to be removed from the system
+	"BOARDING": 204, // reached the target station
 }
 
 
@@ -35,7 +35,7 @@ class Train {
 		} else {
 			this.nextId = nextId
 		}
-		
+
 		// stuff that handles coordinates
 		this.lambda = lambda;
 		this.prev = prev;
@@ -44,6 +44,7 @@ class Train {
 		} else {
 			this.next = next
 		}
+		this.coords = {"x":0, "y":0}
 		this.getCoords();
 
 		// state
@@ -59,8 +60,8 @@ class Train {
 	}
 
 	getCoords() {
-		this.x = this.lerp(this.prev.x, this.next.x, this.lambda);
-  		this.y = this.lerp(this.prev.y, this.next.y, this.lambda);
+		this.coords.x = this.lerp(this.prev.x, this.next.x, this.lambda);
+  		this.coords.y = this.lerp(this.prev.y, this.next.y, this.lambda);
 	}
 
 	hasReached() {

@@ -7,8 +7,68 @@ let MAX_ZOOM = 5
 let MIN_ZOOM = 0.1
 let SCROLL_SENSITIVITY = 0.0005
 
-var isRunning = true;
+var isRunning = false;
 // var creatorMode = false;
+
+var maxX = 960;
+var maxY = 540;
+
+var fps = 20; // frames per real time second // FPS needs to be at least 5 and all waitTimes of trains and edge weights must be at least 1
+var timestep = 1/fps;
+
+//intiialize graph and drawer
+var metro = new Metro("Singapore MRT");
+var drawer = new MapDrawer(ctx, maxX, maxY);
+
+var midX = Math.floor(window.innerWidth / 10)
+var midY = Math.floor(window.innerHeight / 10)
+console.log(midX, midY)
+var station1 = new Station("station1", midX - 50, midY, name="station1", codes = ["red"], waitTime=1)
+var station2 = new Station("station2", midX, midY, name="station2", codes = ["red", "purple"], waitTime=1)
+var station3 = new Station("station3", midX + 50, midY, name="station3", codes = ["red"], waitTime=1)
+station1.addNeighbour("red", "FW", "station2")
+station2.addNeighbour("red", "FW", "station3")
+station3.addNeighbour("red", "BW", "station2")
+station2.addNeighbour("red", "BW", "station1")
+
+var station4 = new Station("station4", midX, midY - 50, name="station4", codes = "purple", waitTime=1)
+var station5 = new Station("station5", midX, midY + 50, name="station5", codes = "purple", waitTime=1)
+station4.addNeighbour("purple", "FW", "station2")
+station2.addNeighbour("purple", "FW", "station5")
+station5.addNeighbour("purple", "BW", "station2")
+station2.addNeighbour("purple", "BW", "station4")
+
+var stations = {
+	"station1": station1,
+	"station2": station2,
+	"station3": station3,
+	"station4": station4,
+	"station5": station5
+}
+
+var edges = {
+	"station1_station2": 2,
+	"station2_station1": 2,
+	"station2_station3": 2,
+	"station3_station2": 2,
+	"station4_station2": 2,
+	"station2_station4": 2,
+	"station5_station2": 2,
+	"station2_station5": 2
+}
+
+metro.stationDict = stations
+metro.edgeDict = edges
+metro.metroLineStartStation = {"red": "station1", "purple": "station4"};
+metro.metroLineColours = {"red": "red", "purple": "purple"};
+
+var train1 = new Train("train1", 
+	pathCode = "red", 
+	prev = station1.coords, 
+	prevId="station1")
+
+metro.trainDict["train1"] = train1
+
 
 function draw_map() {
 		canvas.width = window.innerWidth
@@ -20,21 +80,22 @@ function draw_map() {
 		ctx.translate( -window.innerWidth / 2 + cameraOffset.x, -window.innerHeight / 2 + cameraOffset.y )
 		ctx.clearRect(0,0, window.innerWidth, window.innerHeight)
 
-		// if it is running
+
 		if (isRunning) {
 			// take a simulation step
-			metroGraph.simStep();
+			metro.simStep(timestep);
 
 			// draw map
-			drawer.drawMap(metro, mouseX, mouseY);
+			drawer.drawMap(metro);
 
 		// } else if (creatorMode) {
 		// 	// else if in creator mode (draw creator map)
 		// 	drawer.drawCreatorMap(metro, mouseX, mouseY);
 
 		} else {
+			// console.log("loop")
 			// if it is paused, just draw the map with no additional input
-			drawer.drawMap(metro, mouseX, mouseY);
+			drawer.drawMap(metro);
 			
 		}
 
@@ -150,6 +211,7 @@ canvas.addEventListener( 'wheel', (e) => adjustZoom(e.deltaY*SCROLL_SENSITIVITY)
 
 function toggleSim() {
 	isRunning = !isRunning
+	console.log(`is running: ${isRunning}`)
 }
 
 // function toggleCreate() {

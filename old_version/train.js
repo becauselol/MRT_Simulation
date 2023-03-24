@@ -121,12 +121,14 @@ class Train {
 				if (this.waitTime >= paths[this.pathCode + this.direction][this.curLocation].waitTime) {
 					this.nextLocation(paths)
 				}
+				break;
 
 			case TrainState.MOVING:
 				this.move();
 				if (this.hasReached()) {
 					this.nextLocation(paths);
 				}
+				break;
 		}
 	}
 }
