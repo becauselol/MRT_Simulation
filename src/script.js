@@ -20,8 +20,8 @@ var timestep = 1/fps;
 var metro = new Metro("Singapore MRT");
 var drawer = new MapDrawer(ctx, maxX, maxY);
 
-var midX = Math.floor(window.innerWidth / 10) + 200
-var midY = Math.floor(window.innerHeight / 10) + 200
+var midX = 0
+var midY = 0
 console.log(midX, midY)
 var station1 = new Station("station1", midX - 100, midY, name="station1", codes = ["red"], waitTime=1)
 var station2 = new Station("station2", midX, midY, name="station2", codes = ["red", "purple"], waitTime=1)
@@ -62,6 +62,8 @@ metro.edgeDict = edges
 metro.metroLineStartStation = {"red": "station1", "purple": "station4"};
 metro.metroLineColours = {"red": "red", "purple": "purple"};
 
+metro.getPathsFromStartStation();
+
 var train1 = new Train("train1", 
 	pathCode = "red", 
 	prev = station1.coords, 
@@ -71,9 +73,9 @@ metro.trainDict["train1"] = train1
 var pos = {"x": 0, "y": 0}
 window.addEventListener('mousemove',() => {
 	var rect = canvas.getBoundingClientRect();
-  pos.x = (event.clientX - cameraOffset.x - rect.left) * cameraZoom
-  pos.y = (event.clientY - cameraOffset.y - rect.top) * cameraZoom
-  console.log(pos)
+  pos.x = (event.clientX - cameraOffset.x - rect.left) / cameraZoom
+  pos.y = (event.clientY - cameraOffset.y - rect.top) / cameraZoom
+  // console.log(pos)
 }, false);
 
 
@@ -83,7 +85,7 @@ function draw_map() {
 
 		// Translate to the canvas centre before zooming - so you'll always zoom on what you're looking directly at
 		ctx.translate( window.innerWidth / 2, window.innerHeight / 2 )
-		// ctx.scale(cameraZoom, cameraZoom)
+		ctx.scale(cameraZoom, cameraZoom)
 		ctx.translate( -window.innerWidth / 2 + cameraOffset.x, -window.innerHeight / 2 + cameraOffset.y )
 		ctx.clearRect(0,0, window.innerWidth, window.innerHeight)
 

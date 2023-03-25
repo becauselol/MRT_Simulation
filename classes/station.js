@@ -30,6 +30,10 @@ class Station {
 		// parameters that deal with the spawn rate of Commuters
 		this.spawnNo = 1;
 		this.spawnProb = 0.05;
+		this.spawnFreq = 2
+		this.spawnTime = 0
+		this.termFreq = 3
+		this.termTime = 0
 	}
 
 	/** Add neighbour to the current station 
