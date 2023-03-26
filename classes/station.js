@@ -26,7 +26,7 @@ class Station {
 		this.lines = {};
 
 		// commuters is an object of lists where key: lineCode_direction and value: list of commuters waiting for that train
-		this.commuters = {};
+		this.commuters = {"terminating": []};
 		this.waitTime = waitTime;
 		this.pathCodes = new Set();
 

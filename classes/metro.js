@@ -246,7 +246,37 @@ class Metro {
 
 				// we need to alight all commuters on the train and 
 				// move them to the station it has reached
+				// board the passengers
+				var currStation = this.stationDict[train.prevId]
+				var alightingPassengers = train.commuters[train.prevId]
 
+				//update target of commuters
+				//check who needs to be boarded
+				if (alightingPassengers === undefined) {
+					train.state = TrainState.BOARDING
+					return;
+				}
+
+				while (alightingPassengers.length > 0) {
+					// get the target location to alight
+					var currCommuter = alightingPassengers[0];
+					if (currStation.id == currCommuter.target) {
+						currStation.commuters["terminating"].push(currCommuter)
+						alightingPassengers.splice(0, 1)
+						continue;
+					}
+					// again we add some randomness by letting them choose the shortest path to board at
+					var path_options = this.interchangePaths[train.prevId][currCommuter.target]
+					var path_choice = path_options[Math.floor(Math.random() * path_options.length)]
+
+					var boardingTarget = path_choice.board[0]
+
+					if (currStation.commuters[boardingTarget] === undefined) {
+						currStation.commuters[boardingTarget] = []
+					}
+					currStation.commuters[boardingTarget].push(currCommuter)
+					alightingPassengers.splice(0, 1)
+				}
 
 
 				// the train is now waiting
