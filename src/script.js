@@ -72,12 +72,14 @@ metro.getPathsFromStartStation();
 var train1 = new Train("train1", 
 	pathCode = "red", 
 	prev = station1.coords, 
-	prevId="station1")
+	prevId="station1",
+    capacity=3)
 
 var train2 = new Train("train2", 
     pathCode = "purple", 
     prev = station4.coords, 
-    prevId="station4")
+    prevId="station4",
+    capacity=3)
 
 metro.trainDict["train1"] = train1
 metro.trainDict["train2"] = train2

@@ -296,7 +296,7 @@ class Metro {
 					train.state = TrainState.WAITING
 					return;
 				}
-				while (train.getCommuterCount() <= train.capacity && boardingPassengers.length > 0) {
+				while (train.getCommuterCount() < train.capacity && boardingPassengers.length > 0) {
 					// get the target location to alight
 					var currCommuter = boardingPassengers[0];
 
