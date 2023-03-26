@@ -377,18 +377,11 @@ class Metro {
 	}
 
 	stationSimStepTerminate(timestep, station) {
-		station.termTime += timestep;
+		// collect some stats
 
-		if (station.termTime >= station.termFreq) {
-			for (const [key, value] of Object.entries(station.commuters)) {
-				if (value.length > 0) {
-					value.pop()
-					station.termTime = 0;
-					return;
-				}
-			}
 
-		}
+		// terminate all the commuters
+		station.commuters["terminating"] = []
 	}
 
 	simStep(timestep){
