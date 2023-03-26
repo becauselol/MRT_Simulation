@@ -74,7 +74,7 @@ class MapDrawer {
         // console.log(metroGraph)
         for (const [lineCode, stationId] of Object.entries(metroGraph.metroLineStartStation)) {
             var curr = metroGraph.stationDict[stationId]
-            var nextId = curr.neighbours[`${lineCode}_FW`]
+            var nextId = curr.getNeighbourId(lineCode, "FW")
             var next = metroGraph.stationDict[nextId]
             var colour = metroGraph.metroLineColours[lineCode]
             
@@ -82,7 +82,7 @@ class MapDrawer {
             while (next !== undefined) {
                 this.drawEdge(curr, next, colour);
                 curr = next;
-                nextId = curr.neighbours[`${lineCode}_FW`]
+                nextId = curr.getNeighbourId(lineCode, "FW")
                 next = metroGraph.stationDict[nextId]
             }
         }

@@ -25,18 +25,32 @@ var midY = 0
 console.log(midX, midY)
 var station1 = new Station("station1", midX - 100, midY, name="station1", codes = ["red"], waitTime=1)
 var station2 = new Station("station2", midX, midY, name="station2", codes = ["red", "purple"], waitTime=1)
-var station3 = new Station("station3", midX + 100, midY, name="station3", codes = ["red"], waitTime=1)
-station1.addNeighbour("red", "FW", "station2")
-station2.addNeighbour("red", "FW", "station3")
-station3.addNeighbour("red", "BW", "station2")
-station2.addNeighbour("red", "BW", "station1")
+var station3 = new Station("station3", midX + 100, midY, name="station3", codes = ["red", "purple"], waitTime=1)
+station1.pathCodes.add("red")
+station2.pathCodes.add("red")
+station3.pathCodes.add("red")
+station3.pathCodes.add("purple")
+station2.pathCodes.add("purple")
+
+station1.addNeighbour("red", "FW", "station2", 2)
+station2.addNeighbour("red", "FW", "station3", 2)
+station3.addNeighbour("red", "BW", "station2", 2)
+station2.addNeighbour("red", "BW", "station1", 2)
 
 var station4 = new Station("station4", midX, midY - 100, name="station4", codes = "purple", waitTime=1)
 var station5 = new Station("station5", midX, midY + 100, name="station5", codes = "purple", waitTime=1)
-station4.addNeighbour("purple", "FW", "station2")
-station2.addNeighbour("purple", "FW", "station5")
-station5.addNeighbour("purple", "BW", "station2")
-station2.addNeighbour("purple", "BW", "station4")
+station4.pathCodes.add("purple")
+station5.pathCodes.add("purple")
+
+station4.addNeighbour("purple", "FW", "station2", 2)
+station2.addNeighbour("purple", "BW", "station4", 2)
+
+station3.addNeighbour("purple", "BW", "station2", 2)
+station2.addNeighbour("purple", "FW", "station3", 2)
+
+station5.addNeighbour("purple", "BW", "station3", 2)
+station3.addNeighbour("purple", "FW", "station5", 2)
+
 
 var stations = {
 	"station1": station1,
@@ -46,19 +60,10 @@ var stations = {
 	"station5": station5
 }
 
-var edges = {
-	"station1_station2": 2,
-	"station2_station1": 2,
-	"station2_station3": 2,
-	"station3_station2": 2,
-	"station4_station2": 2,
-	"station2_station4": 2,
-	"station5_station2": 2,
-	"station2_station5": 2
-}
 
-metro.stationDict = stations
-metro.edgeDict = edges
+for (const [stationId, station] of Object.entries(stations)) {
+    metro.addStation(station);
+}
 metro.metroLineStartStation = {"red": "station1", "purple": "station4"};
 metro.metroLineColours = {"red": "red", "purple": "purple"};
 
@@ -69,7 +74,13 @@ var train1 = new Train("train1",
 	prev = station1.coords, 
 	prevId="station1")
 
+var train2 = new Train("train2", 
+    pathCode = "purple", 
+    prev = station4.coords, 
+    prevId="station4")
+
 metro.trainDict["train1"] = train1
+metro.trainDict["train2"] = train2
 var pos = {"x": 0, "y": 0}
 window.addEventListener('mousemove',() => {
 	var rect = canvas.getBoundingClientRect();

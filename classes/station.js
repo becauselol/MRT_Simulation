@@ -23,6 +23,7 @@ class Station {
 		this.name = name;
 		this.codes = codes;
 		this.neighbours = {};
+		this.lines = {};
 		this.commuters = [];
 		this.waitTime = waitTime;
 		this.pathCodes = new Set();
@@ -40,7 +41,40 @@ class Station {
 	* @param {number} neighbour_id - unique id of the neighbour
 	* @param {DirectedEdge} edge - the edge connecting these two 
 	*/
-	addNeighbour(line, direction, neighbourId) {
-		this.neighbours[`${line}_${direction}`] = neighbourId
+	addNeighbour(line, direction, neighbourId, weight) {
+		if (this.lines[line] === undefined) {
+			this.lines[line] = {}
+		}
+		this.lines[line][direction] = {"id": neighbourId, "weight": weight}
+		if (this.neighbours[neighbourId] === undefined) {
+			this.neighbours[neighbourId] = [`${line}_${direction}`]
+		} else {
+			this.neighbours[neighbourId].push(`${line}_${direction}`)
+		}
+
+	}
+
+	getNeighbourId(line, direction) {
+		if (this.lines[line] === undefined) {
+			return undefined
+		}
+		if (this.lines[line][direction] === undefined) {
+			return undefined
+		}
+		return this.lines[line][direction].id
+	}
+
+	getNeighbourWeight(line, direction) {
+		if (this.lines[line] === undefined) {
+			return undefined
+		}
+		if (this.lines[line][direction] === undefined) {
+			return undefined
+		}
+		return this.lines[line][direction].weight
+	}
+
+	getLineDirections(neighbourId) {
+		return this.neighbours[neighbourId]
 	}
 }
