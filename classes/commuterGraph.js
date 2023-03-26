@@ -16,7 +16,6 @@ class CommuterGraph {
 	}
 
 	floydWarshall() {
-
 	    this.dist = {};
 	    this.next = {};
 	    let i = 0;
@@ -35,13 +34,12 @@ class CommuterGraph {
 
 	    for (const [i, iDict] of Object.entries(this.edgeDict)) {
 	    	for (const [j, weight] of Object.entries(iDict)) {
-	    		console.log(weight)
 	    		this.dist[i][j] = weight;
 				this.next[i][j] = [-1];
 	    	}
 	    	// console.log(this.dist)
 	    }
-	    console.log(this.dist)
+	    
 	    for (const i of Object.keys(this.nodeDict)) {
 	    	this.dist[i][i] = 0;
 	    	this.next[i][i] = [];
@@ -116,7 +114,7 @@ class CommuterGraph {
 				if (paths == []) {
 					continue;
 				}
-				
+
 				var forwardPaths = []
 				for (const p of paths) {
 					forwardPaths.push([...p])

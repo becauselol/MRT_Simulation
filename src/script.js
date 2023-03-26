@@ -37,8 +37,8 @@ station2.addNeighbour("red", "FW", "station3", 2)
 station3.addNeighbour("red", "BW", "station2", 2)
 station2.addNeighbour("red", "BW", "station1", 2)
 
-var station4 = new Station("station4", midX, midY - 100, name="station4", codes = "purple", waitTime=1)
-var station5 = new Station("station5", midX, midY + 100, name="station5", codes = "purple", waitTime=1)
+var station4 = new Station("station4", midX, midY - 100, name="station4", codes = ["purple"], waitTime=1)
+var station5 = new Station("station5", midX, midY + 100, name="station5", codes = ["purple"], waitTime=1)
 station4.pathCodes.add("purple")
 station5.pathCodes.add("purple")
 
@@ -90,8 +90,7 @@ window.addEventListener('mousemove',() => {
 }, false);
 
 metro.constructCommuterGraph();
-metro.commuterGraph.floydWarshall();
-metro.commuterGraph.getAllPathPairs();
+metro.constructInterchangePaths();
 
 function draw_map() {
 		canvas.width = window.innerWidth
@@ -101,8 +100,9 @@ function draw_map() {
 		ctx.translate( window.innerWidth / 2, window.innerHeight / 2 )
 		ctx.scale(cameraZoom, cameraZoom)
 		ctx.translate( -window.innerWidth / 2 + cameraOffset.x, -window.innerHeight / 2 + cameraOffset.y )
-		ctx.clearRect(0,0, window.innerWidth, window.innerHeight)
-
+		ctx.clearRect(-canvas.width,-canvas.height, window.innerWidth, window.innerHeight)
+        // ctx.fillStyle = "black"
+        // ctx.fillRect(-canvas.width, -canvas.height, window.innerWidth, window.innerHeight);
 
 		if (isRunning) {
 			// take a simulation step

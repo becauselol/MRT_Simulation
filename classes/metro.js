@@ -20,6 +20,7 @@ class Metro {
 		
 		this.commuterGraph = new CommuterGraph()
 		this.commuterInterchangeWaitTime = {};
+		this.interchangePaths = {}
 	}
 
 	addStation(station) {
@@ -89,6 +90,80 @@ class Metro {
 		}
 	}
 
+	getDirection(pathCode, startStation, targetStation) {
+		if (this.metroPaths[pathCode]["FW"].indexOf(startStation) < this.metroPaths[pathCode]["FW"].indexOf(targetStation)) {
+			return "FW"
+		} else {
+			return "BW"
+		}
+	}
+
+	// construct the instructions for the commuters
+	constructInterchangePaths() {
+		if (Object.keys(this.commuterGraph.commuterPaths) == 0) {
+			this.commuterGraph.floydWarshall()
+			this.commuterGraph.getAllPathPairs();
+		}
+
+		for (const [i, stationI] of Object.entries(this.stationDict)) {
+			this.interchangePaths[i] = {}
+			for (const [j, stationJ] of Object.entries(this.stationDict)) {
+				if (i == j) {
+					continue;
+				}
+				this.interchangePaths[i][j] = []
+
+				// take the fastest one amongst all the possible pathCode combis
+				// create edge weights for each possible combination of interchanges
+				var min_time = Infinity
+				var chosen_start_line = null
+				var chosen_target_line = null
+
+				for (const iCode of stationI.pathCodes) {
+	  				for (const jCode of stationJ.pathCodes) {
+	  					var timeTaken = this.commuterGraph.dist[`${i}.${iCode}`][`${j}.${jCode}`]
+
+	  					if (timeTaken < min_time) {
+	  						min_time = timeTaken
+	  						chosen_start_line = iCode;
+	  						chosen_target_line = jCode;
+	  					}
+	  				}
+				}
+				if (min_time == Infinity) {
+					console.log("no path?")
+					continue;
+				}
+
+				var chosen_paths = this.commuterGraph.commuterPaths[`${i}.${chosen_start_line}`][`${j}.${chosen_target_line}`]
+				var interchangePaths = []
+				for (const path of chosen_paths) {
+					var direction = this.getDirection(chosen_start_line, i, path[1].split(".")[0])
+
+					var pathDetails = {"board": [`${chosen_start_line}_${direction}`], "alight": []}
+
+					for (var p = 1; p < path.length; p++) {
+						var prev = path[p - 1];
+						var next = path[p];
+
+						var prevDetails = prev.split(".")
+						var nextDetails = next.split(".")
+						if (prevDetails[1] != nextDetails[1]) {
+							pathDetails["alight"].push(prevDetails[0])
+
+							direction = this.getDirection(chosen_start_line, nextDetails[0], path[p+1].split(".")[0])
+							pathDetails["board"].push(`${nextDetails[1]}_${direction}`)
+						}
+					}
+
+					pathDetails["alight"].push(j)
+					this.interchangePaths[i][j].push(pathDetails)
+				}
+			}
+		}
+	}
+
+	// construct the path
 	getPathsFromStartStation() {
 		for (const [lineCode, stationId] of Object.entries(this.metroLineStartStation)) {
 			if (this.metroPaths[lineCode] === undefined) {
@@ -99,7 +174,7 @@ class Metro {
 			var forwardPath = this.metroPaths[lineCode]["FW"]
 
 			var curr = this.stationDict[stationId]
-			console.log(curr)
+
             var nextId = curr.getNeighbourId(lineCode, "FW")
             var next = this.stationDict[nextId]
             
