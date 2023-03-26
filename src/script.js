@@ -89,6 +89,9 @@ window.addEventListener('mousemove',() => {
   // console.log(pos)
 }, false);
 
+metro.constructCommuterGraph();
+metro.commuterGraph.floydWarshall();
+metro.commuterGraph.getAllPathPairs();
 
 function draw_map() {
 		canvas.width = window.innerWidth

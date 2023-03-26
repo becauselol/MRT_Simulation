@@ -68,7 +68,7 @@ class Metro {
 
   					var time = this.commuterInterchangeWaitTime[`${iId}_${jId}`];
   					if (time === undefined) {
-  						time = 0;
+  						time = 0.1;
   					}
   					if (this.commuterGraph.edgeDict[iId] === undefined) {
   						this.commuterGraph.edgeDict[iId] = {}
