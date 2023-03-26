@@ -227,10 +227,19 @@ class Metro {
 					// update the coordinates to show it is ON the station
 					train.prev = train.next;
 					train.prevId = train.nextId;
+
+					// Check if we need to change direction
+					var currStation = this.stationDict[train.prevId]
+					var nextStationId = currStation.getNeighbourId(train.pathCode, train.direction)
+
+					if (nextStationId === undefined) {
+						train.direction = (train.direction == "FW") ? "BW" : "FW"
+					}
 				}
 				break;
 
 			case TrainState.ALIGHTING:
+
 				// console.log("alighting")
 				// increment the timestamp of waiting (lambda)
 				train.lambda += timestep
@@ -241,14 +250,40 @@ class Metro {
 
 
 				// the train is now waiting
-				train.state = TrainState.WAITING
+				train.state = TrainState.BOARDING
 				break;
 
 			case TrainState.BOARDING:
 				train.lambda += timestep
 
-				console.log("boarding")
 				// board the passengers
+				var currStation = this.stationDict[train.prevId]
+				var boardingPassengers = currStation.commuters[`${train.pathCode}_${train.direction}`]
+				// var boardingCommuters = this.commuters.filter(x => x.pathCode == this.trains[idx].pathCode)
+				//update target of commuters
+				//check who needs to be boarded
+				if (boardingPassengers === undefined) {
+					train.state = TrainState.WAITING
+					return;
+				}
+				while (train.getCommuterCount() <= train.capacity && boardingPassengers.length > 0) {
+					// get the target location to alight
+					var currCommuter = boardingPassengers[0];
+
+					// again we add some randomness by letting them choose the shortest path to alight at
+					var path_options = this.interchangePaths[train.prevId][currCommuter.target]
+					var path_choice = path_options[Math.floor(Math.random() * path_options.length)]
+
+					var alightTarget = path_choice.alight[0]
+
+					if (train.commuters[alightTarget] === undefined) {
+						train.commuters[alightTarget] = []
+					}
+					train.commuters[alightTarget].push(currCommuter)
+					boardingPassengers.splice(0, 1)
+				}
+
+				train.state = TrainState.WAITING
 				break;
 
 			case TrainState.WAITING:
