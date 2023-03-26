@@ -112,8 +112,6 @@ class MapDrawer {
                 ctx.font = "20px Verdana";
                 ctx.fillText(station.commuters.length, h.coords.x - 20, h.coords.y - 15);
             }
-        }
-
-        
+        } 
     }
 }

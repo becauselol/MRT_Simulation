@@ -11,8 +11,6 @@ class Metro {
 		this.trainCount = 0;
 		this.trainDict = {};
 
-		// tracks
-
 		// stores weights
 		this.edgeDict = {};
 
@@ -20,7 +18,6 @@ class Metro {
 		this.metroLineStartStation = {};
 		this.metroLineColours = {};
 		
-		this.commuterPaths = {};
 		this.commuterGraph = new CommuterGraph()
 		this.commuterInterchangeWaitTime = {};
 	}
