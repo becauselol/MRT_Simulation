@@ -244,6 +244,13 @@ class Metro {
 				train.state = TrainState.WAITING
 				break;
 
+			case TrainState.BOARDING:
+				train.lambda += timestep
+
+				console.log("boarding")
+				// board the passengers
+				break;
+
 			case TrainState.WAITING:
 				// console.log("waiting")
 				train.lambda += timestep
@@ -251,31 +258,24 @@ class Metro {
 				var currStation = this.stationDict[train.prevId]
 				if (train.lambda >= currStation.waitTime) {
 					// console.log("switch to boarding")
-					train.state = TrainState.BOARDING;
+					train.state = TrainState.MOVING;
+					train.lambda = 0
+
+					// get the next place to move to
+					var currStation = this.stationDict[train.prevId]
+					var nextStationId = currStation.getNeighbourId(train.pathCode, train.direction)
+
+					if (nextStationId === undefined) {
+						train.direction = (train.direction == "FW") ? "BW" : "FW"
+						nextStationId = currStation.getNeighbourId(train.pathCode, train.direction)
+					}
+
+					var nextStation = this.stationDict[nextStationId]
+
+					train.nextId = nextStationId
+					train.next = nextStation.coords
+					train.getCoords()
 				}
-				break;
-
-			case TrainState.BOARDING:
-				console.log("boarding")
-				// board the passengers
-
-				train.state = TrainState.MOVING
-				train.lambda = 0
-
-				// get the next place to move to
-				var currStation = this.stationDict[train.prevId]
-				var nextStationId = currStation.getNeighbourId(train.pathCode, train.direction)
-
-				if (nextStationId === undefined) {
-					train.direction = (train.direction == "FW") ? "BW" : "FW"
-					nextStationId = currStation.getNeighbourId(train.pathCode, train.direction)
-				}
-
-				var nextStation = this.stationDict[nextStationId]
-
-				train.nextId = nextStationId
-				train.next = nextStation.coords
-				train.getCoords()
 				break;
 		}
 	}
@@ -284,11 +284,29 @@ class Metro {
 		station.spawnTime += timestep;
 
 		if (station.spawnTime >= station.spawnFreq) {
+			// pick a random station
+			var options = Object.keys(this.stationDict)
+			var choice = options[Math.floor(Math.random() * options.length)]
+
+			if (choice == station.id) {
+				station.spawnTime = 0;
+				return;
+			}
+
 			var comm = new Commuter(
-					"station2",
+					choice,
 					this.sysTime
 				)
-			station.commuters.push(comm)
+
+			var path_options = this.interchangePaths[station.id][choice]
+			var path_choice = path_options[Math.floor(Math.random() * path_options.length)]
+
+			var board = path_choice.board[0]
+			// the board/alight
+			if (station.commuters[board] === undefined) {
+				station.commuters[board] = []
+			}
+			station.commuters[board].push(comm)
 			station.spawnTime = 0;
 		}
 	}
@@ -297,8 +315,14 @@ class Metro {
 		station.termTime += timestep;
 
 		if (station.termTime >= station.termFreq) {
-			station.commuters.pop()
-			station.termTime = 0;
+			for (const [key, value] of Object.entries(station.commuters)) {
+				if (value.length > 0) {
+					value.pop()
+					station.termTime = 0;
+					return;
+				}
+			}
+
 		}
 	}
 

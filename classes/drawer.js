@@ -110,7 +110,7 @@ class MapDrawer {
             if (dx * dx + dy * dy < this.HOVER_RADIUS * this.HOVER_RADIUS) {
                 // console.log("true")
                 ctx.font = "20px Verdana";
-                ctx.fillText(station.commuters.length, h.coords.x - 20, h.coords.y - 15);
+                ctx.fillText(station.getCommuterCount(), h.coords.x - 20, h.coords.y - 15);
             }
         } 
     }

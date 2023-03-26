@@ -24,7 +24,9 @@ class Station {
 		this.codes = codes;
 		this.neighbours = {};
 		this.lines = {};
-		this.commuters = [];
+
+		// commuters is an object of lists where key: lineCode_direction and value: list of commuters waiting for that train
+		this.commuters = {};
 		this.waitTime = waitTime;
 		this.pathCodes = new Set();
 
@@ -76,5 +78,13 @@ class Station {
 
 	getLineDirections(neighbourId) {
 		return this.neighbours[neighbourId]
+	}
+
+	getCommuterCount() {
+		var amount = 0
+		for (const [station, arr] of Object.entries(this.commuters)) {
+			amount += arr.length;
+		}
+		return amount
 	}
 }

@@ -52,7 +52,9 @@ class Train {
 
 		//commuter related
 		this.capacity = capacity;
-		this.commuters = [];
+
+		// commuters is an object of lists where key: station that they are alighting at and value: list of commuters waiting for that train
+		this.commuters = {};
 	}
 
 	lerp(a, b, alpha) {
@@ -66,5 +68,13 @@ class Train {
 
 	hasReached() {
 		return (this.lambda >= 1);
+	}
+
+	getCommuterCount() {
+		var amount = 0
+		for (const [station, arr] of Object.entries(this.commuters)) {
+			amount += arr.length;
+		}
+		return amount
 	}
 }
