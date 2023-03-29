@@ -3,8 +3,6 @@ class CommuterNode {
 		this.originalId = originalId
 		this.id = id
 		this.code = code
-		this.dist = {}
-		this.next = {}
 	} 
 }
 

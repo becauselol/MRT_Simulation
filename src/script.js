@@ -22,7 +22,8 @@ var drawer = new MapDrawer(ctx, maxX, maxY);
 
 var midX = 0
 var midY = 0
-console.log(midX, midY)
+console.debug(midX, midY)
+
 var station1 = new Station("station1", midX - 100, midY, name="station1", codes = ["red"], waitTime=1)
 var station2 = new Station("station2", midX, midY, name="station2", codes = ["red", "purple"], waitTime=1)
 var station3 = new Station("station3", midX + 100, midY, name="station3", codes = ["red", "purple"], waitTime=1)
@@ -94,6 +95,9 @@ window.addEventListener('mousemove',() => {
 metro.constructCommuterGraph();
 metro.constructInterchangePaths();
 
+dataStore = new DataStore()
+dataStore.init(metro)
+
 function draw_map() {
 		canvas.width = window.innerWidth
 		canvas.height = window.innerHeight
@@ -108,7 +112,7 @@ function draw_map() {
 
 		if (isRunning) {
 			// take a simulation step
-			metro.simStep(timestep);
+			metro.simStep(timestep, dataStore);
 
 			// draw map
 			drawer.drawMap(metro);
