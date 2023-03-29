@@ -6,15 +6,51 @@
 		
 		
 		<!-- custom styles for this application -->
+		<link rel="stylesheet" href="styles/MRT_style.css" media="screen">
+		<!-- <link rel="stylesheet" href="styles/basicagentmodel.css" media="screen"> -->
+		<!-- plotly is for drawing graphs -->
+		<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
 </head>
 <!-- Set class to official for more formal font; unofficial for informal font -->
 <body class="official bgColor0">
+
+	<!-- Tab links -->
+	<div class="tab">
+		
+		<button class="tablinks" onclick="tabswitch(event, 'MRT Map')">MRT Map</button>
+		<button class="tablinks" onclick="tabswitch(event, 'Edge Map')">Edge Map</button>
+
+	</div>
 	
-	<canvas id="myCanvas" height="560" width="980">
-	</canvas>
+	<!-- Tab content -->
+	<div id="MRT Map" class="tabcontent" style="display:block">
+		<h3>MRT Map</h3>
+		<canvas id="myCanvas" height="560" width="980">
+		</canvas>
+	</div>
+	
+	<div id="Edge Map" class="tabcontent">
+		<h3>Edge Map</h3>
+		
+	
+		<canvas id="heatCanvas" height="560" width="980">
+		</canvas>
+	</div>
+	<script type="text/javascript" src="classes/mrtTab.js"></script>
+	
+	<div>
+	<p style="position:absolute;top:80%; font-size:25px">Simulation Parameters</p>
+	<p style="position:absolute;top:90%; font-size:25px">Graphs</p>
+	</div>
+
+	<!-- Add in Charts -->	
+	<div id="chart1"></div>
+
+		
+	<script type="text/javascript" src="classes/compactData.js"></script>
 	
 	 <button class="button" onclick="toggleSim()">Start/Pause</button>
 	<!-- Anything below this line should be a popup window or dialog or a late-loading library -->
@@ -23,6 +59,7 @@
 	<script type="text/javascript" src="classes/commuterGraph.js"></script>
 	<script type="text/javascript" src="classes/drawer.js"></script>
 	<script type="text/javascript" src="classes/dataStore.js"></script>
+
 	<script type="text/javascript" src="classes/commuter.js"></script>
 	<script type="text/javascript" src="classes/station.js"></script>
 	<script type="text/javascript" src="classes/train.js"></script>
@@ -31,5 +68,8 @@
 	<script type="text/javascript" src="src/station_data.js"></script>
 	<script type="text/javascript" src="src/script.js"></script>
 	
+	<!-- Anything below this line should be a popup window or dialog or a late-loading library -->
+	
+	<script type="text/javascript" src="classes/PlotGraph.js"></script>
 </body>
 </html>
