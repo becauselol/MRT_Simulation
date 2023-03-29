@@ -6,6 +6,7 @@ class MetroGraph {
 	 * @param {Map} stations - Stores all the station, initialized as an empty Map (key: id, value: Station)
 	 * */
 	constructor(name) {
+		this.sysTime = 0;
 		this.name = name;
 		this.stations = {};
 		// this.trainController = trainController; //KIV not sure how to implement the trainController rn
@@ -56,6 +57,11 @@ class MetroGraph {
 		this.trains[trainId] = train;
 	}
 
+	initTrainAtStation() {
+		this.trains[this.trainCount] = new Train(this.trainCount, "ccl", 0, this.metroPaths["cclFW"], "FW", 101, 10);
+		this.trainCount++;
+	}
+
 	// Intiializes a train at every station going in both forward and backward directions
 	initTrainAllStations() {
 		// for every metro path
@@ -79,7 +85,7 @@ class MetroGraph {
 				}
 
 				// otherwise create a train and increment the train count
-				this.trains[this.trainCount] = new Train(this.trainCount, pathCode, idx, path[idx], direction);
+				this.trains[this.trainCount] = new Train(this.trainCount, pathCode, idx, path[idx], direction, 101, 10);
 				this.trainCount++;
 			}
 		}
@@ -90,7 +96,8 @@ class MetroGraph {
 	// Runs in O(n^3) time
 	//Taken from a senior (https://github.com/mickey1356/sim_project/blob/master/src/map.js)
 	floydWarshall() {
-		const N = Object.keys(this.stations).length;
+		var station_ids = Object.keys(this.stations)
+		const N = station_ids.length;
 	    this.dist = [];
 	    this.next = [];
 	    let i = 0;
@@ -107,9 +114,9 @@ class MetroGraph {
 	    }
 
 	    for (i = 0; i < N; i++) {
-			for (const [neighbourId, edge] of Object.entries(this.stations[i].neighbours)) {
+			for (const [neighbourId, edge] of Object.entries(this.stations[station_ids[i]].neighbours)) {
 				for (let j = 0; j < N; j++) {
-					if (this.stations[j] === edge.tail) {
+					if (this.stations[station_ids[j]] === edge.tail) {
 						this.dist[i][j] = edge.weight;
 						this.next[i][j] = j;
 						break;
@@ -246,16 +253,19 @@ class MetroGraph {
 
 	// //get all path pairs and store them as commuterPaths
 	getAllPathPairs() {
-		const N = Object.keys(this.stations).length;
+		var station_ids = Object.keys(this.stations)
+		const N = station_ids.length;
 
 		for (let i = 0; i < N; i++) {
 			for (let j = i + 1; j < N; j++) {
-				var path = this.getPathToStation(i, j)
-
+				var path = this.getPathToStation(station_ids[i], station_ids[j])
+				if (path == []) {
+					continue;
+				}
 				//get both the forward path and backward path between stations
-				this.commuterPaths[i.toString() + "_" + j.toString()] = this.convertToCommuterPath(path);
+				this.commuterPaths[station_ids[i].toString() + "_" + station_ids[j].toString()] = this.convertToCommuterPath(path);
 				//simply reverse the order of stations to get the reverse order to travel
-				this.commuterPaths[j.toString() + "_" + i.toString()] = this.convertToCommuterPath(path.reverse());
+				this.commuterPaths[station_ids[j].toString() + "_" + station_ids[i].toString()] = this.convertToCommuterPath(path.reverse());
 			}
 		}
 
@@ -279,7 +289,7 @@ class MetroGraph {
 
 		//for each station, update the station to move to next time step
 		for (const [stationId, station] of Object.entries(this.stations)) {
-			var updateData = station.update(Object.keys(this.stations).length, this.commuterPaths)
+			var updateData = station.update(this.sysTime, Object.keys(this.stations).length, this.commuterPaths)
 
 			// update the overall stationUpdate
 			for (const [key, value] of Object.entries(stationUpdate)) {
@@ -291,6 +301,7 @@ class MetroGraph {
 		this.commuterData['allTimeTotal'] += stationUpdate['spawned']
 		this.commuterData['completedJourneys'] += stationUpdate['completedJourneys']
 		this.commuterData['currentActive'] = this.commuterData['currentActive'] + stationUpdate['spawned'] - stationUpdate['completedJourneys']
+		this.sysTime++
 	}
 
 	// returns the min and max value of the allTimeTotal commuterData

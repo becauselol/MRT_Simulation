@@ -82,6 +82,7 @@ class MetroDataProcesser {
 	 * */
 	constructStations(metroGraph, mapDrawer) {
 		//scaling + adding stations
+		var counter = 0;
 		for (var idx=0; idx < this.stationList.length; idx++) {
 			var name = this.stationList[idx][0];
 
@@ -92,9 +93,20 @@ class MetroDataProcesser {
 			//get codes
 			var all_codes = name.split(" ").slice(-1)[0];
 			var codes = all_codes.split("/");
+
+			// temporary thing to only plot ccl
+			var ccl = false;
+			for (var i = 0; i < codes.length; i++) {
+				if (codes[i].slice(0,2) == "CC") {
+					ccl = true;
+				}
+			}
+			if (ccl) {
+				//add Station to metroGraph
+				metroGraph.addStation(counter, new Station(counter, x + mapDrawer.x_padding, y + mapDrawer.y_padding, name, codes));
+				counter++;
+			}
 			
-			//add Station to metroGraph
-			metroGraph.addStation(idx, new Station(idx, x + mapDrawer.x_padding, y + mapDrawer.y_padding, name, codes));
 		}
 	}
 
@@ -104,6 +116,10 @@ class MetroDataProcesser {
 	 * */
 	constructMapPaths(metroGraph) {
 		for (const [edgeCode, edges] of Object.entries(this.edgeMap)) {
+			// temporary thing to only plot ccl
+			if (edgeCode != "ccl") {
+				continue;
+			}
 			var colour = this.edgeColours[edgeCode];
 
 			//initialize empty path for FW and BW (forwards and backwards)

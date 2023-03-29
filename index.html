@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head>
-<title>testColor</title>
+<title>MRT Simulation</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		
 		
@@ -10,6 +10,8 @@
 		<!-- <link rel="stylesheet" href="styles/basicagentmodel.css" media="screen"> -->
 		<!-- plotly is for drawing graphs -->
 		<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
 </head>
 <!-- Set class to official for more formal font; unofficial for informal font -->
@@ -48,13 +50,16 @@
 	<div id="chart1"></div>
 
 		
-	<!-- <script type="text/javascript" src="src/kmlparse.js"></script> -->
 	<script type="text/javascript" src="classes/compactData.js"></script>
+	
+	 <button class="button" onclick="toggleSim()">Start/Pause</button>
+	<!-- Anything below this line should be a popup window or dialog or a late-loading library -->
+	
+	<script type="text/javascript" src="classes/metro.js"></script>
+	<script type="text/javascript" src="classes/commuterGraph.js"></script>
+	<script type="text/javascript" src="classes/drawer.js"></script>
+	<script type="text/javascript" src="classes/dataStore.js"></script>
 
-	<script type="text/javascript" src="classes/metroDataProcessor.js"></script>
-	<script type="text/javascript" src="classes/metroGraph.js"></script>
-	<script type="text/javascript" src="classes/mapDrawer.js"></script>
-	<script type="text/javascript" src="classes/edge.js"></script>
 	<script type="text/javascript" src="classes/commuter.js"></script>
 	<script type="text/javascript" src="classes/station.js"></script>
 	<script type="text/javascript" src="classes/train.js"></script>
