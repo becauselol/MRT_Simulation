@@ -85,10 +85,17 @@ class DataStore {
 	}
 
 	init(metro) {
+		var initTrainCount = new TrainCommuterCount(0, "init", 0)
+		var initStationCount = new StationCommuterCount(0, "init", 0)
+
 		console.debug("initializing data store")
 		for (const [stationId, station] of Object.entries(metro.stationDict)) {
 			this.stationCommuterCount[stationId] = new StationCommDF(stationId)
+			this.stationCommuterCount[stationId].addData(initStationCount)
+
 			this.stationTrainCommuterCount[stationId] = new TrainCommDF(stationId)
+			this.stationTrainCommuterCount[stationId].addData(initTrainCount)
+
 			this.waitTimes[stationId] = {}
 			this.travelTimes[stationId] = {}
 			for (const targetId of Object.keys(metro.stationDict)) {

@@ -100,7 +100,6 @@ dataStore.init(metro)
 
 var plotter = new Plotter()
 
-
 function draw_map() {
 		canvas.width = window.innerWidth
 		canvas.height = window.innerHeight
@@ -115,7 +114,7 @@ function draw_map() {
 
 		if (isRunning) {
 			// take a simulation step
-			metro.simStep(timestep, dataStore);
+			simStepUpdate = metro.simStep(timestep, dataStore);
 
 			// draw map
 			drawer.drawMap(metro);
@@ -147,7 +146,7 @@ function toggleSim() {
         plotter.plotChosenLineWaitTimes("chartRed", dataStore, "red")
         plotter.plotChosenLineWaitTimes("chartPurple", dataStore, "purple")
         plotter.plotTravelTimes("chartTravelTime", dataStore)
-
+        plotter.initStationCommCount("chartStation1", dataStore, "station1")
     }
 }
 

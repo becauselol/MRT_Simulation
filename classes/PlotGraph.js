@@ -95,6 +95,28 @@ class Plotter {
 
     Plotly.newPlot(plotId, data);
   }
+
+  initStationCommCount(plotId, dataStore, stationId) {
+    var layout = {
+      legend: {
+        y: 0.5,
+        traceorder: 'reversed',
+        font: {size: 16},
+        yref: 'paper'
+      }};
+    Plotly.newPlot(plotId, [{
+      mode: 'lines+markers',
+      line: {shape: 'hv'},
+      type: 'scatter',
+      x: dataStore.stationCommuterCount[stationId].time,
+      y: dataStore.stationCommuterCount[stationId].count,
+      text: dataStore.stationCommuterCount[stationId].event
+    }], layout)
+  }
+
+  plotStationCommCount(plotId, dataStore, stationId) {
+
+  }
 }
 
 

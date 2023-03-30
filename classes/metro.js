@@ -482,24 +482,47 @@ class Metro {
 	}
 
 	simStep(timestep, dataStore){
+		var timeStepUpdate = {}
+
 		// console.groupCollapsed("timestep: " + this.sysTime)
 		for (const [stationId, station] of Object.entries(this.stationDict)) {
             var update = this.stationSimStepSpawn(timestep, station);
             dataStore.update(update)
+
+            if (update !== undefined && Object.keys(update).length > 0) {
+            	timeStepUpdate[stationId] = [update]
+            }
         }
 
         for (const [trainId, train] of Object.entries(this.trainDict)) {
             var update = this.trainSimStep(timestep, train);
             dataStore.update(update)
+
+            if (update !== undefined && Object.keys(update).length > 0) {
+            	if (train.prevId in timeStepUpdate) {
+            		timeStepUpdate[train.prevId].push(update)
+            	} else {
+            		timeStepUpdate[train.prevId] = [update]
+            	}
+            } 
         }
 
         for (const [stationId, station] of Object.entries(this.stationDict)) {
             var update = this.stationSimStepTerminate(timestep, station);
             dataStore.update(update)
+
+            if (update !== undefined && Object.keys(update).length > 0) {
+            	if (stationId in timeStepUpdate) {
+            		timeStepUpdate[stationId].push(update)
+            	} else {
+            		timeStepUpdate[stationId] = [update]
+            	}
+            } 
         }
 
         // console.groupEnd("timestep: " + this.sysTime)
         this.sysTime += timestep
         
+        return timeStepUpdate
 	}
 }
