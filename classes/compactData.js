@@ -1,25 +1,55 @@
 class StatCompact {
 	constructor() {
-		this.vals = []
+		this.freq = {}
+		this.keys = []
 		this.mean = 0
 		this.var = 0
 		this.min = 0
 		this.max = 0
+		this.sum = 0
+		this.count = 0
+	}
+
+	// binary search to find and insert
+	searchInsertPosition(target) {
+		var left = 0;
+	    var right = this.keys.length - 1;
+	    var pivot = 0;
+	    while (left <= right) {
+	        pivot = Math.floor((right - left)/2) + left
+	        if (this.keys[pivot] > target) {
+	            right = pivot - 1
+	        } else if (this.keys[pivot] < target) {
+	            left = pivot + 1
+	        } else {
+	            return pivot
+	        }
+	    }
+	    if (this.keys[pivot] > target) {
+	        return pivot
+	    } else {
+	        return pivot + 1
+	    }
 	}
 
 	addValue(value) {
+		this.count++
+		this.sum += value
 		// add to the frequency
-		this.vals.push(value)
+		if (!(value in this.freq)) {
+			this.freq[value] = 0
+			var insertPos = this.searchInsertPosition(value)
+			this.keys.splice(insertPos, 0, value)
+		}
+		this.freq[value]++
 		//update the various statistics
 		var old_mean = this.mean
-		this.mean = old_mean + (value - old_mean) / this.vals.length;
+		this.mean = old_mean + (value - old_mean) / this.count;
 
 		var old_var = this.var;
-		if (this.vals.length > 1) {
-			this.var = (1 - (1/(this.vals.length - 1))) * old_var + this.vals.length * Math.pow((this.mean - old_mean), 2)
+		if (this.count > 1) {
+			this.var = (1 - (1/(this.count - 1))) * old_var + this.count * Math.pow((this.mean - old_mean), 2)
 		}
-		
-		this.vals.sort()
 
 		if (value < this.min) {
 			this.min = value;
@@ -31,7 +61,7 @@ class StatCompact {
 	}
 
 	getSum() {
-		return this.vals.reduce((a, b) => a + b, 0)
+		return this.sum
 	}
 	getMean() {
 		return this.mean;
@@ -57,16 +87,22 @@ class StatCompact {
 		return this.quantile(0.5);
 	}
 
-	// https://stackoverflow.com/questions/48719873/how-to-get-median-and-quartiles-percentiles-of-an-array-in-javascript-or-php
+	// broken quantile function. does not work as intended
 	quantile(q) {
-	    const pos = (this.vals.length - 1) * q;
-	    const base = Math.floor(pos);
-	    const rest = pos - base;
-	    if (this.vals[base + 1] !== undefined) {
-	        return this.vals[base] + rest * (this.vals[base + 1] - this.vals[base]);
-	    } else {
-	        return this.vals[base];
-	    }
+	    const pos = (this.count + 1) * q;
+	    var tot = 0;
+		for(var i=0; i < this.keys.length; i++){
+		    tot += this.freq[this.keys[i]];
+		    if(tot >= pos) { 
+		        var upper_med = this.keys[i]; 
+		        break; 
+		    }
+
+		    var lower_med = this.keys[i];
+		    
+		}
+		// console.debug(lower_med, upper_med)
+		return upper_med;
 	}
 
 	q25() {
@@ -85,19 +121,7 @@ class StatCompact {
 }
 
 
-class FakeTrainData {
-	constructor() {
-		this.lines = ["ccl", "nsl", "nel", "dtl", "ewl", "tel"]
 
-		// use Object.keys(obj.store) to iterate through, or just use obj.lines
-		this.store = {}
-
-		for (var i = 0; i < this.lines.length; i++) {
-			this.store[this.lines[i]] = new StatCompact();
-			this.store[this.lines[i]].fillRandomNumbers(20);
-		}
-	}
-}
 
 class FakeLineData {
 	constructor() {

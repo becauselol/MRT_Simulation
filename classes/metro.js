@@ -328,14 +328,14 @@ class Metro {
 			return {};
 		}
 
-		var waitTimeUpdate = new WaitTimeUpdate(currStation.id)
+		var waitTimeUpdate = new WaitTimeUpdate(currStation.id, train.pathCode)
 		var board_count = 0 
 
 		while (train.getCommuterCount() < train.capacity && boardingPassengers.length > 0) {
 			// get the target location to alight
 			var currCommuter = boardingPassengers[0];
 
-			waitTimeUpdate.addUpdate((this.sysTime - currCommuter.arrivalTime).toFixed(2))
+			waitTimeUpdate.addUpdate(Math.round(this.sysTime - currCommuter.arrivalTime))
 
 			// again we add some randomness by letting them choose the shortest path to alight at
 			var path_options = this.interchangePaths[train.prevId][currCommuter.target]
@@ -466,7 +466,7 @@ class Metro {
 		var travelTimeUpdate = new TravelTimeUpdate(station.id)
 		for (const commuter of station.commuters["terminating"]) {
 			var originId = commuter.origin
-			var timeTaken = (this.sysTime - commuter.spawnTime).toFixed(2)
+			var timeTaken = Math.round(this.sysTime - commuter.spawnTime)
 			travelTimeUpdate.addUpdate(originId, timeTaken)
 		}
 

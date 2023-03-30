@@ -49,8 +49,9 @@ class StationCommDF {
 }
 
 class WaitTimeUpdate {
-	constructor(stationId) {
+	constructor(stationId, lineCode) {
 		this.stationId = stationId;
+		this.lineCode = lineCode
 		this.update = []
 	}
 
@@ -79,21 +80,30 @@ class DataStore {
 		this.travelTimes = {}
 		this.stationCommuterCount = {}
 		this.stationTrainCommuterCount = {}
+		this.lineWaitTimes = {}
 	}
 
 	init(metro) {
 		console.debug("initializing data store")
-		for (const stationId of Object.keys(metro.stationDict)) {
+		for (const [stationId, station] of Object.entries(metro.stationDict)) {
 			this.stationCommuterCount[stationId] = new StationCommDF(stationId)
 			this.stationTrainCommuterCount[stationId] = new TrainCommDF(stationId)
-			this.waitTimes[stationId] = []
+			this.waitTimes[stationId] = {}
 			this.travelTimes[stationId] = {}
 			for (const targetId of Object.keys(metro.stationDict)) {
 				if (stationId == targetId) {
 					continue
 				}
-				this.travelTimes[stationId][targetId] = []
+				this.travelTimes[stationId][targetId] = new StatCompact()
 			}
+
+			for (const line of Object.keys(station.lines)) {
+				this.waitTimes[stationId][line] = new StatCompact()
+			}
+		}
+
+		for (const lineCode of Object.keys(metro.metroPaths)) {
+			this.lineWaitTimes[lineCode] = new StatCompact()
 		}
 	}
 
@@ -109,13 +119,19 @@ class DataStore {
 
 	updateWaitTime(waitTimeUpdate) {
 		var stationId = waitTimeUpdate.stationId
-		this.waitTimes[stationId].push(...waitTimeUpdate.update)
+		var lineCode = waitTimeUpdate.lineCode
+		for (const value of waitTimeUpdate.update) {
+			this.waitTimes[stationId][lineCode].addValue(value)
+			this.lineWaitTimes[lineCode].addValue(value)
+		}
 	}
 
 	updateTravelTime(travelTimeUpdate) {
 		var targetId = travelTimeUpdate.targetId
 		for (const [originId, update] of Object.entries(travelTimeUpdate.update)) {
-			this.travelTimes[originId][targetId].push(...update)
+			for (const value of update) {
+				this.travelTimes[originId][targetId].addValue(value)
+			}
 		}
 	}
 

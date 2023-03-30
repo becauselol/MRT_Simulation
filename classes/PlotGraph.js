@@ -1,4 +1,16 @@
+class FakeTrainData {
+  constructor() {
+    this.lines = ["ccl", "nsl", "nel", "dtl", "ewl", "tel"]
 
+    // use Object.keys(obj.store) to iterate through, or just use obj.lines
+    this.store = {}
+
+    for (var i = 0; i < this.lines.length; i++) {
+      this.store[this.lines[i]] = new StatCompact();
+      this.store[this.lines[i]].fillRandomNumbers(20);
+    }
+  }
+}
 data1 = new FakeTrainData();
 data2 = new FakeLineData();
 
@@ -8,8 +20,8 @@ var plot_data = []
 for (j = 0; j < data1.lines.length; j++){
   line = data1.lines[j]
   var line_data ={"type": "box", "name" : line, "q1":[data1.store[line].q25()],
-  "median": [data1.store[line].getMedian()], "q3": [data1.store[line].q75()], "lowerfence": [data1.store[line].q25() - 1.5*(data1.store[line].q75()-data1.store[line].q25())], 
-  "upperfence": [data1.store[line].q75()+ 1.5*(data1.store[line].q75()-data1.store[line].q25())], "mean":[data1.store[line].getMean()], "sd" : [data1.store[line].getStd()] };
+  "median": [data1.store[line].getMedian()], "q3": [data1.store[line].q75()], "lowerfence": [data1.store[line].getMin()], 
+  "upperfence": [data1.store[line].getMax()], "mean":[data1.store[line].getMean()], "sd" : [data1.store[line].getStd()] };
 	    plot_data.push(line_data); 
 }
 
