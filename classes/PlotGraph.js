@@ -64,6 +64,37 @@ class Plotter {
 
     Plotly.newPlot(plotId, plot_data, layout)
   }
+
+  plotTravelTimes(plotId, dataStore) {
+    var labels = Object.keys(dataStore.travelTimes)
+
+    var zData = []
+    for (const iId of labels) {
+      zData.push([])
+      var row = zData[zData.length - 1]
+
+      for (const jId of labels) {
+        var val
+        if (iId == jId) {
+          val = null
+        } else {
+          val = dataStore.travelTimes[iId][jId].getMean()
+        }
+        row.push(val)
+      }
+    }
+    var data = [
+      {
+        z: zData,
+        x: labels,
+        y: labels,
+        type: 'heatmap',
+        hoverongaps: false
+      }
+    ];
+
+    Plotly.newPlot(plotId, data);
+  }
 }
 
 

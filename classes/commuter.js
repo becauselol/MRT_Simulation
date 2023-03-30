@@ -22,6 +22,7 @@ class Commuter {
 		this.state = state;
 		this.arrivalTime = spawnTime;
 		this.spawnTime = spawnTime;
+		this.cumWaitingTime = 0;
 	}
 
 }

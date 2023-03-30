@@ -123,7 +123,7 @@ function draw_map() {
 		// } else if (creatorMode) {
 		// 	// else if in creator mode (draw creator map)
 		// 	drawer.drawCreatorMap(metro, mouseX, mouseY);
-            plotter.plotLineWaitTimes("chart1", dataStore)
+            // plotter.plotLineWaitTimes("chart1", dataStore)
             // plotter.plotChosenLineWaitTimes("chartRed", dataStore, "red")
             // plotter.plotChosenLineWaitTimes("chartPurple", dataStore, "purple")
 		} else {
@@ -146,6 +146,8 @@ function toggleSim() {
         plotter.plotLineWaitTimes("chart1", dataStore)
         plotter.plotChosenLineWaitTimes("chartRed", dataStore, "red")
         plotter.plotChosenLineWaitTimes("chartPurple", dataStore, "purple")
+        plotter.plotTravelTimes("chartTravelTime", dataStore)
+
     }
 }
 
