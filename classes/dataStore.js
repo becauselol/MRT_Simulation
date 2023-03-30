@@ -81,6 +81,7 @@ class DataStore {
 		this.stationCommuterCount = {}
 		this.stationTrainCommuterCount = {}
 		this.lineWaitTimes = {}
+		this.lineStations = {}
 	}
 
 	init(metro) {
@@ -102,8 +103,9 @@ class DataStore {
 			}
 		}
 
-		for (const lineCode of Object.keys(metro.metroPaths)) {
+		for (const [lineCode, paths] of Object.entries(metro.metroPaths)) {
 			this.lineWaitTimes[lineCode] = new StatCompact()
+			this.lineStations[lineCode] = [...paths["FW"]]
 		}
 	}
 
