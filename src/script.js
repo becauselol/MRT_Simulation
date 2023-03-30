@@ -43,16 +43,18 @@ red03,1
 pur01,1
 pur04,1`
 
-var period = 5
-
 var processor = new InputProcessor()
-processor.parseStationString(station_data)
-processor.parseEdgeStringDict(travel_data)
-processor.parseEdgeColours(edgeColour)
+processor.parseStationString(stationString)
+processor.parseEdgeStringDict(edgesMap)
+processor.parseEdgeColours(edgeColourString)
 
 processor.constructMetroGraph(metro, drawer)
-processor.addTrainsWithPeriod(metro, "red", 12, 18)
-processor.addTrainsWithPeriod(metro, "pur", 18, 18)
+
+for (const lineCode of Object.keys(edgesMap)) {
+	processor.addTrainsWithPeriod(metro, lineCode, 3, 100)
+}
+// processor.addTrainsWithPeriod(metro, "red", 3, 100)
+// processor.addTrainsWithPeriod(metro, "pur", 3, 100)
 
 metro.getPathsFromStartStation();
 metro.constructCommuterGraph();
@@ -97,8 +99,8 @@ function toggleSim() {
 	console.log(`is running: ${isRunning}`)
     if (!isRunning) {
         plotter.plotLineWaitTimes("chart1", dataStore)
-        plotter.plotChosenLineWaitTimes("chartRed", dataStore, "red")
-        plotter.plotChosenLineWaitTimes("chartPurple", dataStore, "pur")
+        plotter.plotChosenLineWaitTimes("chartRed", dataStore, "nsl")
+        plotter.plotChosenLineWaitTimes("chartPurple", dataStore, "nel")
         plotter.plotTravelTimes("chartTravelTime", dataStore)
         plotter.initStationCommCount("chartstation1", dataStore, "station1")
 		plotter.initStationCommCount("chartstation2", dataStore, "station2")
