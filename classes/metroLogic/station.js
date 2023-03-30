@@ -44,6 +44,8 @@ class Station {
 	* @param {DirectedEdge} edge - the edge connecting these two 
 	*/
 	addNeighbour(line, direction, neighbourId, weight) {
+		this.pathCodes.add(line)
+
 		if (this.lines[line] === undefined) {
 			this.lines[line] = {}
 		}

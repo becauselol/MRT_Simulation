@@ -68,7 +68,7 @@ class MapDrawer {
      * @param {MetroGraph} metroGraph - draws the metroGraph as required
      * */
     drawMap(metroGraph) {
-        // this.ctx.clearRect(0, 0, this.width, this.height);
+        this.ctx.clearRect(0, 0, this.width, this.height);
         // console.log("words?")
         //Iterate over all the objects and draw them as required
         // console.log(metroGraph)

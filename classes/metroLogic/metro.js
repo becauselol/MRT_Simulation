@@ -205,6 +205,41 @@ class Metro {
     	}
 	}
 
+	getLineDuration(lineCode) {
+		var stationId = this.metroLineStartStation[lineCode]
+		var curr = this.stationDict[stationId]
+
+        var nextId = curr.getNeighbourId(lineCode, "FW")
+        var next = this.stationDict[nextId]
+        
+        var duration = 0
+        // utilizes the linked list concept to draw the lines
+        while (next !== undefined) {
+        	duration += curr.waitTime
+        	duration += curr.getNeighbourWeight(lineCode, "FW")
+
+            curr = next;
+            nextId = curr.getNeighbourId(lineCode, "FW")
+            next = this.stationDict[nextId]
+        }
+
+        // complete the full cycle
+        duration = duration * 2
+
+       	return duration
+	}
+
+	placeTrainAtStart(lineCode, capacity) {
+		this.trainCount++
+		var stationId = this.metroLineStartStation[lineCode]
+		var trainId = "train" + this.trainCount
+		this.trainDict[trainId] = new Train(trainId, 
+			lineCode, 
+			this.stationDict[stationId].coords, 
+			stationId,
+			capacity = capacity)
+	}
+
 	stationCommCountUpdate(station, event) {
 		return new StationCommuterCount(
 				station.id,
@@ -479,6 +514,13 @@ class Metro {
 			"station_count": count_update,
 			"travel_time": travelTimeUpdate
 		}
+	}
+
+	onlyTrainSimStep(timestep) {
+		for (const [trainId, train] of Object.entries(this.trainDict)) {
+            this.trainSimStep(timestep, train);
+        }
+        this.sysTime += timestep
 	}
 
 	simStep(timestep, dataStore){

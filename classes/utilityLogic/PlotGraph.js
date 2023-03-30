@@ -114,8 +114,25 @@ class Plotter {
     }], layout)
   }
 
-  plotStationCommCount(plotId, dataStore, stationId) {
+  updateStationCommCount(plotId, update, stationId) {
+    Plotly.extendTraces(plotId, {
+      x: [[(update.time).toFixed(2)]],
+      y: [[update.count]],
+      text: [[update.event]]
+    }, [0])
+  }
 
+  updateCommCount(simStepUpdate, dataStore) {
+    console.debug(simStepUpdate)
+    for (const [stationId, updates] of Object.entries(simStepUpdate)) {
+      for (const update of updates) {
+        for (const [key, value] of Object.entries(update)) {
+          if (key == "station_count") {
+            this.updateStationCommCount("chart" + stationId, value, stationId)
+          }
+        }
+      } 
+    }
   }
 }
 

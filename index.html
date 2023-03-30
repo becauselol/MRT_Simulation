@@ -38,7 +38,6 @@
 		</canvas>
 	</div>
 	<button class="button" onclick="toggleSim()">Start/Pause</button>
-	<script type="text/javascript" src="classes/mrtTab.js"></script>
 	
 	
 	<h3 style="position:relative;top:80%; font-size:25px">Simulation Parameters</h3>
@@ -79,23 +78,31 @@
 	<div id="chartRed"></div>
 	<div id="chartPurple"></div>
 	<div id="chartTravelTime"></div>
-	<div id="chartStation1"></div>
+	<div id="chartstation1"></div>
+	<div id="chartstation2"></div>
+	<div id="chartstation3"></div>
+	<div id="chartstation4"></div>
+	<div id="chartstation5"></div>
 	
 
 	<!-- Anything below this line should be a popup window or dialog or a late-loading library -->
-	<script type="text/javascript" src="classes/compactData.js"></script>
-	<script type="text/javascript" src="classes/metro.js"></script>
-	<script type="text/javascript" src="classes/commuterGraph.js"></script>
-	<script type="text/javascript" src="classes/drawer.js"></script>
-	<script type="text/javascript" src="classes/dataStore.js"></script>
 
-	<script type="text/javascript" src="classes/commuter.js"></script>
-	<script type="text/javascript" src="classes/station.js"></script>
-	<script type="text/javascript" src="classes/train.js"></script>
-	<script type="text/javascript" src="classes/PlotGraph.js"></script>
+	<script type="text/javascript" src="classes/utilityLogic/processor.js"></script>
+	<script type="text/javascript" src="classes/utilityLogic/compactData.js"></script>
+	<script type="text/javascript" src="classes/utilityLogic/drawer.js"></script>
+	<script type="text/javascript" src="classes/utilityLogic/dataStore.js"></script>
+	<script type="text/javascript" src="classes/utilityLogic/PlotGraph.js"></script>
+
+	<script type="text/javascript" src="classes/metroLogic/commuterGraph.js"></script>
+	<script type="text/javascript" src="classes/metroLogic/commuter.js"></script>
+	<script type="text/javascript" src="classes/metroLogic/station.js"></script>
+	<script type="text/javascript" src="classes/metroLogic/train.js"></script>
+	<script type="text/javascript" src="classes/metroLogic/metro.js"></script>
+
+	<script type="text/javascript" src="classes/styleLogic/mrtTab.js"></script>
+
 
 	<script type="text/javascript" src="src/station_data.js"></script>
-	<script type="text/javascript" src="src/zoom_logic.js"></script>
 	<script type="text/javascript" src="src/script.js"></script>
 	
 	<!-- Anything below this line should be a popup window or dialog or a late-loading library -->

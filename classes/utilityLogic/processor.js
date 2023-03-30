@@ -1,23 +1,19 @@
-// Class that can process data to help create metro
-class MetroDataProcesser {
-	/** Creates a MetroDataProcessor
-	 * Initializes it with no stations and edges
-	 * */
+class InputProcessor {
 	constructor() {
-		this.stationList = [];
-		this.edgeMap = {};
-		this.edgeColours = {};
+		this.edgeMap = {}
+		this.stationList = []
+		this.stationDict = {}
+		this.edgeColours = {}
+		this.codeStationRef = {}
+		this.metroLineStartStation = {}
+	}
 
+	parseStationString(stationString) {
 		this.min_lat = Number.MAX_SAFE_INTEGER;
 		this.min_long = Number.MAX_SAFE_INTEGER;
 		this.max_lat = Number.MIN_SAFE_INTEGER;
 		this.max_long = Number.MIN_SAFE_INTEGER;
-	}
-	
-	/** Parses a string of stations in the format "name code, latitude, longitude"
-	 * @param {String} stationString a long chain of strings
-	 * */
-	parseStationString(stationString) {
+
 		// splits the string by the new line
 		// to get each individual station detail
 		var stationArr = stationString.split("\n");
@@ -39,7 +35,6 @@ class MetroDataProcesser {
 		}
 	}
 
-
 	/** Parses a string of Edges in the format "stationCodeFrom, stationCodeTo, timeToTravel"
 	 * @param {String} lineName - the name of the metro line for the edges to process
 	 * @param {String} edgeString - the string that stores all the edges
@@ -53,6 +48,12 @@ class MetroDataProcesser {
 			//Splits the format into an array for easier processing later
 			this.edgeMap[lineName][idx] = this.edgeMap[lineName][idx].split(",");
 			this.edgeMap[lineName][idx][2] = parseInt(this.edgeMap[lineName][idx][2]);
+		}
+	}
+
+	parseEdgeStringDict(edgeDict) {
+		for (const [lineName, edgeString] of Object.entries(edgeDict)) {
+			this.parseEdgeString(lineName, edgeString)
 		}
 	}
 
@@ -76,13 +77,9 @@ class MetroDataProcesser {
 		}
 	}
 
-	/* Construct stations to be added to a MetroGraph object
-	 * @param {MetroGraph} metroGraph - the graph to add stations to
-	 * @param {MapDrawer} mapDrawer - the mapdrawer of the graph (required to scale the stations accordingly)
-	 * */
-	constructStations(metroGraph, mapDrawer) {
+	constructStationDict(mapDrawer) {
 		//scaling + adding stations
-		var counter = 0;
+		var counter = 1;
 		for (var idx=0; idx < this.stationList.length; idx++) {
 			var name = this.stationList[idx][0];
 
@@ -93,80 +90,80 @@ class MetroDataProcesser {
 			//get codes
 			var all_codes = name.split(" ").slice(-1)[0];
 			var codes = all_codes.split("/");
+			var stationId = "station" + counter
+			for (const c of codes) {
+				this.codeStationRef[c] = stationId
+			}
 
 			//add Station to metroGraph
-			metroGraph.addStation(counter, new Station(counter, x + mapDrawer.x_padding, y + mapDrawer.y_padding, name, codes));
+			this.stationDict[stationId] = new Station(stationId, x + mapDrawer.x_padding, y + mapDrawer.y_padding, name, codes);
 			counter++;
 		}
 	}
 
-
-	/* Construct paths to be added to a MetroGraph object
-	 * @param {MetroGraph} metroGraph - the graph to add stations to
-	 * */
-	constructMapPaths(metroGraph) {
-		for (const [edgeCode, edges] of Object.entries(this.edgeMap)) {
-			// temporary thing to only plot ccl
-			if (edgeCode != "ccl") {
-				continue;
-			}
-			var colour = this.edgeColours[edgeCode];
-
-			//initialize empty path for FW and BW (forwards and backwards)
-			metroGraph.metroPaths[edgeCode + "FW"] = [];
-			metroGraph.metroPaths[edgeCode + "BW"] = [];
-
+	constructEdges() {
+		for (const [line, edges] of Object.entries(this.edgeMap)) {
 			for (var idx=0; idx < edges.length; idx++) {
 				//get stationId
-				var a = metroGraph.stationCodeMap[edges[idx][0]];
-				var b = metroGraph.stationCodeMap[edges[idx][1]];
+				var aId = this.codeStationRef[edges[idx][0]];
+				var bId = this.codeStationRef[edges[idx][1]];
+				var a = this.stationDict[aId]
+				var b = this.stationDict[bId]
 				var weight = edges[idx][2];
 
-				//create new edges
-				var undirEdge = new Edge(metroGraph.stations[a], metroGraph.stations[b], colour)
-				var abEdge = new DirectedEdge(metroGraph.stations[a], metroGraph.stations[b], weight, colour, undirEdge);
-				var baEdge = new DirectedEdge(metroGraph.stations[b], metroGraph.stations[a], weight, colour, undirEdge);
-
-				metroGraph.undirectedEdges.push(undirEdge);
-				metroGraph.edges.push(abEdge);
-				metroGraph.edges.push(baEdge);
-
-				//add edges to adjacency list
-				metroGraph.stations[a].addNeighbourUndirected(b, undirEdge);
-				metroGraph.stations[b].addNeighbourUndirected(a, undirEdge);
-				metroGraph.stations[a].addNeighbour(b, abEdge);
-				metroGraph.stations[b].addNeighbour(a, baEdge);
-
-				//add pathCodes to the stations
-				metroGraph.stations[a].pathCodes.add(edgeCode);
-				metroGraph.stations[b].pathCodes.add(edgeCode);
-
-				//add stations to the path
-				//add start station
+				// initialize the start of the line
 				if (idx == 0) {
-					metroGraph.metroPaths[edgeCode + "FW"].push(metroGraph.stations[a]);
-					metroGraph.metroPaths[edgeCode + "BW"].unshift(metroGraph.stations[a]);
+					this.metroLineStartStation[line] = aId
 				}
-				//add subsequent edge
-				metroGraph.metroPaths[edgeCode + "FW"].push(abEdge);
-				metroGraph.metroPaths[edgeCode + "BW"].unshift(baEdge);
-				//add next station
-				metroGraph.metroPaths[edgeCode + "FW"].push(metroGraph.stations[b]);
-				metroGraph.metroPaths[edgeCode + "BW"].unshift(metroGraph.stations[b]);
 
+				a.addNeighbour(line, "FW", bId, weight)
+				b.addNeighbour(line, "BW", aId, weight)
 			}
 		}
 	}
+
 
 	/* Construct a new metroGraph
 	 * @param {MetroGraph} metroGraph - the metroGraph object to add the station and paths to
 	 * @param {MapDrawer} mapDrawer - mapDrawer object to reference for the canvas size
 	 * */
 	constructMetroGraph(metroGraph, mapDrawer) {
-		// construc the stations
-		this.constructStations(metroGraph, mapDrawer);
+		// construct the stations
+		this.constructStationDict(mapDrawer);
 		// construct the map paths
-		this.constructMapPaths(metroGraph);
+		this.constructEdges();
+
+		for (const [key, station] of Object.entries(this.stationDict)) {
+			metroGraph.addStation(station)
+		}
+
+		metro.metroLineStartStation = this.metroLineStartStation
+		metroGraph.metroLineColours = this.edgeColours
 	}
+
+	addTrainsWithPeriod(metroGraph, lineCode, period, capacity) {
+		console.debug(`placing trains for line ${lineCode}`)
+		var duration = metroGraph.getLineDuration(lineCode)
+		var maxTrains = Math.floor(duration / period)
+
+		console.debug(`Placing ${maxTrains} trains`)
+		var trainPlaced = 0
+
+		var interval = (duration / maxTrains).toFixed(2)
+		console.debug(`Interval to place trains at: ${interval}`)
+		while (trainPlaced < maxTrains) {
+			metroGraph.placeTrainAtStart(lineCode, capacity)
+
+			// progress until we hit interval
+			while (metroGraph.sysTime <= interval) {
+				metroGraph.onlyTrainSimStep(0.1)
+			}
+
+			// reset the systime
+			metroGraph.sysTime = 0
+			trainPlaced++
+		}
+	}
+	
 
 }
