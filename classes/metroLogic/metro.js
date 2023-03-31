@@ -454,6 +454,18 @@ class Metro {
 	stationSimStepSpawn(timestep, station) {
 		station.spawnTime += timestep;
 
+		var hour = Math.floor(this.sysTime.toFixed(0) / 60)
+
+		for (const [stationId, rate] of Object.entries(station.spawnRate)) {
+
+			while (this.sysTime >= station.nextSpawnTime[stationId]) {
+				var comm = new Commuter(
+					station.id,
+					stationId,
+					this.sysTime
+				)
+			}
+		}
 		if (station.spawnTime >= station.spawnFreq) {
 			// pick a random station
 			var options = Object.keys(this.stationDict)
@@ -526,15 +538,15 @@ class Metro {
 	simStep(timestep, dataStore){
 		var timeStepUpdate = {}
 
-		// console.groupCollapsed("timestep: " + this.sysTime)
-		for (const [stationId, station] of Object.entries(this.stationDict)) {
-            var update = this.stationSimStepSpawn(timestep, station);
-            dataStore.update(update)
+		// // console.groupCollapsed("timestep: " + this.sysTime)
+		// for (const [stationId, station] of Object.entries(this.stationDict)) {
+        //     var update = this.stationSimStepSpawn(timestep, station);
+        //     dataStore.update(update)
 
-            if (update !== undefined && Object.keys(update).length > 0) {
-            	timeStepUpdate[stationId] = [update]
-            }
-        }
+        //     if (update !== undefined && Object.keys(update).length > 0) {
+        //     	timeStepUpdate[stationId] = [update]
+        //     }
+        // }
 
         for (const [trainId, train] of Object.entries(this.trainDict)) {
             var update = this.trainSimStep(timestep, train);

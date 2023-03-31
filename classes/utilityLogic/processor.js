@@ -6,6 +6,7 @@ class InputProcessor {
 		this.edgeColours = {}
 		this.codeStationRef = {}
 		this.metroLineStartStation = {}
+		this.spawnData = {}
 	}
 
 	parseStationString(stationString) {
@@ -32,6 +33,43 @@ class InputProcessor {
 			this.max_lat = Math.max(this.max_lat, row[1])
 			this.min_long = Math.min(this.min_long, row[2])
 			this.max_long = Math.max(this.max_long, row[2])
+		}
+	}
+
+	parseSpawnDataString(spawnDataString) {
+		var spawnArr = spawnDataString.split("\n");
+		// console.debug(this.codeStationRef)
+		for (var idx=0; idx < spawnArr.length; idx++) {
+			// split the string by commas to get each individual detail
+			// Converts the original values to ["name code", lat, long]
+			let row = spawnArr[idx].split(",")
+
+			
+
+			row[0] = parseFloat(row[0]);
+			row[3] = parseFloat(row[3]);
+
+			row[1] = row[1].split("/")[0]
+			row[2] = row[2].split("/")[0]
+			// console.debug(row)
+
+			var hour = row[0]
+			var rate = row[3]
+			var sourceId = this.codeStationRef[row[1]]
+			var destId = this.codeStationRef[row[2]]
+
+			if (sourceId === undefined || destId === undefined) {
+				continue;
+			}
+
+			var sourceStation = this.stationDict[sourceId]
+			// console.debug(sourceId)
+			if (!(hour in sourceStation.spawnRate)) {
+				sourceStation.spawnRate[hour] = {}
+			}
+
+			// we go by the minute
+			sourceStation.spawnRate[hour][destId] = parseFloat((rate/60).toFixed(6))
 		}
 	}
 
@@ -127,9 +165,11 @@ class InputProcessor {
 	 * @param {MetroGraph} metroGraph - the metroGraph object to add the station and paths to
 	 * @param {MapDrawer} mapDrawer - mapDrawer object to reference for the canvas size
 	 * */
-	constructMetroGraph(metroGraph, mapDrawer) {
+	constructMetroGraph(metroGraph, mapDrawer, spawnDataString) {
 		// construct the stations
 		this.constructStationDict(mapDrawer);
+
+		this.parseSpawnDataString(spawnDataString)
 		// construct the map paths
 		this.constructEdges();
 

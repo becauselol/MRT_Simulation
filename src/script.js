@@ -48,10 +48,10 @@ processor.parseStationString(stationString)
 processor.parseEdgeStringDict(edgesMap)
 processor.parseEdgeColours(edgeColourString)
 
-processor.constructMetroGraph(metro, drawer)
+processor.constructMetroGraph(metro, drawer, spawnDataString)
 
 for (const lineCode of Object.keys(edgesMap)) {
-	processor.addTrainsWithPeriod(metro, lineCode, 3, 100)
+	processor.addTrainsWithPeriod(metro, lineCode, 3, 300)
 }
 // processor.addTrainsWithPeriod(metro, "red", 3, 100)
 // processor.addTrainsWithPeriod(metro, "pur", 3, 100)
