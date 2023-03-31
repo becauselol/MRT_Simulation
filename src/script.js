@@ -20,31 +20,6 @@ var drawer = new MapDrawer(ctx, maxX, maxY);
 var midX = 200
 var midY = 200
 
-// var station_data = `Station1 red01,-100,0
-// Station 2 red02/pur02,0,0
-// Station 3 red03/pur03,100,0
-// Station 4 pur01,0,-100
-// Station 5 pur04,0,100`
-
-// var travel_data = {
-// 	"pur": `pur01,pur02,2
-// pur02,pur03,2
-// pur03,pur04,2`,
-
-// 	"red": `red01,red02,2
-// red02,red03,2`
-// }
-
-// var edgeColour = `red,red
-// pur,purple`
-
-// // not being used at the moment
-// train_wait_time = `red01,1
-// red02,1
-// red03,1
-// pur01,1
-// pur04,1`
-
 var processor = new InputProcessor()
 processor.parseStationString(stationString)
 processor.parseEdgeStringDict(edgesMap)
@@ -53,7 +28,7 @@ processor.parseEdgeColours(edgeColourString)
 processor.constructMetroGraph(metro, drawer, spawnDataString)
 
 for (const lineCode of Object.keys(edgesMap)) {
-	processor.addTrainsWithPeriod(metro, lineCode, 2, 10000)
+	processor.addTrainsWithPeriod(metro, lineCode, 4, 900)
 }
 
 metro.getPathsFromStartStation();
@@ -99,16 +74,32 @@ function toggleSim() {
     if (!isRunning) {
         plotter.plotLineWaitTimes("chart1", dataStore)
         plotter.plotChosenLineWaitTimes("chartRed", dataStore, "nsl")
-        plotter.plotChosenLineWaitTimes("chartPurple", dataStore, "nel")
+        plotter.plotChosenLineWaitTimes("chartPurple", dataStore, "ewl")
         plotter.plotTravelTimes("chartTravelTime", dataStore)
-        plotter.initStationCommCount("chartstation1", dataStore, "station1")
-		plotter.initStationCommCount("chartstation2", dataStore, "station2")
-		plotter.initStationCommCount("chartstation3", dataStore, "station3")
+        plotter.initStationCommCount("chartstation1", dataStore, "station12")
+		plotter.initStationCommCount("chartstation2", dataStore, "station94")
+		plotter.initStationTrainCommCount("chartstation3", dataStore, "station3")
 		plotter.initStationCommCount("chartstation4", dataStore, "station4")
 		plotter.initStationCommCount("chartstation5", dataStore, "station5")
     }
 }
 
+function resetSim() {
+
+}
+
+function downloadRunData() {
+    var zip = new JSZip();
+    for (var i = 0; i < 5; i++) {
+        var txt = 'hello';
+        zip.file("file" + i + ".txt", txt);
+    }
+    zip.generateAsync({
+        type: "base64"
+    }).then(function(content) {
+        window.location.href = "data:application/zip;base64," + content;
+    });       
+}
 // function toggleCreate() {
 // 	creatorMode = !creatorMode
 // }

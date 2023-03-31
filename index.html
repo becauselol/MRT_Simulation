@@ -12,6 +12,7 @@
 		<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+		<script type="text/javascript" src="dist/jszip.min.js"></script>
 
 </head>
 <!-- Set class to official for more formal font; unofficial for informal font -->
@@ -38,6 +39,8 @@
 		</canvas>
 	</div>
 	<button class="button" onclick="toggleSim()">Start/Pause</button>
+	<button class="button" onclick="resetSim()">Reset</button>
+	<button class="button" onclick="downloadRunData()">Download Data</button>
 	
 	
 	<h3 style="position:relative;top:80%; font-size:25px">Simulation Parameters</h3>

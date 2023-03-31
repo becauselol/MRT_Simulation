@@ -364,3 +364,27 @@ TE21,TE22,2`
 
 
 
+// var station_data = `Station1 red01,-100,0
+// Station 2 red02/pur02,0,0
+// Station 3 red03/pur03,100,0
+// Station 4 pur01,0,-100
+// Station 5 pur04,0,100`
+
+// var travel_data = {
+// 	"pur": `pur01,pur02,2
+// pur02,pur03,2
+// pur03,pur04,2`,
+
+// 	"red": `red01,red02,2
+// red02,red03,2`
+// }
+
+// var edgeColour = `red,red
+// pur,purple`
+
+// // not being used at the moment
+// train_wait_time = `red01,1
+// red02,1
+// red03,1
+// pur01,1
+// pur04,1`

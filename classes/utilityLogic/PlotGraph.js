@@ -79,6 +79,9 @@ class Plotter {
           val = null
         } else {
           val = dataStore.travelTimes[iId][jId].getMean()
+          if (val == 0) {
+            val = null
+          }
         }
         row.push(val)
       }

@@ -238,7 +238,7 @@ class Metro {
 			lineCode, 
 			this.stationDict[stationId].coords, 
 			stationId,
-			capacity = capacity)
+			capacity)
 	}
 
 	stationCommCountUpdate(station, event) {
@@ -301,14 +301,17 @@ class Metro {
 		// move them to the station it has reached
 		// board the passengers
 		var currStation = this.stationDict[train.prevId]
+
+		if (!(train.prevId in train.commuters)) {
+			train.commuters[train.prevId] = []
+			train.state = TrainState.BOARDING
+			return {};
+		}
+
 		var alightingPassengers = train.commuters[train.prevId]
 
 		//update target of commuters
 		//check who needs to be boarded
-		if (alightingPassengers === undefined) {
-			train.state = TrainState.BOARDING
-			return {};
-		}
 
 		var alight_count = alightingPassengers.length
 
@@ -334,8 +337,10 @@ class Metro {
 			currStation.commuters[boardingTarget].push(currCommuter)
 			alightingPassengers.splice(0, 1)
 		}
-
-		console.debug("time " + this.sysTime.toFixed(2) + ": " + train.id + " alighting " + alight_count + " passengers at station " + currStation.name)
+		if (alight_count > 0) {
+			console.debug("time " + this.sysTime.toFixed(2) + ": " + train.id + " alighting " + alight_count + " passengers at station " + currStation.name)
+		}
+		
 		// the train is now waiting
 		train.state = TrainState.BOARDING
 
@@ -355,6 +360,7 @@ class Metro {
 		// board the passengers
 		var currStation = this.stationDict[train.prevId]
 		var boardingPassengers = currStation.commuters[`${train.pathCode}_${train.direction}`]
+
 		// var boardingCommuters = this.commuters.filter(x => x.pathCode == this.trains[idx].pathCode)
 		//update target of commuters
 		//check who needs to be boarded
@@ -369,9 +375,10 @@ class Metro {
 
 		while (train.getCommuterCount() < train.capacity && boardingPassengers.length > 0) {
 			// get the target location to alight
-			var currCommuter = boardingPassengers[0];
+			var currCommuter = boardingPassengers.splice(0, 1)[0];
+			var waitTime = Math.round(this.sysTime - currCommuter.arrivalTime)
 
-			waitTimeUpdate.addUpdate(Math.round(this.sysTime - currCommuter.arrivalTime))
+			waitTimeUpdate.addUpdate(waitTime)
 
 			// again we add some randomness by letting them choose the shortest path to alight at
 			var path_options = this.interchangePaths[train.prevId][currCommuter.target]
@@ -379,11 +386,10 @@ class Metro {
 
 			var alightTarget = path_choice.alight[0]
 
-			if (train.commuters[alightTarget] === undefined) {
+			if (!(alightTarget in train.commuters)) {
 				train.commuters[alightTarget] = []
 			}
 			train.commuters[alightTarget].push(currCommuter)
-			boardingPassengers.splice(0, 1)
 
 			board_count += 1
 		}
@@ -412,11 +418,6 @@ class Metro {
 			// get the next place to move to
 			var currStation = this.stationDict[train.prevId]
 			var nextStationId = currStation.getNeighbourId(train.pathCode, train.direction)
-
-			if (nextStationId === undefined) {
-				train.direction = (train.direction == "FW") ? "BW" : "FW"
-				nextStationId = currStation.getNeighbourId(train.pathCode, train.direction)
-			}
 
 			var nextStation = this.stationDict[nextStationId]
 
@@ -460,6 +461,7 @@ class Metro {
 		if (!(this.hour in station.spawnRate)) {
 			return {}
 		}
+		var count = 0
 		// console.debug(`actually spawning for ${station.id}`)
 		for (const [destId, rate] of Object.entries(station.spawnRate[this.hour])) {
 			if (!(destId in station.nextSpawn)) {
@@ -469,7 +471,7 @@ class Metro {
 				var comm = new Commuter(
 					station.id,
 					destId,
-					this.sysTime
+					Math.round(station.nextSpawn[destId])
 				)
 
 				var path_options = this.interchangePaths[station.id][destId]
@@ -483,9 +485,14 @@ class Metro {
 				station.commuters[board].push(comm)
 
 				station.nextSpawn[destId] += randomExponential(rate)
+
+				count++
 			}
 		}
-
+		if (count > 0) {
+			console.debug(`time ${this.sysTime.toFixed(2)}: spawning ${count} passengers at ${station.name}`)
+		}
+		
 		var count_update = this.stationCommCountUpdate(station, "post_spawn")
 		return {
 			"station_count": count_update
@@ -571,7 +578,7 @@ class Metro {
 		}
         // console.groupEnd("timestep: " + this.sysTime)
         this.sysTime += timestep
-        
+        // this.sysTime = this.sysTime.toFixed(2)
         return timeStepUpdate
 	}
 }

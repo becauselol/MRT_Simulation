@@ -22,7 +22,7 @@ class Train {
      * @param {number} capacity - the max number of commuters on a train
      * @param {Array} commuters - stores the commuters that are on a train
      */
-	constructor(id, pathCode, prev, prevId, next=null, nextId=null, direction='FW', state=TrainState.WAITING, capacity=300, lambda=0) {
+	constructor(id, pathCode, prev, prevId, capacity, next=null, nextId=null, direction='FW', state=TrainState.WAITING, lambda=0) {
 		this.id = id;
 
 		// stuff that handles the line and direction

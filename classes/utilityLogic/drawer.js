@@ -43,7 +43,12 @@ class MapDrawer {
         this.ctx.arc(train.coords.x, train.coords.y, 1, 0, 2*Math.PI, true);
         this.ctx.lineWidth = 5;
         // line color
-        this.ctx.strokeStyle = 'black';
+        if (train.direction == "FW") {
+            this.ctx.strokeStyle = 'pink';
+        } else {
+            this.ctx.strokeStyle = 'turquoise';
+        }
+
         this.ctx.stroke();
         this.ctx.closePath();
     }

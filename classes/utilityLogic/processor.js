@@ -189,20 +189,23 @@ class InputProcessor {
 		console.debug(`Placing ${maxTrains} trains`)
 		var trainPlaced = 0
 
-		var interval = (duration / maxTrains).toFixed(2)
+		var interval = (duration / maxTrains).toFixed(10)
 		console.debug(`Interval to place trains at: ${interval}`)
+		var overall_lag = 0
 		while (trainPlaced < maxTrains) {
 			metroGraph.placeTrainAtStart(lineCode, capacity)
 
 			// progress until we hit interval
-			while (metroGraph.sysTime <= interval) {
-				metroGraph.onlyTrainSimStep(0.1)
+			while (metroGraph.sysTime < interval) {
+				metroGraph.onlyTrainSimStep(0.01)
 			}
-
+			overall_lag += (metroGraph.sysTime - interval)
+			// console.debug(`time ${metroGraph.sysTime.toFixed(2)}: train placed and progressed ${metroGraph.sysTime.toFixed(2)} with interval ${interval}`)
 			// reset the systime
 			metroGraph.sysTime = 0
 			trainPlaced++
 		}
+		console.debug(`overall lag: ${overall_lag}`)
 	}
 	
 
