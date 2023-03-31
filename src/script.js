@@ -1,6 +1,8 @@
 let canvas = document.getElementById("myCanvas")
 let ctx = canvas.getContext('2d')
 
+var startHour = 6
+var endHour = 24
 
 var isRunning = false;
 // var creatorMode = false;
@@ -18,30 +20,30 @@ var drawer = new MapDrawer(ctx, maxX, maxY);
 var midX = 200
 var midY = 200
 
-var station_data = `Station1 red01,-100,0
-Station 2 red02/pur02,0,0
-Station 3 red03/pur03,100,0
-Station 4 pur01,0,-100
-Station 5 pur04,0,100`
+// var station_data = `Station1 red01,-100,0
+// Station 2 red02/pur02,0,0
+// Station 3 red03/pur03,100,0
+// Station 4 pur01,0,-100
+// Station 5 pur04,0,100`
 
-var travel_data = {
-	"pur": `pur01,pur02,2
-pur02,pur03,2
-pur03,pur04,2`,
+// var travel_data = {
+// 	"pur": `pur01,pur02,2
+// pur02,pur03,2
+// pur03,pur04,2`,
 
-	"red": `red01,red02,2
-red02,red03,2`
-}
+// 	"red": `red01,red02,2
+// red02,red03,2`
+// }
 
-var edgeColour = `red,red
-pur,purple`
+// var edgeColour = `red,red
+// pur,purple`
 
-// not being used at the moment
-train_wait_time = `red01,1
-red02,1
-red03,1
-pur01,1
-pur04,1`
+// // not being used at the moment
+// train_wait_time = `red01,1
+// red02,1
+// red03,1
+// pur01,1
+// pur04,1`
 
 var processor = new InputProcessor()
 processor.parseStationString(stationString)
@@ -51,10 +53,8 @@ processor.parseEdgeColours(edgeColourString)
 processor.constructMetroGraph(metro, drawer, spawnDataString)
 
 for (const lineCode of Object.keys(edgesMap)) {
-	processor.addTrainsWithPeriod(metro, lineCode, 3, 300)
+	processor.addTrainsWithPeriod(metro, lineCode, 2, 10000)
 }
-// processor.addTrainsWithPeriod(metro, "red", 3, 100)
-// processor.addTrainsWithPeriod(metro, "pur", 3, 100)
 
 metro.getPathsFromStartStation();
 metro.constructCommuterGraph();
@@ -65,6 +65,8 @@ dataStore.init(metro)
 
 var plotter = new Plotter()
 
+metro.hour = startHour
+metro.sysTime = startHour * 60
 
 function draw_map() {
 
@@ -75,20 +77,17 @@ function draw_map() {
 			// draw map
 			drawer.drawMap(metro);
 
-			// plotter.updateCommCount(simStepUpdate)
-		// } else if (creatorMode) {
-		// 	// else if in creator mode (draw creator map)
-		// 	drawer.drawCreatorMap(metro, mouseX, mouseY);
-            // plotter.plotLineWaitTimes("chart1", dataStore)
-            // plotter.plotChosenLineWaitTimes("chartRed", dataStore, "red")
-            // plotter.plotChosenLineWaitTimes("chartPurple", dataStore, "purple")
 		} else {
 			// if it is paused, just draw the map with no additional input
 			drawer.drawMap(metro);
 			
 		}
 
-        
+        if (metro.hour == endHour) {
+        	if (isRunning) {
+        		toggleSim()
+        	}
+        }
 		// refresh to the next frame
 		window.requestAnimationFrame(draw_map);
 }

@@ -1,6 +1,7 @@
 class Metro {
 	constructor(name) {
 		this.sysTime = 0;
+		this.hour = 0;
 		this.name = name;
 
 		//stations
@@ -452,52 +453,40 @@ class Metro {
 	}
 
 	stationSimStepSpawn(timestep, station) {
-		station.spawnTime += timestep;
 
-		var hour = Math.floor(this.sysTime.toFixed(0) / 60)
-
-		for (const [stationId, rate] of Object.entries(station.spawnRate)) {
-
-			while (this.sysTime >= station.nextSpawnTime[stationId]) {
+		// var pre_count = this.stationCommCountUpdate(station, "pre_spawn")
+		// console.debug(station.id, this.hour)
+		// console.debug(`spawning for ${station.id}`)
+		if (!(this.hour in station.spawnRate)) {
+			return {}
+		}
+		// console.debug(`actually spawning for ${station.id}`)
+		for (const [destId, rate] of Object.entries(station.spawnRate[this.hour])) {
+			if (!(destId in station.nextSpawn)) {
+				station.nextSpawn[destId] = this.sysTime + randomExponential(rate)
+			}
+			while (this.sysTime + timestep > station.nextSpawn[destId]) {
 				var comm = new Commuter(
 					station.id,
-					stationId,
-					this.sysTime
-				)
-			}
-		}
-		if (station.spawnTime >= station.spawnFreq) {
-			// pick a random station
-			var options = Object.keys(this.stationDict)
-			var choice = options[Math.floor(Math.random() * options.length)]
-
-			if (choice == station.id) {
-				station.spawnTime = 0;
-				return;
-			}
-
-			var comm = new Commuter(
-					station.id,
-					choice,
+					destId,
 					this.sysTime
 				)
 
-			var path_options = this.interchangePaths[station.id][choice]
-			var path_choice = path_options[Math.floor(Math.random() * path_options.length)]
+				var path_options = this.interchangePaths[station.id][destId]
+				var path_choice = path_options[Math.floor(Math.random() * path_options.length)]
 
-			var board = path_choice.board[0]
-			// the board/alight
-			if (station.commuters[board] === undefined) {
-				station.commuters[board] = []
+				var board = path_choice.board[0]
+				// the board/alight
+				if (station.commuters[board] === undefined) {
+					station.commuters[board] = []
+				}
+				station.commuters[board].push(comm)
+
+				station.nextSpawn[destId] += randomExponential(rate)
 			}
-			station.commuters[board].push(comm)
-			station.spawnTime = 0;
-		} else {
-			return {}
 		}
 
 		var count_update = this.stationCommCountUpdate(station, "post_spawn")
-
 		return {
 			"station_count": count_update
 		}
@@ -538,15 +527,15 @@ class Metro {
 	simStep(timestep, dataStore){
 		var timeStepUpdate = {}
 
-		// // console.groupCollapsed("timestep: " + this.sysTime)
-		// for (const [stationId, station] of Object.entries(this.stationDict)) {
-        //     var update = this.stationSimStepSpawn(timestep, station);
-        //     dataStore.update(update)
+		// console.groupCollapsed("timestep: " + this.sysTime)
+		for (const [stationId, station] of Object.entries(this.stationDict)) {
+            var update = this.stationSimStepSpawn(timestep, station);
+            dataStore.update(update)
 
-        //     if (update !== undefined && Object.keys(update).length > 0) {
-        //     	timeStepUpdate[stationId] = [update]
-        //     }
-        // }
+            if (update !== undefined && Object.keys(update).length > 0) {
+            	timeStepUpdate[stationId] = [update]
+            }
+        }
 
         for (const [trainId, train] of Object.entries(this.trainDict)) {
             var update = this.trainSimStep(timestep, train);
@@ -573,7 +562,13 @@ class Metro {
             	}
             } 
         }
-
+        		// if we go into the new hour
+		if (Math.floor(this.sysTime/60) < Math.floor((this.sysTime + timestep)/60)) {
+			this.hour += 1
+			for (const [stationId, station] of Object.entries(this.stationDict)) {
+				station.nextSpawn = {}
+			}
+		}
         // console.groupEnd("timestep: " + this.sysTime)
         this.sysTime += timestep
         
