@@ -28,6 +28,10 @@ processor.parseEdgeColours(edgeColourString)
 processor.constructMetroGraph(metro, drawer, spawnDataString)
 
 for (const lineCode of Object.keys(edgesMap)) {
+	if (lineCode == "nsl" || lineCode == "ewl") {
+		processor.addTrainsWithPeriod(metro, lineCode, 2, 900)
+		continue
+	}
 	processor.addTrainsWithPeriod(metro, lineCode, 4, 900)
 }
 
