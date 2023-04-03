@@ -411,7 +411,7 @@ class Metro {
 
 			var alightTarget = path_options[Math.floor(Math.random() * path_options.length)]
 
-			waitTimeUpdate.addUpdate((this.sysTime - commuter.arrivalTime).toFixed(2))
+			waitTimeUpdate.addUpdate(parseFloat((this.sysTime - commuter.arrivalTime).toFixed(1)))
 
 			if (!(alightTarget in train.commuters)) {
 				train.commuters[alightTarget] = []
@@ -492,13 +492,13 @@ class Metro {
 		// console.debug(`actually spawning for ${station.id}`)
 		for (const [destId, rate] of Object.entries(station.spawnRate[this.hour])) {
 			if (!(destId in station.nextSpawn)) {
-				station.nextSpawn[destId] = this.sysTime + randomExponential(rate)
+				station.nextSpawn[destId] = this.sysTime - timestep + randomExponential(rate)
 			}
-			while (this.sysTime + timestep > station.nextSpawn[destId]) {
+			while (this.sysTime > station.nextSpawn[destId]) {
 				var comm = new Commuter(
 					station.id,
 					destId,
-					Math.round(station.nextSpawn[destId])
+					parseFloat(station.nextSpawn[destId].toFixed(2))
 				)
 
 				// the board/alight
