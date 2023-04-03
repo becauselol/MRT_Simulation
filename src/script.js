@@ -106,8 +106,10 @@ function downloadRunData() {
     	}
     	var csvContent = '';
     	dfObj.data.forEach(function(rowArray) {
-		    let row = rowArray.join(",");
-		    csvContent += row + "\r\n";
+    		if (rowArray[1] != "post_spawn") {
+    			let row = rowArray.join(",");
+		    	csvContent += row + "\r\n";
+    		} 
 		});
         
         zip.file("file_" + stationId + ".csv", csvContent);
