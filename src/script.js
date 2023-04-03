@@ -48,7 +48,12 @@ metro.hour = startHour
 metro.sysTime = startHour * 60
 
 function draw_map() {
-
+		  document.getElementById("time").textContent =
+		    "Current time is " +
+		    metro.sysTime.toFixed(2) +
+		    " minutes or " +
+		    (metro.sysTime / 60).toFixed(2) +
+		    " hours";
 		if (isRunning) {
 			// take a simulation step
 			var simStepUpdate = metro.simStep(timestep, dataStore);
@@ -94,10 +99,21 @@ function resetSim() {
 
 function downloadRunData() {
     var zip = new JSZip();
-    for (var i = 0; i < 5; i++) {
-        var txt = 'hello';
-        zip.file("file" + i + ".txt", txt);
+    var count = 0
+    for (const [stationId, dfObj] of Object.entries(dataStore.stationCommuterCount)) {
+    	if (count > 2) {
+    		break;
+    	}
+    	var csvContent = '';
+    	dfObj.data.forEach(function(rowArray) {
+		    let row = rowArray.join(",");
+		    csvContent += row + "\r\n";
+		});
+        
+        zip.file("file_" + stationId + ".csv", csvContent);
+        count++;
     }
+
     zip.generateAsync({
         type: "base64"
     }).then(function(content) {

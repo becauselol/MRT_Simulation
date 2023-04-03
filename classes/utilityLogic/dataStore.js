@@ -20,15 +20,11 @@ class TrainCommuterCount {
 class TrainCommDF {
 	constructor(stationId) {
 		this.stationId = stationId
-		this.time = []
-		this.event = []
-		this.count = []
+		this.data = []
 	}
 
 	addData(trainCommCount) {
-		this.time.push(trainCommCount.time)
-		this.event.push(trainCommCount.event)
-		this.count.push(trainCommCount.count)
+		this.data.push([trainCommCount.time, trainCommCount.event, trainCommCount.count])
 	}
 }
 
@@ -36,15 +32,11 @@ class TrainCommDF {
 class StationCommDF {
 	constructor(stationId) {
 		this.stationId = stationId
-		this.time = []
-		this.event = []
-		this.count = []
+		this.data = []
 	}
 
 	addData(stationCommCount) {
-		this.time.push(stationCommCount.time)
-		this.event.push(stationCommCount.event)
-		this.count.push(stationCommCount.count)
+		this.data.push([stationCommCount.time, stationCommCount.event, stationCommCount.count])
 	}
 }
 

@@ -337,9 +337,9 @@ class Metro {
 			currStation.commuters[boardingTarget].push(currCommuter)
 			alightingPassengers.splice(0, 1)
 		}
-		if (alight_count > 0) {
-			console.debug("time " + this.sysTime.toFixed(2) + ": " + train.id + " alighting " + alight_count + " passengers at station " + currStation.name)
-		}
+		// if (alight_count > 0) {
+		// 	console.debug("time " + this.sysTime.toFixed(2) + ": " + train.id + " alighting " + alight_count + " passengers at station " + currStation.name)
+		// }
 		
 		// the train is now waiting
 		train.state = TrainState.BOARDING
@@ -395,7 +395,7 @@ class Metro {
 		}
 
 		train.state = TrainState.WAITING
-		console.debug("time " + this.sysTime.toFixed(2) + ": " + train.id + " boarding " + board_count + " passengers at station " + currStation.name)
+		// console.debug("time " + this.sysTime.toFixed(2) + ": " + train.id + " boarding " + board_count + " passengers at station " + currStation.name)
 		var station_count = this.stationCommCountUpdate(currStation, "post_board")
 
 		return {
@@ -489,9 +489,9 @@ class Metro {
 				count++
 			}
 		}
-		if (count > 0) {
-			console.debug(`time ${this.sysTime.toFixed(2)}: spawning ${count} passengers at ${station.name}`)
-		}
+		// if (count > 0) {
+		// 	console.debug(`time ${this.sysTime.toFixed(2)}: spawning ${count} passengers at ${station.name}`)
+		// }
 		
 		var count_update = this.stationCommCountUpdate(station, "post_spawn")
 		return {
@@ -500,11 +500,11 @@ class Metro {
 	}
 
 	stationSimStepTerminate(timestep, station) {
-		if (station.commuters["terminating"].length > 0) {
-			console.debug("time " + this.sysTime.toFixed(2) + ": terminating "+ station.commuters["terminating"].length +" commuters at " + station.name)
-		} else {
+		if (station.commuters["terminating"].length == 0) {
 			return {}
 		}
+
+		// console.debug("time " + this.sysTime.toFixed(2) + ": terminating "+ station.commuters["terminating"].length +" commuters at " + station.name)
 		
 		var travelTimeUpdate = new TravelTimeUpdate(station.id)
 		for (const commuter of station.commuters["terminating"]) {
