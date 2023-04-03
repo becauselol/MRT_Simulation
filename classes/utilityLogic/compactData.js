@@ -4,8 +4,8 @@ class StatCompact {
 		this.keys = []
 		this.mean = 0
 		this.var = 0
-		this.min = 0
-		this.max = 0
+		this.min = Number.MAX_SAFE_INTEGER
+		this.max = Number.MIN_SAFE_INTEGER
 		this.sum = 0
 		this.count = 0
 	}

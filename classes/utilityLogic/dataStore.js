@@ -53,9 +53,10 @@ class StationCommDF {
 }
 
 class WaitTimeUpdate {
-	constructor(stationId, lineCode) {
+	constructor(stationId, lineCode, direction) {
 		this.stationId = stationId;
 		this.lineCode = lineCode
+		this.direction = direction
 		this.update = []
 	}
 

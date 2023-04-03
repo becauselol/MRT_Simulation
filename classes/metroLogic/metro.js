@@ -359,7 +359,9 @@ class Metro {
 
 		return {
 			"train_count": train_count,
-			"station_count": station_count
+			"station_count": station_count,
+			"alight_count": alight_count,
+			"csv_train_count": train_count.count
 		}
 	}
 
@@ -375,8 +377,7 @@ class Metro {
 		//update target of commuters
 		//check who needs to be boarded
 
-		var waitTimeUpdate = new WaitTimeUpdate(currStation.id, train.pathCode)
-		var board_count = 0 
+		var waitTimeUpdate = new WaitTimeUpdate(currStation.id, train.pathCode, train.direction)
 
 		var numberOnTrain = train.getCommuterCount()
 
@@ -398,6 +399,8 @@ class Metro {
 		}
 		// console.debug(trainDirection)
 		boardIndexes.reverse()
+
+		var board_count = boardIndexes.length;
 		//board commuters accordingly (last to first) cos array problems
 		for (const idx of boardIndexes) {
 			//get the commuter
@@ -424,7 +427,8 @@ class Metro {
 		return {
 			"train_count": train_count,
 			"station_count": station_count,
-			"wait_time": waitTimeUpdate
+			"wait_time": waitTimeUpdate,
+			"board_count": board_count
 		}
 	}
 
@@ -514,7 +518,8 @@ class Metro {
 		
 		var count_update = this.stationCommCountUpdate(station, "post_spawn")
 		return {
-			"station_count": count_update
+			"station_count": count_update,
+			"tap_in": count
 		}
 	}
 
@@ -523,6 +528,7 @@ class Metro {
 			return {}
 		}
 
+		var count = station.commuters["terminating"].length
 		// console.debug("time " + this.sysTime.toFixed(2) + ": terminating "+ station.commuters["terminating"].length +" commuters at " + station.name)
 		
 		var travelTimeUpdate = new TravelTimeUpdate(station.id)
@@ -539,7 +545,8 @@ class Metro {
 
 		return {
 			"station_count": count_update,
-			"travel_time": travelTimeUpdate
+			"travel_time": travelTimeUpdate,
+			"tap_out": count
 		}
 	}
 
@@ -550,21 +557,35 @@ class Metro {
         this.sysTime += timestep
 	}
 
-	simStep(timestep, dataStore){
+	simStep(timestep, dataStore, csvDataStore){
 		// console.groupCollapsed("timestep: " + this.sysTime)
 		for (const [stationId, station] of Object.entries(this.stationDict)) {
             var update = this.stationSimStepSpawn(timestep, station);
             dataStore.update(update)
+
+            //update csv data
+            if (update !== undefined && update['tap_in'] !== undefined) {
+            	csvDataStore.updateTapIn(this.hour, stationId, update["tap_in"])
+            }
+            
         }
 
         for (const [trainId, train] of Object.entries(this.trainDict)) {
             var update = this.trainSimStep(timestep, train);
             dataStore.update(update)
+            csvDataStore.update(this.hour, update, train.prevId, train.pathCode, train.direction)
         }
 
         for (const [stationId, station] of Object.entries(this.stationDict)) {
             var update = this.stationSimStepTerminate(timestep, station);
             dataStore.update(update)
+
+            //update csv data
+            if (update !== undefined && update['tap_out'] !== undefined) {
+            	csvDataStore.updateTapOut(this.hour, stationId, update["tap_out"])
+            }
+
+            csvDataStore.updateStationCount(this.hour, stationId, station.getCommuterCount())
         }
         		// if we go into the new hour
 		if (Math.floor(this.sysTime/60) < Math.floor((this.sysTime + timestep)/60)) {

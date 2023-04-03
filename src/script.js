@@ -7,8 +7,8 @@ var endHour = 24
 var isRunning = false;
 // var creatorMode = false;
 
-var maxX = 960;
-var maxY = 540;
+var maxX = 200;
+var maxY = 200;
 
 var fps = 10; // frames per real time second // FPS needs to be at least 5 and all waitTimes of trains and edge weights must be at least 1
 var timestep = 1/fps;
@@ -42,6 +42,8 @@ metro.constructInterchangePaths();
 var dataStore = new DataStore()
 dataStore.init(metro)
 
+var csvDataStore = new CSVDataStore(metro.stationDict, startHour, endHour);
+
 var plotter = new Plotter()
 
 metro.hour = startHour
@@ -57,7 +59,7 @@ function draw_map() {
 
 		if (isRunning) {
 			// take a simulation step
-			metro.simStep(timestep, dataStore);
+			metro.simStep(timestep, dataStore, csvDataStore);
 
 			// draw map
 			drawer.drawMap(metro);
@@ -83,8 +85,8 @@ function toggleSim() {
 	console.log(`is running: ${isRunning}`)
     if (!isRunning) {
         plotter.plotLineWaitTimes("chart1", dataStore)
-        plotter.plotChosenLineWaitTimes("chartRed", dataStore, "ewl")
-        plotter.plotChosenLineWaitTimes("chartPurple", dataStore, "nel")
+        plotter.plotChosenLineWaitTimes("chartRed", dataStore, "nel")
+        plotter.plotChosenLineWaitTimes("chartPurple", dataStore, "ewl")
         plotter.plotTravelTimes("chartTravelTime", dataStore)
         plotter.initStationCommCount("chartstation1", dataStore, "station1")
 		plotter.initStationCommCount("chartstation2", dataStore, "station2")
