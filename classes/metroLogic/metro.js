@@ -117,8 +117,7 @@ class Metro {
 				// take the fastest one amongst all the possible pathCode combis
 				// create edge weights for each possible combination of interchanges
 				var min_time = Infinity
-				var chosen_start_line = null
-				var chosen_target_line = null
+				var chosen_lines = []
 
 				for (const iCode of stationI.pathCodes) {
 	  				for (const jCode of stationJ.pathCodes) {
@@ -126,39 +125,47 @@ class Metro {
 
 	  					if (timeTaken < min_time) {
 	  						min_time = timeTaken
-	  						chosen_start_line = iCode;
-	  						chosen_target_line = jCode;
+	  						chosen_lines = [[iCode, jCode]]
+	  					} else if (timeTaken == min_time) {
+	  						chosen_lines.push([iCode, jCode])
 	  					}
+
 	  				}
 				}
 				if (min_time == Infinity) {
-					console.log("no path?")
+					console.debug("no path?")
 					continue;
 				}
 
-				var chosen_paths = this.commuterGraph.commuterPaths[`${i}.${chosen_start_line}`][`${j}.${chosen_target_line}`]
+				var chosen_paths = {}
+				for (const pairs of chosen_lines) {
+					chosen_paths[`${pairs[0]}.${pairs[1]}`] = this.commuterGraph.commuterPaths[`${i}.${pairs[0]}`][`${j}.${pairs[1]}`]
+				}
+				// console.debug(chosen_paths)
 				var interchangePaths = []
-				for (const path of chosen_paths) {
-					var direction = this.getDirection(chosen_start_line, i, path[1].split(".")[0])
+				for (const [key, possible_paths] of Object.entries(chosen_paths)) {
+					var chosenLineCodes = key.split(".")
+					for (const path of possible_paths) {
+						var direction = this.getDirection(chosenLineCodes[0], i, path[1].split(".")[0])
 
-					var pathDetails = {"board": [`${chosen_start_line}_${direction}`], "alight": []}
+						var pathDetails = {"board": [`${chosenLineCodes[0]}_${direction}`], "alight": []}
 
-					for (var p = 1; p < path.length; p++) {
-						var prev = path[p - 1];
-						var next = path[p];
+						for (var p = 1; p < path.length; p++) {
+							var prev = path[p - 1];
+							var next = path[p];
 
-						var prevDetails = prev.split(".")
-						var nextDetails = next.split(".")
-						if (prevDetails[1] != nextDetails[1]) {
-							pathDetails["alight"].push(prevDetails[0])
-
-							direction = this.getDirection(chosen_start_line, nextDetails[0], path[p+1].split(".")[0])
-							pathDetails["board"].push(`${nextDetails[1]}_${direction}`)
+							var prevDetails = prev.split(".")
+							var nextDetails = next.split(".")
+							if (p < path.length - 1 && prevDetails[1] != nextDetails[1]) {
+								pathDetails["alight"].push(prevDetails[0])
+								direction = this.getDirection(chosenLineCodes[0], nextDetails[0], path[p+1].split(".")[0])
+								pathDetails["board"].push(`${nextDetails[1]}_${direction}`)
+							}
 						}
-					}
 
-					pathDetails["alight"].push(j)
-					this.interchangePaths[i][j].push(pathDetails)
+						pathDetails["alight"].push(j)
+						this.interchangePaths[i][j].push(pathDetails)
+					}
 				}
 			}
 		}
@@ -537,7 +544,7 @@ class Metro {
 		// console.groupCollapsed("timestep: " + this.sysTime)
 		for (const [stationId, station] of Object.entries(this.stationDict)) {
             var update = this.stationSimStepSpawn(timestep, station);
-            dataStore.update(update)
+            // dataStore.update(update)
 
             if (update !== undefined && Object.keys(update).length > 0) {
             	timeStepUpdate[stationId] = [update]
@@ -546,7 +553,7 @@ class Metro {
 
         for (const [trainId, train] of Object.entries(this.trainDict)) {
             var update = this.trainSimStep(timestep, train);
-            dataStore.update(update)
+            // dataStore.update(update)
 
             if (update !== undefined && Object.keys(update).length > 0) {
             	if (train.prevId in timeStepUpdate) {
@@ -559,7 +566,7 @@ class Metro {
 
         for (const [stationId, station] of Object.entries(this.stationDict)) {
             var update = this.stationSimStepTerminate(timestep, station);
-            dataStore.update(update)
+            // dataStore.update(update)
 
             if (update !== undefined && Object.keys(update).length > 0) {
             	if (stationId in timeStepUpdate) {

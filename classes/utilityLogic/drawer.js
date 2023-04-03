@@ -44,7 +44,7 @@ class MapDrawer {
         this.ctx.lineWidth = 5;
         // line color
         if (train.direction == "FW") {
-            this.ctx.strokeStyle = 'pink';
+            this.ctx.strokeStyle = 'black';
         } else {
             this.ctx.strokeStyle = 'turquoise';
         }
