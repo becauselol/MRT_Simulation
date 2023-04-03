@@ -12,6 +12,9 @@ class Metro {
 		this.trainCount = 0;
 		this.trainDict = {};
 
+		//commuterCount
+		this.commuterCount = 0;
+		
 		// stores weights
 		this.edgeDict = {};
 
@@ -330,24 +333,27 @@ class Metro {
 		//update target of commuters
 		//check who needs to be boarded
 
-		var alight_count = alightingPassengers.length
+		var alight_count = Object.keys(alightingPassengers).length
 
-		while (alightingPassengers.length > 0) {
-			// get the target location to alight
-			var currCommuter = alightingPassengers[0];
-			currCommuter.arrivalTime = this.sysTime;
-
-			if (currStation.id == currCommuter.target) {
-				currStation.commuters["terminating"].push(currCommuter)
-				alightingPassengers.splice(0, 1)
+		for (const [commId, comm] of Object.entries(alightingPassengers)) {
+			comm.arrivalTime = this.sysTime
+			if (currStation.id == comm.target) {
+				currStation.commuters["terminating"][commId] = comm
+				delete alightingPassengers[commId]
 				continue;
 			}
 
-			if (currStation.commuters["transit"] === undefined) {
-				currStation.commuters["transit"] = []
+			var path_options = Object.keys(this.interchangePaths[currStation.id][comm.target])
+
+			for (const trainDirection of path_options) {
+				if (!(trainDirection in currStation.boardingData)) {
+					currStation.boardingData[trainDirection] = new Set()
+				}
+				currStation.boardingData[trainDirection].add(commId)
 			}
-			currStation.commuters["transit"].push(currCommuter)
-			alightingPassengers.splice(0, 1)
+
+			currStation.commuters["transit"][commId] = comm
+			delete alightingPassengers[commId]
 		}
 		// if (alight_count > 0) {
 		// 	console.debug("time " + this.sysTime.toFixed(2) + ": " + train.id + " alighting " + alight_count + " passengers at station " + currStation.name)
@@ -371,8 +377,9 @@ class Metro {
 
 		// board the passengers
 		var currStation = this.stationDict[train.prevId]
-		var boardingPassengers = currStation.commuters["transit"]
 		var trainDirection = `${train.pathCode}_${train.direction}`
+		var boardingPassengers = currStation.boardingData[trainDirection]
+		
 		//update target of commuters
 		//check who needs to be boarded
 
@@ -381,41 +388,39 @@ class Metro {
 
 		var numberOnTrain = train.getCommuterCount()
 
-		var boardIndexes = []
-
-		for (const [index, commuter] of boardingPassengers.entries()) {
-			if (numberOnTrain > train.capacity) {
-				console.debug(`seems like train is full on ${trainDirection}`)
-				break;
-			}
-
-			if (!Object.keys(this.interchangePaths[currStation.id][commuter.target]).includes(trainDirection)) {
-				continue;
-			}
-
-			boardIndexes.push(index)
-
-			numberOnTrain++;
+		// get the iterator
+		if (boardingPassengers === undefined) {
+			train.state = TrainState.WAITING
+			return {};
 		}
-		// console.debug(trainDirection)
-		boardIndexes.reverse()
-		//board commuters accordingly (last to first) cos array problems
-		for (const idx of boardIndexes) {
-			//get the commuter
-			var commuter = boardingPassengers.splice(idx, 1)[0]
+
+		var iter = boardingPassengers.values()
+		while (numberOnTrain < train.capacity && boardingPassengers.size > 0) {
+			var currCommId = iter.next().value
+
+			var commuter = currStation.commuters["transit"][currCommId]
 
 			// again we add some randomness by letting them choose the shortest path to alight at
-			var path_options = this.interchangePaths[train.prevId][commuter.target][trainDirection]
+			var path_options = this.interchangePaths[currStation.id][commuter.target][trainDirection]
 
 			var alightTarget = path_options[Math.floor(Math.random() * path_options.length)]
 
 			waitTimeUpdate.addUpdate((this.sysTime - commuter.arrivalTime).toFixed(2))
 
 			if (!(alightTarget in train.commuters)) {
-				train.commuters[alightTarget] = []
+				train.commuters[alightTarget] = {}
 			}
 			//board the commuter
-			train.commuters[alightTarget].push(commuter);
+			train.commuters[alightTarget][commuter.id] = commuter;
+
+			for (const [otherOptions, sets] of Object.entries(currStation.boardingData)) {
+				sets.delete(currCommId)
+			}
+
+			// remove from station
+			delete currStation.commuters["transit"][currCommId]
+
+			numberOnTrain++
 		}
 
 		train.state = TrainState.WAITING
@@ -477,6 +482,16 @@ class Metro {
 		return update
 	}
 
+	generateStationCountToSpawn(timestep, rate, startTime) {
+		var stationCount = 0
+		// generate the random numbers
+		while (startTime < this.sysTime + timestep) {
+			startTime += randomExponential(rate)
+			stationCount++
+		}
+		return {"startTime": startTime, "count": stationCount}
+	}
+
 	stationSimStepSpawn(timestep, station) {
 
 		// var pre_count = this.stationCommCountUpdate(station, "pre_spawn")
@@ -485,30 +500,42 @@ class Metro {
 		if (!(this.hour in station.spawnRate)) {
 			return {}
 		}
-		var count = 0
+
 		// console.debug(`actually spawning for ${station.id}`)
-		for (const [destId, rate] of Object.entries(station.spawnRate[this.hour])) {
+		Object.entries(station.spawnRate[this.hour]).forEach(([destId, rate]) => {
 			if (!(destId in station.nextSpawn)) {
 				station.nextSpawn[destId] = this.sysTime + randomExponential(rate)
 			}
-			while (this.sysTime + timestep > station.nextSpawn[destId]) {
+
+			var info = this.generateStationCountToSpawn(timestep, rate, station.nextSpawn[destId])
+			station.nextSpawn[destId] = info.startTime
+			var stationCount = info.count
+
+			for (var i = 0; i < stationCount; i++) {
 				var comm = new Commuter(
+					this.commuterCount,
 					station.id,
 					destId,
-					Math.round(station.nextSpawn[destId])
+					this.sysTime.toFixed(2)
 				)
 
 				// the board/alight
-				if (station.commuters["transit"] === undefined) {
-					station.commuters["transit"] = []
+				
+				station.commuters["transit"][comm.id] = comm 
+
+				// add the boarding data
+				var path_options = Object.keys(this.interchangePaths[station.id][comm.target])
+
+				for (const lineDirection of path_options) {
+					if (!(lineDirection in station.boardingData)) {
+						station.boardingData[lineDirection] = new Set()
+					}
+					station.boardingData[lineDirection].add(comm.id)
 				}
-				station.commuters["transit"].push(comm)
 
-				station.nextSpawn[destId] += randomExponential(rate)
-
-				count++
+				this.commuterCount++
 			}
-		}
+		})
 		// if (count > 0) {
 		// 	console.debug(`time ${this.sysTime.toFixed(2)}: spawning ${count} passengers at ${station.name}`)
 		// }
@@ -520,21 +547,21 @@ class Metro {
 	}
 
 	stationSimStepTerminate(timestep, station) {
-		if (station.commuters["terminating"].length == 0) {
+		if (Object.keys(station.commuters["terminating"]).length == 0) {
 			return {}
 		}
 
 		// console.debug("time " + this.sysTime.toFixed(2) + ": terminating "+ station.commuters["terminating"].length +" commuters at " + station.name)
 		
 		var travelTimeUpdate = new TravelTimeUpdate(station.id)
-		for (const commuter of station.commuters["terminating"]) {
+		for (const [commId, commuter] of Object.entries(station.commuters["terminating"])) {
 			var originId = commuter.origin
 			var timeTaken = Math.round(this.sysTime - commuter.spawnTime)
 			travelTimeUpdate.addUpdate(originId, timeTaken)
 		}
 
 		// terminate all the commuters
-		station.commuters["terminating"] = []
+		station.commuters["terminating"] = {}
 
 		var count_update = this.stationCommCountUpdate(station, "post_terminate")
 
@@ -555,17 +582,17 @@ class Metro {
 		// console.groupCollapsed("timestep: " + this.sysTime)
 		for (const [stationId, station] of Object.entries(this.stationDict)) {
             var update = this.stationSimStepSpawn(timestep, station);
-            dataStore.update(update)
+            // dataStore.update(update)
         }
 
         for (const [trainId, train] of Object.entries(this.trainDict)) {
             var update = this.trainSimStep(timestep, train);
-            dataStore.update(update)
+            // dataStore.update(update)
         }
 
         for (const [stationId, station] of Object.entries(this.stationDict)) {
             var update = this.stationSimStepTerminate(timestep, station);
-            dataStore.update(update)
+            // dataStore.update(update)
         }
         		// if we go into the new hour
 		if (Math.floor(this.sysTime/60) < Math.floor((this.sysTime + timestep)/60)) {
