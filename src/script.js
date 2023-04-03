@@ -7,8 +7,8 @@ var endHour = 24
 var isRunning = false;
 // var creatorMode = false;
 
-var maxX = 200;
-var maxY = 200;
+var maxX = 960;
+var maxY = 540;
 
 var fps = 10; // frames per real time second // FPS needs to be at least 5 and all waitTimes of trains and edge weights must be at least 1
 var timestep = 1/fps;
@@ -100,24 +100,11 @@ function resetSim() {
 
 }
 
-function downloadRunData() {
-    var zip = new JSZip();
-    var count = 0
-    for (const [stationId, dfObj] of Object.entries(dataStore.stationCommuterCount)) {
-    	if (count > 2) {
-    		break;
-    	}
-    	var csvContent = '';
-    	dfObj.data.forEach(function(rowArray) {
-    		if (rowArray[1] != "post_spawn") {
-    			let row = rowArray.join(",");
-		    	csvContent += row + "\r\n";
-    		} 
-		});
+function downloadStationRunData() {
+	var zip = new JSZip();
+    var csvContent = csvDataStore.writeStationCSVString()
         
-        zip.file("file_" + stationId + ".csv", csvContent);
-        count++;
-    }
+    zip.file("stationData.csv", csvContent);
 
     zip.generateAsync({
         type: "base64"
@@ -125,6 +112,37 @@ function downloadRunData() {
         window.location.href = "data:application/zip;base64," + content;
     });       
 }
+
+function downloadTrainRunData() {
+	var zip = new JSZip();
+    var csvContent = csvDataStore.writeTrainCSVString()
+        
+    zip.file("trainData.csv", csvContent);
+
+    zip.generateAsync({
+        type: "base64"
+    }).then(function(content) {
+        window.location.href = "data:application/zip;base64," + content;
+    });       
+}
+
+// function downloadRunData() {
+// 	var zip = new JSZip();
+
+// 	var csvContent = csvDataStore.writeStationCSVString()
+        
+//     zip.file("stationData.csv", csvContent);
+
+//     var csvContent = csvDataStore.writeTrainCSVString()
+        
+//     zip.file("trainData.csv", csvContent);
+
+//     zip.generateAsync({
+//         type: "base64"
+//     }).then(function(content) {
+//         window.location.href = "data:application/zip;base64," + content;
+//     });       
+// }
 // function toggleCreate() {
 // 	creatorMode = !creatorMode
 // }

@@ -41,14 +41,15 @@ class CSVDataStore {
 	constructor(stationDict, min_hour, max_hour) {
 		this.data = {}
 		this.trainData = {}
+		this.nameMap = {}
 
-		for (var hr = min_hour; hr < max_hour + 1; hr++) {
+		for (var hr = min_hour; hr < max_hour; hr++) {
 			this.data[hr] = {}
 			this.trainData[hr] = {}
 
 			for (const [stationId, station] of Object.entries(stationDict)) {
 				this.data[hr][stationId] = new StationDataStore()
-
+				this.nameMap[stationId] = station.name
 				this.trainData[hr][stationId] = {}
 				for (const [line, dirDict] of Object.entries(station.lines)) {
 					this.trainData[hr][stationId][line] = {}
@@ -118,5 +119,61 @@ class CSVDataStore {
 		}
 	}
 
+	writeStationCSVString() {
+		var headers = ["hour", "stationName", "tapIn", "tapOut"]
+		var sevenFigures = ["mean", "sd", "min", "q1", "median", "q3", "max"]
+		var stats = ["alightCount", "boardCount", "waitTime", "stationCount"]
+		for (const s of stats) {
+			for (const f of sevenFigures) {
+				headers.push(s + "_" + f)
+			}
+		}
 
+		var lineData = [headers]
+		for (const [hour, stationDict] of Object.entries(this.data)) {
+			for (const [stationId, stationData] of Object.entries(stationDict)) {
+				var row_data = [hour, this.nameMap[stationId], stationData.tapIn, stationData.tapOut]
+
+				row_data.push(...stationData.alightCount.getSevenFigureArray())
+				row_data.push(...stationData.boardCount.getSevenFigureArray())
+				row_data.push(...stationData.waitTime.getSevenFigureArray())
+				row_data.push(...stationData.stationCount.getSevenFigureArray())
+				lineData.push(row_data.join(","))
+			}
+			
+		}
+
+		return lineData.join("\n")
+	}
+
+	writeTrainCSVString() {
+		var headers = ["hour", "stationName", "line", "direction"]
+		var sevenFigures = ["mean", "sd", "min", "q1", "median", "q3", "max"]
+		var stats = ["alightCount", "boardCount", "waitTime", "trainCount"]
+		for (const s of stats) {
+			for (const f of sevenFigures) {
+				headers.push(s + "_" + f)
+			}
+		}
+
+		var lineData = [headers]
+		for (const [hour, stationDict] of Object.entries(this.trainData)) {
+			for (const [stationId, lineDict] of Object.entries(stationDict)) {
+				for (const [line, directionDict] of Object.entries(lineDict)) {
+					for (const [direction, trainData] of Object.entries(directionDict)) {
+						var row_data = [hour, this.nameMap[stationId], line, direction]
+
+						row_data.push(...trainData.alightCount.getSevenFigureArray())
+						row_data.push(...trainData.boardCount.getSevenFigureArray())
+						row_data.push(...trainData.waitTime.getSevenFigureArray())
+						row_data.push(...trainData.trainCount.getSevenFigureArray())
+						lineData.push(row_data.join(","))
+					}
+				}
+			}
+			
+		}
+
+		return lineData.join("\n")
+	}
 }

@@ -118,6 +118,10 @@ class StatCompact {
 			this.addValue(Math.floor(Math.random() * 10))
 		}
 	}
+
+	getSevenFigureArray() {
+		return [this.getMean(), this.getStd(), this.getMin(), this.q25(), this.getMedian(), this.q75(), this.getMax()]
+	}
 }
 
 
