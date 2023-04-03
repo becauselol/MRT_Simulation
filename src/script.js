@@ -10,7 +10,7 @@ var isRunning = false;
 var maxX = 960;
 var maxY = 540;
 
-var fps = 10; // frames per real time second // FPS needs to be at least 5 and all waitTimes of trains and edge weights must be at least 1
+var fps = 30; // frames per real time second // FPS needs to be at least 5 and all waitTimes of trains and edge weights must be at least 1
 var timestep = 1/fps;
 
 //intiialize graph and drawer
@@ -21,13 +21,13 @@ var midX = 200
 var midY = 200
 
 var processor = new InputProcessor()
-processor.parseStationString(stationString)
-processor.parseEdgeStringDict(edgesMap)
-processor.parseEdgeColours(edgeColourString)
+processor.parseStationString(station_data)
+processor.parseEdgeStringDict(travel_data)
+processor.parseEdgeColours(edgeColour)
 
-processor.constructMetroGraph(metro, drawer, spawnDataString)
+processor.constructMetroGraph(metro, drawer, spawnString)
 
-for (const lineCode of Object.keys(edgesMap)) {
+for (const lineCode of Object.keys(travel_data)) {
 	if (lineCode == "ewlA") {
 		processor.addTrainsWithPeriod(metro, lineCode, 1, 900)
 		continue
@@ -54,7 +54,7 @@ function draw_map() {
 		    " minutes or " +
 		    (metro.sysTime / 60).toFixed(2) +
 		    " hours";
-		    
+
 		if (isRunning) {
 			// take a simulation step
 			metro.simStep(timestep, dataStore);
@@ -83,11 +83,11 @@ function toggleSim() {
 	console.log(`is running: ${isRunning}`)
     if (!isRunning) {
         plotter.plotLineWaitTimes("chart1", dataStore)
-        plotter.plotChosenLineWaitTimes("chartRed", dataStore, "nsl")
-        plotter.plotChosenLineWaitTimes("chartPurple", dataStore, "ewl")
+        plotter.plotChosenLineWaitTimes("chartRed", dataStore, "red")
+        plotter.plotChosenLineWaitTimes("chartPurple", dataStore, "pur")
         plotter.plotTravelTimes("chartTravelTime", dataStore)
-        plotter.initStationCommCount("chartstation1", dataStore, "station12")
-		plotter.initStationCommCount("chartstation2", dataStore, "station94")
+        plotter.initStationCommCount("chartstation1", dataStore, "station1")
+		plotter.initStationCommCount("chartstation2", dataStore, "station2")
 		// plotter.initStationTrainCommCount("chartstation3", dataStore, "station3")
 		// plotter.initStationCommCount("chartstation4", dataStore, "station4")
 		// plotter.initStationCommCount("chartstation5", dataStore, "station5")

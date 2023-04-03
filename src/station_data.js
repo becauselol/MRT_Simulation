@@ -287,22 +287,22 @@ EW29,EW30,3
 EW30,EW31,3
 EW31,EW32,4
 EW32,EW33,3`,
-	'ewlA': `EW8,EW9,2
-EW9,EW10,3
-EW10,EW11,2
-EW11,EW12,2
-EW12,EW13,3
-EW13,EW14,2
-EW14,EW15,2
-EW15,EW16,2
-EW16,EW17,3
-EW17,EW18,3
-EW18,EW19,2
-EW19,EW20,3
-EW20,EW21,2
-EW21,EW22,3
-EW22,EW23,2
-EW23,EW24,5`,
+// 	'ewlA': `EW8,EW9,2
+// EW9,EW10,3
+// EW10,EW11,2
+// EW11,EW12,2
+// EW12,EW13,3
+// EW13,EW14,2
+// EW14,EW15,2
+// EW15,EW16,2
+// EW16,EW17,3
+// EW17,EW18,3
+// EW18,EW19,2
+// EW19,EW20,3
+// EW20,EW21,2
+// EW21,EW22,3
+// EW22,EW23,2
+// EW23,EW24,5`,
 //4, 3, 3, 3, 3, 2, 3, 2, 5, 2, 3, 2, 3, 2, 3, 3, 2, 2, 2, 3, 2, 2, 3, 2, 3, 2, 2, 3, 3, 3, 3
 	'cgl': `CG,CG1,3
 CG1,CG2,5`,
@@ -381,23 +381,41 @@ TE21,TE22,2`
 
 
 
-// var station_data = `Station1 red01,-100,0
-// Station 2 red02/pur02,0,0
-// Station 3 red03/pur03,100,0
-// Station 4 pur01,0,-100
-// Station 5 pur04,0,100`
+var station_data = `Station1 red01,-100,0
+Station 2 red02/pur02,0,0
+Station 3 red03/pur03,100,0
+Station 4 pur01,0,-100
+Station 5 pur04,0,100`
 
-// var travel_data = {
-// 	"pur": `pur01,pur02,2
-// pur02,pur03,2
-// pur03,pur04,2`,
+var travel_data = {
+	"pur": `pur01,pur02,2
+pur02,pur03,2
+pur03,pur04,2`,
 
-// 	"red": `red01,red02,2
-// red02,red03,2`
-// }
+	"red": `red01,red02,2
+red02,red03,2`
+}
 
-// var edgeColour = `red,red
-// pur,purple`
+var edgeColour = `red,red
+pur,purple`
+
+var stations = ["red01", "red02/pur02", "red03/pur03", "pur01", "pur04"]
+var spawnArr = []
+for (var hr = 5; hr < 24; hr++) {
+	for (const i of stations) {
+		for (const j of stations) {
+			if (i == j) {
+				continue
+			}
+			var rate = 60
+
+			var tempString = `${hr},${i},${j},${rate}`
+			spawnArr.push(tempString)
+		}
+	}
+}
+
+var spawnString = spawnArr.join("\n")
 
 // // not being used at the moment
 // train_wait_time = `red01,1
