@@ -4,8 +4,8 @@ class StatCompact {
 		this.keys = []
 		this.mean = 0
 		this.var = 0
-		this.min = 0
-		this.max = 0
+		this.min = Number.MAX_SAFE_INTEGER
+		this.max = Number.MIN_SAFE_INTEGER
 		this.sum = 0
 		this.count = 0
 	}
@@ -117,6 +117,10 @@ class StatCompact {
 		for(var i = 0 ; i < n; i++) {
 			this.addValue(Math.floor(Math.random() * 10))
 		}
+	}
+
+	getSevenFigureArray() {
+		return [this.getMean(), this.getStd(), this.getMin(), this.q25(), this.getMedian(), this.q75(), this.getMax()]
 	}
 }
 

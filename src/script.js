@@ -29,7 +29,7 @@ processor.constructMetroGraph(metro, drawer, spawnDataString)
 
 for (const lineCode of Object.keys(edgesMap)) {
 	if (lineCode == "ewlA") {
-		processor.addTrainsWithPeriod(metro, lineCode, 1, 900)
+		processor.addTrainsWithPeriod(metro, lineCode, 2, 900)
 		continue
 	}
 	processor.addTrainsWithPeriod(metro, lineCode, 4, 900)
@@ -41,6 +41,8 @@ metro.constructInterchangePaths();
 
 var dataStore = new DataStore()
 dataStore.init(metro)
+
+var csvDataStore = new CSVDataStore(metro.stationDict, startHour, endHour);
 
 var plotter = new Plotter()
 
@@ -54,10 +56,10 @@ function draw_map() {
 		    " minutes or " +
 		    (metro.sysTime / 60).toFixed(2) +
 		    " hours";
-		    
+
 		if (isRunning) {
 			// take a simulation step
-			metro.simStep(timestep, dataStore);
+			metro.simStep(timestep, dataStore, csvDataStore);
 
 			// draw map
 			drawer.drawMap(metro);
@@ -83,11 +85,11 @@ function toggleSim() {
 	console.log(`is running: ${isRunning}`)
     if (!isRunning) {
         plotter.plotLineWaitTimes("chart1", dataStore)
-        plotter.plotChosenLineWaitTimes("chartRed", dataStore, "nsl")
+        plotter.plotChosenLineWaitTimes("chartRed", dataStore, "nel")
         plotter.plotChosenLineWaitTimes("chartPurple", dataStore, "ewl")
         plotter.plotTravelTimes("chartTravelTime", dataStore)
-        plotter.initStationCommCount("chartstation1", dataStore, "station12")
-		plotter.initStationCommCount("chartstation2", dataStore, "station94")
+        plotter.initStationCommCount("chartstation1", dataStore, "station1")
+		plotter.initStationCommCount("chartstation2", dataStore, "station2")
 		// plotter.initStationTrainCommCount("chartstation3", dataStore, "station3")
 		// plotter.initStationCommCount("chartstation4", dataStore, "station4")
 		// plotter.initStationCommCount("chartstation5", dataStore, "station5")
@@ -98,24 +100,11 @@ function resetSim() {
 
 }
 
-function downloadRunData() {
-    var zip = new JSZip();
-    var count = 0
-    for (const [stationId, dfObj] of Object.entries(dataStore.stationCommuterCount)) {
-    	if (count > 2) {
-    		break;
-    	}
-    	var csvContent = '';
-    	dfObj.data.forEach(function(rowArray) {
-    		if (rowArray[1] != "post_spawn") {
-    			let row = rowArray.join(",");
-		    	csvContent += row + "\r\n";
-    		} 
-		});
+function downloadStationRunData() {
+	var zip = new JSZip();
+    var csvContent = csvDataStore.writeStationCSVString()
         
-        zip.file("file_" + stationId + ".csv", csvContent);
-        count++;
-    }
+    zip.file("stationData.csv", csvContent);
 
     zip.generateAsync({
         type: "base64"
@@ -123,6 +112,37 @@ function downloadRunData() {
         window.location.href = "data:application/zip;base64," + content;
     });       
 }
+
+function downloadTrainRunData() {
+	var zip = new JSZip();
+    var csvContent = csvDataStore.writeTrainCSVString()
+        
+    zip.file("trainData.csv", csvContent);
+
+    zip.generateAsync({
+        type: "base64"
+    }).then(function(content) {
+        window.location.href = "data:application/zip;base64," + content;
+    });       
+}
+
+// function downloadRunData() {
+// 	var zip = new JSZip();
+
+// 	var csvContent = csvDataStore.writeStationCSVString()
+        
+//     zip.file("stationData.csv", csvContent);
+
+//     var csvContent = csvDataStore.writeTrainCSVString()
+        
+//     zip.file("trainData.csv", csvContent);
+
+//     zip.generateAsync({
+//         type: "base64"
+//     }).then(function(content) {
+//         window.location.href = "data:application/zip;base64," + content;
+//     });       
+// }
 // function toggleCreate() {
 // 	creatorMode = !creatorMode
 // }

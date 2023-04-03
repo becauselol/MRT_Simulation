@@ -68,9 +68,6 @@ class Metro {
   					var time = this.commuterInterchangeWaitTime[`${iId}_${jId}`];
   					if (time === undefined) {
   						time = 0.1;
-  						if (i == "ewlA" || j == "ewlA") {
-  							time = 0.01;
-  						}
   					}
   					if (this.commuterGraph.edgeDict[iId] === undefined) {
   						this.commuterGraph.edgeDict[iId] = {}
@@ -148,10 +145,13 @@ class Metro {
 				var interchangePaths = []
 				for (const [key, possible_paths] of Object.entries(chosen_paths)) {
 					var chosenLineCodes = key.split(".")
+
 					for (const path of possible_paths) {
 						var direction = this.getDirection(chosenLineCodes[0], i, path[1].split(".")[0])
 
-						var pathDetails = {"board": [`${chosenLineCodes[0]}_${direction}`], "alight": []}
+						var pathDetails = {"board": [], "alight": []}
+						var board = `${chosenLineCodes[0]}_${direction}`
+						var alight = undefined
 
 						for (var p = 1; p < path.length; p++) {
 							var prev = path[p - 1];
@@ -160,14 +160,21 @@ class Metro {
 							var prevDetails = prev.split(".")
 							var nextDetails = next.split(".")
 							if (p < path.length - 1 && prevDetails[1] != nextDetails[1]) {
-								pathDetails["alight"].push(prevDetails[0])
-								direction = this.getDirection(chosenLineCodes[0], nextDetails[0], path[p+1].split(".")[0])
-								pathDetails["board"].push(`${nextDetails[1]}_${direction}`)
+								alight = prevDetails[0]
+								break
 							}
 						}
+						if (alight === undefined) {
+							alight = j
+						}
 
-						pathDetails["alight"].push(j)
-						this.interchangePaths[i][j].push(pathDetails)
+						if (!(board in this.interchangePaths[i][j])) {
+							this.interchangePaths[i][j][board] = []
+						}
+						// if (!this.interchangePaths[i][j][board].includes(alight)) {
+						// 	this.interchangePaths[i][j][board].push(alight)
+						// }
+						this.interchangePaths[i][j][board].push(alight)
 					}
 				}
 			}
@@ -325,28 +332,22 @@ class Metro {
 
 		var alight_count = alightingPassengers.length
 
-		while (alightingPassengers.length > 0) {
+		for (const currCommuter of alightingPassengers) {
 			// get the target location to alight
-			var currCommuter = alightingPassengers[0];
 			currCommuter.arrivalTime = this.sysTime;
 
 			if (currStation.id == currCommuter.target) {
 				currStation.commuters["terminating"].push(currCommuter)
-				alightingPassengers.splice(0, 1)
 				continue;
 			}
-			// again we add some randomness by letting them choose the shortest path to board at
-			var path_options = this.interchangePaths[train.prevId][currCommuter.target]
-			var path_choice = path_options[Math.floor(Math.random() * path_options.length)]
 
-			var boardingTarget = path_choice.board[0]
-
-			if (currStation.commuters[boardingTarget] === undefined) {
-				currStation.commuters[boardingTarget] = []
+			if (currStation.commuters["transit"] === undefined) {
+				currStation.commuters["transit"] = []
 			}
-			currStation.commuters[boardingTarget].push(currCommuter)
-			alightingPassengers.splice(0, 1)
+			currStation.commuters["transit"].push(currCommuter)
 		}
+
+		train.commuters[train.prevId] = []
 		// if (alight_count > 0) {
 		// 	console.debug("time " + this.sysTime.toFixed(2) + ": " + train.id + " alighting " + alight_count + " passengers at station " + currStation.name)
 		// }
@@ -358,7 +359,9 @@ class Metro {
 
 		return {
 			"train_count": train_count,
-			"station_count": station_count
+			"station_count": station_count,
+			"alight_count": alight_count,
+			"csv_train_count": train_count.count
 		}
 	}
 
@@ -369,39 +372,52 @@ class Metro {
 
 		// board the passengers
 		var currStation = this.stationDict[train.prevId]
-		var boardingPassengers = currStation.commuters[`${train.pathCode}_${train.direction}`]
-
-		// var boardingCommuters = this.commuters.filter(x => x.pathCode == this.trains[idx].pathCode)
+		var boardingPassengers = currStation.commuters["transit"]
+		var trainDirection = `${train.pathCode}_${train.direction}`
 		//update target of commuters
 		//check who needs to be boarded
 
-		if (boardingPassengers === undefined) {
-			train.state = TrainState.WAITING
-			return {};
+		var waitTimeUpdate = new WaitTimeUpdate(currStation.id, train.pathCode, train.direction)
+
+		var numberOnTrain = train.getCommuterCount()
+
+		var boardIndexes = []
+
+		for (const [index, commuter] of boardingPassengers.entries()) {
+			if (numberOnTrain > train.capacity) {
+				console.debug(`seems like train is full on ${trainDirection}`)
+				break;
+			}
+
+			if (!Object.keys(this.interchangePaths[currStation.id][commuter.target]).includes(trainDirection)) {
+				continue;
+			}
+
+			boardIndexes.push(index)
+
+			numberOnTrain++;
 		}
+		// console.debug(trainDirection)
+		boardIndexes.reverse()
 
-		var waitTimeUpdate = new WaitTimeUpdate(currStation.id, train.pathCode)
-		var board_count = 0 
-
-		while (train.getCommuterCount() < train.capacity && boardingPassengers.length > 0) {
-			// get the target location to alight
-			var currCommuter = boardingPassengers.splice(0, 1)[0];
-			var waitTime = Math.round(this.sysTime - currCommuter.arrivalTime)
-
-			waitTimeUpdate.addUpdate(waitTime)
+		var board_count = boardIndexes.length;
+		//board commuters accordingly (last to first) cos array problems
+		for (const idx of boardIndexes) {
+			//get the commuter
+			var commuter = boardingPassengers.splice(idx, 1)[0]
 
 			// again we add some randomness by letting them choose the shortest path to alight at
-			var path_options = this.interchangePaths[train.prevId][currCommuter.target]
-			var path_choice = path_options[Math.floor(Math.random() * path_options.length)]
+			var path_options = this.interchangePaths[train.prevId][commuter.target][trainDirection]
 
-			var alightTarget = path_choice.alight[0]
+			var alightTarget = path_options[Math.floor(Math.random() * path_options.length)]
+
+			waitTimeUpdate.addUpdate(parseFloat((this.sysTime - commuter.arrivalTime).toFixed(1)))
 
 			if (!(alightTarget in train.commuters)) {
 				train.commuters[alightTarget] = []
 			}
-			train.commuters[alightTarget].push(currCommuter)
-
-			board_count += 1
+			//board the commuter
+			train.commuters[alightTarget].push(commuter);
 		}
 
 		train.state = TrainState.WAITING
@@ -411,7 +427,8 @@ class Metro {
 		return {
 			"train_count": train_count,
 			"station_count": station_count,
-			"wait_time": waitTimeUpdate
+			"wait_time": waitTimeUpdate,
+			"board_count": board_count
 		}
 	}
 
@@ -475,24 +492,20 @@ class Metro {
 		// console.debug(`actually spawning for ${station.id}`)
 		for (const [destId, rate] of Object.entries(station.spawnRate[this.hour])) {
 			if (!(destId in station.nextSpawn)) {
-				station.nextSpawn[destId] = this.sysTime + randomExponential(rate)
+				station.nextSpawn[destId] = this.sysTime - timestep + randomExponential(rate)
 			}
-			while (this.sysTime + timestep > station.nextSpawn[destId]) {
+			while (this.sysTime > station.nextSpawn[destId]) {
 				var comm = new Commuter(
 					station.id,
 					destId,
-					Math.round(station.nextSpawn[destId])
+					parseFloat(station.nextSpawn[destId].toFixed(2))
 				)
 
-				var path_options = this.interchangePaths[station.id][destId]
-				var path_choice = path_options[Math.floor(Math.random() * path_options.length)]
-
-				var board = path_choice.board[0]
 				// the board/alight
-				if (station.commuters[board] === undefined) {
-					station.commuters[board] = []
+				if (station.commuters["transit"] === undefined) {
+					station.commuters["transit"] = []
 				}
-				station.commuters[board].push(comm)
+				station.commuters["transit"].push(comm)
 
 				station.nextSpawn[destId] += randomExponential(rate)
 
@@ -505,7 +518,8 @@ class Metro {
 		
 		var count_update = this.stationCommCountUpdate(station, "post_spawn")
 		return {
-			"station_count": count_update
+			"station_count": count_update,
+			"tap_in": count
 		}
 	}
 
@@ -514,6 +528,7 @@ class Metro {
 			return {}
 		}
 
+		var count = station.commuters["terminating"].length
 		// console.debug("time " + this.sysTime.toFixed(2) + ": terminating "+ station.commuters["terminating"].length +" commuters at " + station.name)
 		
 		var travelTimeUpdate = new TravelTimeUpdate(station.id)
@@ -530,7 +545,8 @@ class Metro {
 
 		return {
 			"station_count": count_update,
-			"travel_time": travelTimeUpdate
+			"travel_time": travelTimeUpdate,
+			"tap_out": count
 		}
 	}
 
@@ -541,21 +557,35 @@ class Metro {
         this.sysTime += timestep
 	}
 
-	simStep(timestep, dataStore){
+	simStep(timestep, dataStore, csvDataStore){
 		// console.groupCollapsed("timestep: " + this.sysTime)
 		for (const [stationId, station] of Object.entries(this.stationDict)) {
             var update = this.stationSimStepSpawn(timestep, station);
             dataStore.update(update)
+
+            //update csv data
+            if (update !== undefined && update['tap_in'] !== undefined) {
+            	csvDataStore.updateTapIn(this.hour, stationId, update["tap_in"])
+            }
+            
         }
 
         for (const [trainId, train] of Object.entries(this.trainDict)) {
             var update = this.trainSimStep(timestep, train);
             dataStore.update(update)
+            csvDataStore.update(this.hour, update, train.prevId, train.pathCode, train.direction)
         }
 
         for (const [stationId, station] of Object.entries(this.stationDict)) {
             var update = this.stationSimStepTerminate(timestep, station);
             dataStore.update(update)
+
+            //update csv data
+            if (update !== undefined && update['tap_out'] !== undefined) {
+            	csvDataStore.updateTapOut(this.hour, stationId, update["tap_out"])
+            }
+
+            csvDataStore.updateStationCount(this.hour, stationId, station.getCommuterCount())
         }
         		// if we go into the new hour
 		if (Math.floor(this.sysTime/60) < Math.floor((this.sysTime + timestep)/60)) {
