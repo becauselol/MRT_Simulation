@@ -54,9 +54,10 @@ function draw_map() {
 		    " minutes or " +
 		    (metro.sysTime / 60).toFixed(2) +
 		    " hours";
+		    
 		if (isRunning) {
 			// take a simulation step
-			var simStepUpdate = metro.simStep(timestep, dataStore);
+			metro.simStep(timestep, dataStore);
 
 			// draw map
 			drawer.drawMap(metro);
@@ -87,9 +88,9 @@ function toggleSim() {
         plotter.plotTravelTimes("chartTravelTime", dataStore)
         plotter.initStationCommCount("chartstation1", dataStore, "station12")
 		plotter.initStationCommCount("chartstation2", dataStore, "station94")
-		plotter.initStationTrainCommCount("chartstation3", dataStore, "station3")
-		plotter.initStationCommCount("chartstation4", dataStore, "station4")
-		plotter.initStationCommCount("chartstation5", dataStore, "station5")
+		// plotter.initStationTrainCommCount("chartstation3", dataStore, "station3")
+		// plotter.initStationCommCount("chartstation4", dataStore, "station4")
+		// plotter.initStationCommCount("chartstation5", dataStore, "station5")
     }
 }
 

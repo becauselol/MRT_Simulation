@@ -68,6 +68,9 @@ class Metro {
   					var time = this.commuterInterchangeWaitTime[`${iId}_${jId}`];
   					if (time === undefined) {
   						time = 0.1;
+  						if (i == "ewlA" || j == "ewlA") {
+  							time = 0.01;
+  						}
   					}
   					if (this.commuterGraph.edgeDict[iId] === undefined) {
   						this.commuterGraph.edgeDict[iId] = {}
@@ -539,42 +542,20 @@ class Metro {
 	}
 
 	simStep(timestep, dataStore){
-		var timeStepUpdate = {}
-
 		// console.groupCollapsed("timestep: " + this.sysTime)
 		for (const [stationId, station] of Object.entries(this.stationDict)) {
             var update = this.stationSimStepSpawn(timestep, station);
-            // dataStore.update(update)
-
-            if (update !== undefined && Object.keys(update).length > 0) {
-            	timeStepUpdate[stationId] = [update]
-            }
+            dataStore.update(update)
         }
 
         for (const [trainId, train] of Object.entries(this.trainDict)) {
             var update = this.trainSimStep(timestep, train);
-            // dataStore.update(update)
-
-            if (update !== undefined && Object.keys(update).length > 0) {
-            	if (train.prevId in timeStepUpdate) {
-            		timeStepUpdate[train.prevId].push(update)
-            	} else {
-            		timeStepUpdate[train.prevId] = [update]
-            	}
-            } 
+            dataStore.update(update)
         }
 
         for (const [stationId, station] of Object.entries(this.stationDict)) {
             var update = this.stationSimStepTerminate(timestep, station);
-            // dataStore.update(update)
-
-            if (update !== undefined && Object.keys(update).length > 0) {
-            	if (stationId in timeStepUpdate) {
-            		timeStepUpdate[stationId].push(update)
-            	} else {
-            		timeStepUpdate[stationId] = [update]
-            	}
-            } 
+            dataStore.update(update)
         }
         		// if we go into the new hour
 		if (Math.floor(this.sysTime/60) < Math.floor((this.sysTime + timestep)/60)) {
@@ -586,6 +567,6 @@ class Metro {
         // console.groupEnd("timestep: " + this.sysTime)
         this.sysTime += timestep
         // this.sysTime = this.sysTime.toFixed(2)
-        return timeStepUpdate
+        return 
 	}
 }
