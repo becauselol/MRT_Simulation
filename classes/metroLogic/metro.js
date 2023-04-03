@@ -332,14 +332,12 @@ class Metro {
 
 		var alight_count = alightingPassengers.length
 
-		while (alightingPassengers.length > 0) {
+		for (const currCommuter of alightingPassengers) {
 			// get the target location to alight
-			var currCommuter = alightingPassengers[0];
 			currCommuter.arrivalTime = this.sysTime;
 
 			if (currStation.id == currCommuter.target) {
 				currStation.commuters["terminating"].push(currCommuter)
-				alightingPassengers.splice(0, 1)
 				continue;
 			}
 
@@ -347,8 +345,9 @@ class Metro {
 				currStation.commuters["transit"] = []
 			}
 			currStation.commuters["transit"].push(currCommuter)
-			alightingPassengers.splice(0, 1)
 		}
+
+		train.commuters[train.prevId] = []
 		// if (alight_count > 0) {
 		// 	console.debug("time " + this.sysTime.toFixed(2) + ": " + train.id + " alighting " + alight_count + " passengers at station " + currStation.name)
 		// }

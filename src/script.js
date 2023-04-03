@@ -10,7 +10,7 @@ var isRunning = false;
 var maxX = 960;
 var maxY = 540;
 
-var fps = 30; // frames per real time second // FPS needs to be at least 5 and all waitTimes of trains and edge weights must be at least 1
+var fps = 10; // frames per real time second // FPS needs to be at least 5 and all waitTimes of trains and edge weights must be at least 1
 var timestep = 1/fps;
 
 //intiialize graph and drawer
