@@ -14,17 +14,21 @@ class CommuterGraph {
 	}
 
 	floydWarshall() {
+		var nodeOrder = Object.keys(this.nodeDict)
 	    this.dist = {};
 	    this.next = {};
+	    this.count = {};
 	    let i = 0;
 	    // console.log(this.dist)
-	    for (const stationId of Object.keys(this.nodeDict)) {
+	    for (const stationId of nodeOrder) {
 	    	this.dist[stationId] = {};
 	    	this.next[stationId] = {};
+	    	this.count[stationId] = {};
 
-	    	for (const id of Object.keys(this.nodeDict)) {
+	    	for (const id of nodeOrder) {
 	    		this.dist[stationId][id] = Infinity
 	    		this.next[stationId][id] = [-1]
+	    		this.count[stationId][id] = 0;
 	    	}
 	    	// console.log(this.dist)
 	    }
@@ -32,26 +36,30 @@ class CommuterGraph {
 
 	    for (const [i, iDict] of Object.entries(this.edgeDict)) {
 	    	for (const [j, weight] of Object.entries(iDict)) {
+	    		console.log(weight)
 	    		this.dist[i][j] = weight;
 				this.next[i][j] = [-1];
+				this.count[i][j] = 1
 	    	}
 	    	// console.log(this.dist)
 	    }
-	    
-	    for (const i of Object.keys(this.nodeDict)) {
+	    console.log(this.dist)
+	    for (const i of nodeOrder) {
 	    	this.dist[i][i] = 0;
 	    	this.next[i][i] = [];
 	    }
 
-	    for (const k of Object.keys(this.nodeDict)) {
-	    	for (const i of Object.keys(this.nodeDict)) {
-	    		for (const j of Object.keys(this.nodeDict)) {
-	    			if (this.dist[i][j] > this.dist[i][k] + this.dist[k][j]) {
+	    for (const k of nodeOrder) {
+	    	for (const i of nodeOrder) {
+	    		for (const j of nodeOrder) {
+	    			if (this.dist[i][k] + this.dist[k][j] < this.dist[i][j]) {
 						this.dist[i][j] = this.dist[i][k] + this.dist[k][j];
 						this.next[i][j] = []
 						this.next[i][j].push(k)
+						this.count[i][j] = 1
 					} else if (this.dist[i][j] == this.dist[i][k] + this.dist[k][j] &&  k != j && k != i && this.dist[i][j] != Infinity) {
 						this.next[i][j].push(k);
+						this.count[i][j]++
 					}
 	    		}
 	    	}
