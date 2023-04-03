@@ -16,8 +16,7 @@ class Commuter {
      * @param {number} arrivalTime - the time the agent arrived at a certain station
      * @param {number} spawnTime - the time the agent arrived at a certain station
      */
-	constructor(id, origin, target, spawnTime, state=CommuterState.WAITING) {
-		this.id = id
+	constructor(origin, target, spawnTime, state=CommuterState.WAITING) {
 		this.origin = origin
 		this.target = target;
 		this.state = state;

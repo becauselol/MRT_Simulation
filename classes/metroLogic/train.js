@@ -72,8 +72,8 @@ class Train {
 
 	getCommuterCount() {
 		var amount = 0
-		for (const [station, commDict] of Object.entries(this.commuters)) {
-			amount += Object.keys(commDict).length
+		for (const [station, arr] of Object.entries(this.commuters)) {
+			amount += arr.length;
 		}
 		return amount
 	}

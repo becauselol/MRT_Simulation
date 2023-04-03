@@ -26,9 +26,7 @@ class Station {
 		this.lines = {};
 
 		// commuters is an object of lists where key: lineCode_direction and value: list of commuters waiting for that train
-		this.commuters = {"terminating": {}, "transit": {}};
-		this.boardingData = {}
-
+		this.commuters = {"terminating": [], "transit": []};
 		this.waitTime = waitTime;
 		this.pathCodes = new Set();
 
@@ -82,8 +80,8 @@ class Station {
 
 	getCommuterCount() {
 		var amount = 0
-		for (const [station, commDict] of Object.entries(this.commuters)) {
-			amount += Object.keys(commDict).length
+		for (const [station, arr] of Object.entries(this.commuters)) {
+			amount += arr.length;
 		}
 		return amount
 	}
