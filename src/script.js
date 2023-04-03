@@ -21,15 +21,15 @@ var midX = 200
 var midY = 200
 
 var processor = new InputProcessor()
-processor.parseStationString(station_data)
-processor.parseEdgeStringDict(travel_data)
-processor.parseEdgeColours(edgeColour)
+processor.parseStationString(stationString)
+processor.parseEdgeStringDict(edgesMap)
+processor.parseEdgeColours(edgeColourString)
 
-processor.constructMetroGraph(metro, drawer, spawnString)
+processor.constructMetroGraph(metro, drawer, spawnDataString)
 
-for (const lineCode of Object.keys(travel_data)) {
+for (const lineCode of Object.keys(edgesMap)) {
 	if (lineCode == "ewlA") {
-		processor.addTrainsWithPeriod(metro, lineCode, 1, 900)
+		processor.addTrainsWithPeriod(metro, lineCode, 2, 900)
 		continue
 	}
 	processor.addTrainsWithPeriod(metro, lineCode, 4, 900)
@@ -83,8 +83,8 @@ function toggleSim() {
 	console.log(`is running: ${isRunning}`)
     if (!isRunning) {
         plotter.plotLineWaitTimes("chart1", dataStore)
-        plotter.plotChosenLineWaitTimes("chartRed", dataStore, "red")
-        plotter.plotChosenLineWaitTimes("chartPurple", dataStore, "pur")
+        plotter.plotChosenLineWaitTimes("chartRed", dataStore, "ewl")
+        plotter.plotChosenLineWaitTimes("chartPurple", dataStore, "nel")
         plotter.plotTravelTimes("chartTravelTime", dataStore)
         plotter.initStationCommCount("chartstation1", dataStore, "station1")
 		plotter.initStationCommCount("chartstation2", dataStore, "station2")

@@ -15,6 +15,8 @@ class CommuterGraph {
 
 	floydWarshall() {
 		var nodeOrder = Object.keys(this.nodeDict)
+		// console.debug(nodeOrder)
+		// nodeOrder = ['station1.red', 'station2.red', 'station2.pur', 'station3.red', 'station3.pur', 'station4.pur', 'station5.pur']
 	    this.dist = {};
 	    this.next = {};
 	    this.count = {};
@@ -36,14 +38,14 @@ class CommuterGraph {
 
 	    for (const [i, iDict] of Object.entries(this.edgeDict)) {
 	    	for (const [j, weight] of Object.entries(iDict)) {
-	    		console.log(weight)
+	    		// console.log(weight)
 	    		this.dist[i][j] = weight;
 				this.next[i][j] = [-1];
 				this.count[i][j] = 1
 	    	}
 	    	// console.log(this.dist)
 	    }
-	    console.log(this.dist)
+	    // console.log(this.dist)
 	    for (const i of nodeOrder) {
 	    	this.dist[i][i] = 0;
 	    	this.next[i][i] = [];
@@ -74,7 +76,7 @@ class CommuterGraph {
 	 * @param {number} targetStation - stationId of the station to target:
 	 * */
 	// Taken from a senior (https://stackoverflow.com/questions/11370041/floyd-warshall-all-shortest-paths)
-	getPathsToStation(i, j) {
+	getPathsToStation(i, j, it=0) {
 		// have to search for the indices, unfortunately
 		var allPaths = [];
 		if (this.next[i][j].length == 0) {
@@ -85,8 +87,8 @@ class CommuterGraph {
 			if (k == -1) {
 				allPaths.push([i, j])
 			} else {
-				var path_i_k = this.getPathsToStation(i, k);
-				var path_k_j = this.getPathsToStation(k, j);
+				var path_i_k = this.getPathsToStation(i, k, it+1);
+				var path_k_j = this.getPathsToStation(k, j, it+1);
 
 				for (const i_k of path_i_k) {
 					for (const k_j of path_k_j) {
@@ -99,6 +101,18 @@ class CommuterGraph {
 					}
 				}
 			}
+		}
+
+		if (it == 0) {
+			var temp = []
+			var check = new Set()
+			for (var i = 0; i < allPaths.length; i++) {
+				if (i==0 || !check.has(JSON.stringify(allPaths[i])))  {
+					temp.push(allPaths[i]);
+					check.add(JSON.stringify(allPaths[i]))
+				}
+			}
+			allPaths = temp
 		}
 		return allPaths
 	}
