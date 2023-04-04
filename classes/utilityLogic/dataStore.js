@@ -122,6 +122,10 @@ class DataStore {
 		}
 	}
 
+	getLineCodeArray() {
+		return Object.keys(this.lineStations)
+	}
+
 	updateTrainCount(trainCommCount) {
 		var stationId = trainCommCount.stationId
 		this.stationTrainCommuterCount[stationId].addData(trainCommCount)
