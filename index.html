@@ -21,7 +21,7 @@
 	<!-- Tab links -->
 	<div class="tab">
 		
-		<button class="tablinks" onclick="tabswitch(event, 'MRT Map')">MRT Map</button>
+		<button class="tablinks" onclick="tabswitch(event, 'MRT Map')" id = "defaultOpen">MRT Map</button>
 		<button class="tablinks" onclick="tabswitch(event, 'Edge Map')">Edge Map</button>
 
 	</div>
@@ -76,7 +76,12 @@
 	<h3 style="position:relative;top:90%; font-size:25px">Graphs</h3>
 	</div>
 
-	<!-- Add in Charts -->	
+	<!-- Add in Charts -->
+
+	<select id = "select">
+        <option value="default">default</option>
+    </select>
+	</div>
 	<div id="chart1"></div>
 	<div id="chartRed"></div>
 	<div id="chartPurple"></div>
@@ -104,6 +109,7 @@
 	<script type="text/javascript" src="classes/metroLogic/metro.js"></script>
 
 	<script type="text/javascript" src="classes/styleLogic/mrtTab.js"></script>
+	<script type="text/javascript" src="classes/styleLogic/graphButton.js"></script>
 
 
 	<script type="text/javascript" src="src/station_data.js"></script>

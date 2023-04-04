@@ -26,6 +26,8 @@
   background-color: #ccc;
 }
 
+
+
 /* Style the tab content */
 .tabcontent {
   display: none;
@@ -46,7 +48,6 @@
   /*border: 2px solid #000;*/
 
 }
-
 
 
 /* slider for parameters */
@@ -83,4 +84,16 @@
   border-radius: 50%;
   background: #000000;
   cursor: pointer;
+}
+
+
+
+select{
+  border:none;
+  padding: 10px 20px;
+  border-radius:5px;
+}
+
+select:focus{
+  outline:none;
 }

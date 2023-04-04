@@ -82,7 +82,8 @@ function toggleSim() {
 	isRunning = !isRunning
 	console.log(`is running: ${isRunning}`)
     if (!isRunning) {
-        plotter.plotLineWaitTimes("chart1", dataStore)
+		plotter.filterBtn(dataStore)
+        plotter.plotLineWaitTimes("chart1", dataStore, processor.edgeColours )
         plotter.plotChosenLineWaitTimes("chartRed", dataStore, "nsl")
         plotter.plotChosenLineWaitTimes("chartPurple", dataStore, "ewl")
         plotter.plotTravelTimes("chartTravelTime", dataStore)
@@ -91,6 +92,7 @@ function toggleSim() {
 		// plotter.initStationTrainCommCount("chartstation3", dataStore, "station3")
 		// plotter.initStationCommCount("chartstation4", dataStore, "station4")
 		// plotter.initStationCommCount("chartstation5", dataStore, "station5")
+
     }
 }
 
