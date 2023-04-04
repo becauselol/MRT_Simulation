@@ -121,7 +121,7 @@ class CSVDataStore {
 
 	writeStationCSVString() {
 		var headers = ["hour", "stationName", "tapIn", "tapOut"]
-		var sevenFigures = ["mean", "sd", "min", "q1", "median", "q3", "max"]
+		var sevenFigures = ["mean", "sd", "min", "q1", "median", "q3", "max", "count", "total"]
 		var stats = ["alightCount", "boardCount", "waitTime", "stationCount"]
 		for (const s of stats) {
 			for (const f of sevenFigures) {
@@ -134,10 +134,10 @@ class CSVDataStore {
 			for (const [stationId, stationData] of Object.entries(stationDict)) {
 				var row_data = [hour, this.nameMap[stationId], stationData.tapIn, stationData.tapOut]
 
-				row_data.push(...stationData.alightCount.getSevenFigureArray())
-				row_data.push(...stationData.boardCount.getSevenFigureArray())
-				row_data.push(...stationData.waitTime.getSevenFigureArray())
-				row_data.push(...stationData.stationCount.getSevenFigureArray())
+				row_data.push(...stationData.alightCount.getNineFigureArray())
+				row_data.push(...stationData.boardCount.getNineFigureArray())
+				row_data.push(...stationData.waitTime.getNineFigureArray())
+				row_data.push(...stationData.stationCount.getNineFigureArray())
 				lineData.push(row_data.join(","))
 			}
 			
@@ -148,7 +148,7 @@ class CSVDataStore {
 
 	writeTrainCSVString() {
 		var headers = ["hour", "stationName", "line", "direction"]
-		var sevenFigures = ["mean", "sd", "min", "q1", "median", "q3", "max"]
+		var sevenFigures = ["mean", "sd", "min", "q1", "median", "q3", "max", "count", "total"]
 		var stats = ["alightCount", "boardCount", "waitTime", "trainCount"]
 		for (const s of stats) {
 			for (const f of sevenFigures) {
@@ -163,10 +163,10 @@ class CSVDataStore {
 					for (const [direction, trainData] of Object.entries(directionDict)) {
 						var row_data = [hour, this.nameMap[stationId], line, direction]
 
-						row_data.push(...trainData.alightCount.getSevenFigureArray())
-						row_data.push(...trainData.boardCount.getSevenFigureArray())
-						row_data.push(...trainData.waitTime.getSevenFigureArray())
-						row_data.push(...trainData.trainCount.getSevenFigureArray())
+						row_data.push(...trainData.alightCount.getNineFigureArray())
+						row_data.push(...trainData.boardCount.getNineFigureArray())
+						row_data.push(...trainData.waitTime.getNineFigureArray())
+						row_data.push(...trainData.trainCount.getNineFigureArray())
 						lineData.push(row_data.join(","))
 					}
 				}

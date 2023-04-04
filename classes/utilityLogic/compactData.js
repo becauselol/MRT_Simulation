@@ -119,8 +119,8 @@ class StatCompact {
 		}
 	}
 
-	getSevenFigureArray() {
-		return [this.getMean(), this.getStd(), this.getMin(), this.q25(), this.getMedian(), this.q75(), this.getMax()]
+	getNineFigureArray() {
+		return [this.getMean(), this.getStd(), this.getMin(), this.q25(), this.getMedian(), this.q75(), this.getMax(), this.count, this.getSum()]
 	}
 }
 
