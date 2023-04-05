@@ -22,6 +22,7 @@ var dataStore = new DataStore()
 var csvDataStore = new CSVDataStore();
 var plotter = new Plotter()
 
+
 function init() {
 	metro.init("Singapore MRT")
 	processor.init()
@@ -31,13 +32,13 @@ function init() {
 
 	processor.constructMetroGraph(metro, drawer, spawnDataString)
 
-	for (const lineCode of Object.keys(edgesMap)) {
-		processor.addTrainsWithPeriod(metro, lineCode, 4, 900)
-	}
+	// for (const lineCode of Object.keys(edgesMap)) {
+	// 	processor.addTrainsWithPeriod(metro, lineCode, 4, 900)
+	// }
 
 	metro.getPathsFromStartStation();
-	metro.constructCommuterGraph();
-	metro.constructInterchangePaths();
+	// metro.constructCommuterGraph();
+	// metro.constructInterchangePaths();
 
 	
 	dataStore.init(metro)
@@ -47,6 +48,11 @@ function init() {
 	metro.sysTime = startHour * 60
 }
 
+function updateButton(){
+
+	document.getElementById("trainstn").innerHTML = "" ;
+	setButton2(dataStore)
+}
 
 function draw_map() {
 		  document.getElementById("time").textContent =
@@ -83,6 +89,7 @@ function draw_map() {
 function updateGraph(){
 	plotter.plotChosenLineWaitTimes("chartRed", dataStore, plotter.getChosenLine());
 }
+
 document.getElementById('select').addEventListener('change', updateGraph, false);
 
 function toggleSim() {
@@ -160,3 +167,6 @@ function downloadTrainRunData() {
 // Ready, set, go
 init()
 draw_map()
+setButton1(dataStore)
+setButton2(dataStore)
+document.getElementById('trainline').addEventListener('change', updateButton, false);

@@ -1,3 +1,6 @@
+/* bg colour */
+/*body {background-color: rgb(37, 37, 37);} */
+
 /* Style the tab */
 .tab {
   overflow: hidden;
@@ -50,41 +53,68 @@
 }
 
 
-/* slider for parameters */
-.slidecontainer {
+
+
+/* input for parameters */
+.inputcontainer {
   width: 25%;
   display :inline-block;
 }
 
-.slider {
-  -webkit-appearance: none;
+/* input text box */
+.input {
   width: 100%;
-  height: 15px;
-  border-radius: 5px;  
-  background: #d3d3d3;
-  outline: none;
-  opacity: 0.7;
-  -webkit-transition: .2s;
-  transition: opacity .2s;
+  max-width: 100px;
+  color: rgb(0, 0, 0);
+  height: 40px;
+  border: 1px solid rgb(0, 0, 0);
+  border-radius: 4px;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin-right: -15px;
+
 }
 
-.slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 25px;
-  height: 25px;
-  border-radius: 50%; 
-  background: #000000;
-  cursor: pointer;
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  opacity: 1;
+  background: white;
 }
 
-.slider::-moz-range-thumb {
-  width: 25px;
-  height: 25px;
-  border-radius: 50%;
-  background: #000000;
-  cursor: pointer;
+.number-wrapper {
+  position: relative;
+  z-index: 3;
+
 }
+
+.number-wrapper:after,
+.number-wrapper:before {
+  position: absolute;
+  right: 8px;
+  width: 10px;
+  height: 10px;
+  font-size: 10px;
+  pointer-events: none;
+  background-color: #ffffff;
+}
+
+.number-wrapper:after {
+  color: gray;
+  content: "\25B2";
+  transform: scale(2, 1);
+  top: -1px;
+}
+
+.number-wrapper:before {
+  color: gray;
+  content: "\25BC";
+  margin-bottom: 5px;
+  bottom: -.5em;
+  transform: scale(2, 1);
+}
+
+
 
 
 /* drop down filter */
