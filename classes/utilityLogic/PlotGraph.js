@@ -15,6 +15,14 @@ class Plotter {
     }
   }
 
+  getChosenLine(){
+    var select = document.getElementById('select');
+    var chosenLine = select.options[select.selectedIndex].text;
+    return chosenLine
+  }
+
+
+
   plotLineWaitTimes(plotId, dataStore, line_colour) {
     var plot_data = []
     var layout = {
@@ -27,7 +35,6 @@ class Plotter {
         },
         boxmode: 'group'
     };
-
     for (const [line, data] of Object.entries(dataStore.lineWaitTimes)) {
       var line_data ={
         "type": "box", 
@@ -49,7 +56,7 @@ class Plotter {
   }
 
   plotChosenLineWaitTimes(plotId, dataStore, line) {
-
+    
     var plot_data = []
     var layout = {
         boxmode: 'group',
@@ -79,6 +86,7 @@ class Plotter {
     }
 
     Plotly.newPlot(plotId, plot_data, layout)
+
   }
 
   plotTravelTimes(plotId, dataStore) {
