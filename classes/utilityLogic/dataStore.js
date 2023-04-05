@@ -87,6 +87,7 @@ class DataStore {
 		this.stationTrainCommuterCount = {}
 		this.lineWaitTimes = {}
 		this.lineStations = {}
+		this.nameMap = {}
 	}
 
 	init(metro) {
@@ -95,6 +96,7 @@ class DataStore {
 
 		console.debug("initializing data store")
 		for (const [stationId, station] of Object.entries(metro.stationDict)) {
+			this.nameMap[stationId] = station.name
 			this.stationCommuterCount[stationId] = new StationCommDF(stationId)
 			this.stationCommuterCount[stationId].addData(initStationCount)
 
@@ -119,6 +121,10 @@ class DataStore {
 			this.lineWaitTimes[lineCode] = new StatCompact()
 			this.lineStations[lineCode] = [...paths["FW"]]
 		}
+	}
+
+	getLineCodeArray() {
+		return Object.keys(this.lineStations)
 	}
 
 	updateTrainCount(trainCommCount) {

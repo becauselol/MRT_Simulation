@@ -80,12 +80,19 @@ function draw_map() {
 }
 
 
+//update graph
+function updateGraph(){
+	plotter.plotChosenLineWaitTimes("chartRed", dataStore, plotter.getChosenLine());
+}
+document.getElementById('select').addEventListener('change', updateGraph, false);
+
 function toggleSim() {
 	isRunning = !isRunning
 	console.log(`is running: ${isRunning}`)
     if (!isRunning) {
-        plotter.plotLineWaitTimes("chart1", dataStore)
-        plotter.plotChosenLineWaitTimes("chartRed", dataStore, "nel")
+		    plotter.filterBtn(dataStore)
+        plotter.plotLineWaitTimes("chart1", dataStore, processor.edgeColours)
+        //plotter.plotChosenLineWaitTimes("chartRed", dataStore, plotter.getChosenLine())
         plotter.plotChosenLineWaitTimes("chartPurple", dataStore, "ewl")
         plotter.plotTravelTimes("chartTravelTime", dataStore)
         plotter.initStationCommCount("chartstation1", dataStore, "station1")
@@ -93,6 +100,10 @@ function toggleSim() {
 		// plotter.initStationTrainCommCount("chartstation3", dataStore, "station3")
 		// plotter.initStationCommCount("chartstation4", dataStore, "station4")
 		// plotter.initStationCommCount("chartstation5", dataStore, "station5")
+		//plotter.updateGraph(plotter.plotChosenLineWaitTimes("chartRed", dataStore, plotter.getChosenLine()))
+
+	
+
     }
 }
 
