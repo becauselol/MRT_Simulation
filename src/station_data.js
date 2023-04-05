@@ -381,23 +381,41 @@ TE21,TE22,2`
 
 
 
-// var station_data = `Station1 red01,-100,0
-// Station 2 red02/pur02,0,0
-// Station 3 red03/pur03,100,0
-// Station 4 pur01,0,-100
-// Station 5 pur04,0,100`
+var station_data = `Station1 red01,-100,0
+Station 2 red02/pur02,0,0
+Station 3 red03/pur03,100,0
+Station 4 pur01,0,-100
+Station 5 pur04,0,100`
 
-// var travel_data = {
-// 	"pur": `pur01,pur02,2
-// pur02,pur03,2
-// pur03,pur04,2`,
+var travel_data = {
+	"pur": `pur01,pur02,2
+pur02,pur03,2
+pur03,pur04,2`,
 
-// 	"red": `red01,red02,2
-// red02,red03,2`
-// }
+	"red": `red01,red02,2
+red02,red03,2`
+}
 
-// var edgeColour = `red,red
-// pur,purple`
+var edgeColour = `red,red
+pur,purple`
+
+var stations = ["red01", "red02/pur02", "red03/pur03", "pur01", "pur04"]
+var spawnArr = []
+for (var hr = 5; hr < 24; hr++) {
+	for (const i of stations) {
+		for (const j of stations) {
+			if (i == j) {
+				continue
+			}
+			var rate = 60
+
+			var tempString = `${hr},${i},${j},${rate}`
+			spawnArr.push(tempString)
+		}
+	}
+}
+
+var spawnString = spawnArr.join("\n")
 
 // // not being used at the moment
 // train_wait_time = `red01,1

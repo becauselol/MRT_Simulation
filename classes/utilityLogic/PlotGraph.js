@@ -80,7 +80,7 @@ class Plotter {
         "lowerfence": [data.getMin()], 
         "upperfence": [data.getMax()], 
         "mean":[data.getMean()], 
-        "sd" : [data.getStd()] };
+        "sd" : [data.getStd()]};
 
       plot_data.push(line_data); 
     }
