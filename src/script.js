@@ -17,37 +17,36 @@ var timestep = 1/fps;
 var metro = new Metro("Singapore MRT");
 var drawer = new MapDrawer(ctx, maxX, maxY);
 
-var midX = 200
-var midY = 200
-
-var processor = new InputProcessor()
-processor.parseStationString(stationString)
-processor.parseEdgeStringDict(edgesMap)
-processor.parseEdgeColours(edgeColourString)
-
-processor.constructMetroGraph(metro, drawer, spawnDataString)
-
-for (const lineCode of Object.keys(edgesMap)) {
-	if (lineCode == "ewlA") {
-		processor.addTrainsWithPeriod(metro, lineCode, 2, 900)
-		continue
-	}
-	processor.addTrainsWithPeriod(metro, lineCode, 4, 900)
-}
-
-metro.getPathsFromStartStation();
-metro.constructCommuterGraph();
-metro.constructInterchangePaths();
-
 var dataStore = new DataStore()
-dataStore.init(metro)
 
-var csvDataStore = new CSVDataStore(metro.stationDict, startHour, endHour);
-
+var csvDataStore = new CSVDataStore();
 var plotter = new Plotter()
 
-metro.hour = startHour
-metro.sysTime = startHour * 60
+function init() {
+	metro.init("Singapore MRT")
+	var processor = new InputProcessor()
+	processor.parseStationString(stationString)
+	processor.parseEdgeStringDict(edgesMap)
+	processor.parseEdgeColours(edgeColourString)
+
+	processor.constructMetroGraph(metro, drawer, spawnDataString)
+
+	for (const lineCode of Object.keys(edgesMap)) {
+		processor.addTrainsWithPeriod(metro, lineCode, 4, 900)
+	}
+
+	metro.getPathsFromStartStation();
+	metro.constructCommuterGraph();
+	metro.constructInterchangePaths();
+
+	
+	dataStore.init(metro)
+	csvDataStore.init(metro.stationDict, startHour, endHour)
+
+	metro.hour = startHour
+	metro.sysTime = startHour * 60
+}
+
 
 function draw_map() {
 		  document.getElementById("time").textContent =
@@ -90,8 +89,8 @@ function toggleSim() {
 	isRunning = !isRunning
 	console.log(`is running: ${isRunning}`)
     if (!isRunning) {
-		    plotter.filterBtn(dataStore)
-        plotter.plotLineWaitTimes("chart1", dataStore, processor.edgeColours)
+		plotter.filterBtn(dataStore)
+        plotter.plotLineWaitTimes("chart1", dataStore, metro.metroLineColours)
         //plotter.plotChosenLineWaitTimes("chartRed", dataStore, plotter.getChosenLine())
         plotter.plotChosenLineWaitTimes("chartPurple", dataStore, "ewl")
         plotter.plotTravelTimes("chartTravelTime", dataStore)
@@ -101,14 +100,11 @@ function toggleSim() {
 		// plotter.initStationCommCount("chartstation4", dataStore, "station4")
 		// plotter.initStationCommCount("chartstation5", dataStore, "station5")
 		//plotter.updateGraph(plotter.plotChosenLineWaitTimes("chartRed", dataStore, plotter.getChosenLine()))
-
-	
-
     }
 }
 
 function resetSim() {
-
+	init()
 }
 
 function downloadStationRunData() {
@@ -159,4 +155,5 @@ function downloadTrainRunData() {
 // }
 
 // Ready, set, go
+init()
 draw_map()

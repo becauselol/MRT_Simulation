@@ -177,7 +177,7 @@ class InputProcessor {
 			metroGraph.addStation(station)
 		}
 
-		metro.metroLineStartStation = this.metroLineStartStation
+		metroGraph.metroLineStartStation = this.metroLineStartStation
 		metroGraph.metroLineColours = this.edgeColours
 	}
 

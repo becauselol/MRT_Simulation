@@ -1,5 +1,9 @@
 class Metro {
 	constructor(name) {
+		this.init(name)
+	}
+
+	init(name) {
 		this.sysTime = 0;
 		this.hour = 0;
 		this.name = name;
