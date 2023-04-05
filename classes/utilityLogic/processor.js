@@ -1,5 +1,9 @@
 class InputProcessor {
 	constructor() {
+		this.init()
+	}
+
+	init() {
 		this.edgeMap = {}
 		this.stationList = []
 		this.stationDict = {}

@@ -16,7 +16,7 @@ var timestep = 1/fps;
 //intiialize graph and drawer
 var metro = new Metro("Singapore MRT");
 var drawer = new MapDrawer(ctx, maxX, maxY);
-
+var processor = new InputProcessor()
 var dataStore = new DataStore()
 
 var csvDataStore = new CSVDataStore();
@@ -24,7 +24,7 @@ var plotter = new Plotter()
 
 function init() {
 	metro.init("Singapore MRT")
-	var processor = new InputProcessor()
+	processor.init()
 	processor.parseStationString(stationString)
 	processor.parseEdgeStringDict(edgesMap)
 	processor.parseEdgeColours(edgeColourString)
@@ -104,6 +104,9 @@ function toggleSim() {
 }
 
 function resetSim() {
+	// update the variables
+
+	// init the functions
 	init()
 }
 
