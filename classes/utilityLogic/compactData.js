@@ -120,7 +120,15 @@ class StatCompact {
 	}
 
 	getNineFigureArray() {
-		return [this.getMean(), this.getStd(), this.getMin(), this.q25(), this.getMedian(), this.q75(), this.getMax(), this.count, this.getSum()]
+		var min = this.getMin()
+		if (min == Number.MAX_SAFE_INTEGER) {
+			min = 0
+		}
+		var max = this.getMax()
+		if (max == Number.MIN_SAFE_INTEGER) {
+			max = 0
+		}
+		return [this.getMean(), this.getStd(), min, this.q25(), this.getMedian(), this.q75(), max, this.count, this.getSum()]
 	}
 }
 
