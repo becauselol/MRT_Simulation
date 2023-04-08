@@ -142,14 +142,13 @@ class Metro {
 					chosen_paths[`${pairs[0]}.${pairs[1]}`] = this.commuterGraph.commuterPaths[`${i}.${pairs[0]}`][`${j}.${pairs[1]}`]
 				}
 				// console.debug(chosen_paths)
-				var interchangePaths = []
+
 				for (const [key, possible_paths] of Object.entries(chosen_paths)) {
 					var chosenLineCodes = key.split(".")
 
 					for (const path of possible_paths) {
 						var direction = this.getDirection(chosenLineCodes[0], i, path[1].split(".")[0])
 
-						var pathDetails = {"board": [], "alight": []}
 						var board = `${chosenLineCodes[0]}_${direction}`
 						var alight = undefined
 

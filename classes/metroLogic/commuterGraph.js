@@ -1,3 +1,4 @@
+
 class CommuterNode {
 	constructor(originalId, id, code) {
 		this.originalId = originalId
