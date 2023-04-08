@@ -127,3 +127,56 @@ select{
 select:focus{
   outline:none;
 }
+
+/* New line style */
+
+.newlinebox {
+  width: 350px;
+  padding: 30px;
+  border: 2px solid gray;
+  margin: 30px;
+  height: 100px;
+  justify-content: space-between;
+  flex-direction: column;
+  display: none;
+}
+
+.newlineboxnxt {
+  width: 350px;
+  padding: 30px;
+  border: 2px solid gray;
+  margin: 30px;
+  height: 100px;
+  justify-content: space-between;
+  flex-direction: column;
+  display: none;
+}
+
+.textinput{
+  margin: 5px 5px;
+}
+
+
+.container {
+  justify-content: space-between;
+  flex-direction: column;
+
+  display: inline-flex;
+}
+
+.right{
+  
+  justify-content: flex-end;
+  display: flex;
+}
+
+.container .next {
+  justify-content: flex-end;
+  display: inline-flex;
+
+}
+.container .previous {
+  justify-content: flex-end;
+  display: inline-flex;
+}
+

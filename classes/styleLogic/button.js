@@ -35,5 +35,20 @@ function setButton2(dataStore){
 
 }
 
+function replace( hide, show ) {
+    document.getElementById(hide).style.display="none";
+    document.getElementById(show).style.display="flex";
+  }
 
+
+function newLine() {
+    var x = document.getElementById("newline");
+    console.log(x.style.display)
+    if (x.style.display === "none") {
+      x.style.display = "flex";
+    } else {
+      x.style.display = "none";
+
+    }
+  }
 

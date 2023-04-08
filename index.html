@@ -44,10 +44,47 @@
 	<button class="button" onclick="downloadTrainRunData()">Download Train Data</button>
 	<!-- <button class="button" onclick="downloadRunData()">Download All Data</button> too much data to handle--> 
 	
+	<!-- Create new line -->
+	<button onclick="newLine()">Add New Line</button>
+
+	<div class = "newlinebox" id = "newline">
+
+		<label class = "textinput" for="name">Name of new line:</label>
+		<input type="text" id="name" name="name" placeholder="not an existing line">
+		<label class = "textinput" for="colour">Colour of new line:</label>
+		<input  type="text" id="colour" name="colour" placeholder="not an existing colour">
+
+		<div class="container">
+			<div class = "right">
+			  <button class="previous" type="button">Previous</button>
+			  <button class="next" type="button"  name="next" onclick = "replace('newline', 'newlineNxt')" >Next</button>
+
+			</div>
+		</div>
+
+
+	</div>
+
+
+	<div class = "newlineboxnxt" id = "newlineNxt">
+
+		<label class = "textinput" for="frmstn">From station:</label>
+		<input type="text" id="frmstn" name="frmstn" >
+		<label class = "textinput" for="tostn">To station:</label>
+		<input  type="text" id="tostn" name="tostn">
+
+		<div class="container">
+			<div class = "right">
+			  <button class="previous" type="button" onclick = "replace('newlineNxt', 'newline')">Previous</button>
+			  <button class="next" type="button"  name="next">Next</button>
+
+			</div>
+		</div>
+
+	</div>
 	
+
 	<h3 style="position:relative;top:80%; font-size:25px">Simulation Parameters</h3>
-
-
 
 	<div class="inputcontainer">
 		<label for="trainline">Choose a line:</label>
