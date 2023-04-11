@@ -21,7 +21,10 @@ class Plotter {
     return chosenLine
   }
 
-
+  layout= {
+    plot_bgcolor:"black",
+    paper_bgcolor:"#FFF3"
+}
 
   plotLineWaitTimes(plotId, dataStore, line_colour) {
     var plot_data = []
@@ -33,7 +36,9 @@ class Plotter {
           title: 'waiting time',
           zeroline: false
         },
-        boxmode: 'group'
+        boxmode: 'group',
+        plot_bgcolor:"#E5E4E2",
+        paper_bgcolor:"#E5E4E2"
     };
     for (const [line, data] of Object.entries(dataStore.lineWaitTimes)) {
       var line_data ={

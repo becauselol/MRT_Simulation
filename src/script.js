@@ -13,6 +13,17 @@ var maxY = 540;
 var fps = 10; // frames per real time second // FPS needs to be at least 5 and all waitTimes of trains and edge weights must be at least 1
 var timestep = 1/fps;
 
+const trainCapacity = document.getElementById("traincap");
+const interArrival = document.getElementById("arrtime");
+const spawnRate = document.getElementById("spawnrate");
+var inputPara = {trainCap:0, interArrival: 0, spawnRate :0 };
+
+const inputFrom = document.getElementById("frmstn");
+const inputTo = document.getElementById("tostn");
+var newLineArr = []
+var allNewLines = {}
+
+
 //intiialize graph and drawer
 var metro = new Metro("Singapore MRT");
 var drawer = new MapDrawer(ctx, maxX, maxY);
@@ -32,13 +43,13 @@ function init() {
 
 	processor.constructMetroGraph(metro, drawer, spawnDataString)
 
-	// for (const lineCode of Object.keys(edgesMap)) {
-	// 	processor.addTrainsWithPeriod(metro, lineCode, 4, 900)
-	// }
+	for (const lineCode of Object.keys(edgesMap)) {
+		processor.addTrainsWithPeriod(metro, lineCode, 4, 900)
+	}
 
 	metro.getPathsFromStartStation();
-	// metro.constructCommuterGraph();
-	// metro.constructInterchangePaths();
+	metro.constructCommuterGraph();
+	metro.constructInterchangePaths();
 
 	
 	dataStore.init(metro)
@@ -46,12 +57,58 @@ function init() {
 
 	metro.hour = startHour
 	metro.sysTime = startHour * 60
+	
+
+	// set parameters to initial
+	trainCapacity.value = 0;
+	interArrival.value = 0;
+	spawnRate.value = 0;
+	
 }
 
 function updateButton(){
 
 	document.getElementById("trainstn").innerHTML = "" ;
 	setButton2(dataStore)
+}
+
+function updateParameters(){
+	console.log(trainCapacity.value, interArrival.value, spawnRate.value);
+	inputPara.interArrival = interArrival.value;
+	inputPara.spawnRate = spawnRate.value;
+	inputPara.trainCap = trainCapacity.value;
+	console.log(inputPara)
+
+}
+
+function newLineUpdate(){
+	// when next clicked save content
+	var stn_i1 = document.getElementById("frmstn").value;
+	var stn_i2 = document.getElementById("tostn").value;
+	console.log(stn_i1, stn_i2);
+
+	newLineArr.push([stn_i1,stn_i2]);
+	console.log(newLineArr);
+	// refresh input
+	inputFrom.value = "";
+	inputTo.value = "";
+
+}
+
+function saveLine(){
+	// take arr and convert to string
+	//Make new line key
+	allNewLines[getLineName()] = null
+	for (var stnPair in newLineArr) {
+		allNewLines.push(stnPair.join(","))
+	}
+	// add to main dictionary
+  }
+
+function getLineName(){
+	 var newLineName = document.getElementById("name").value
+
+	 return newLineName
 }
 
 function draw_map() {
@@ -112,6 +169,7 @@ function toggleSim() {
 
 function resetSim() {
 	// update the variables
+	// document.getElementById("traincap").value = '';
 
 	// init the functions
 	init()
@@ -165,8 +223,9 @@ function downloadTrainRunData() {
 // }
 
 // Ready, set, go
-init()
-draw_map()
-setButton1(dataStore)
-setButton2(dataStore)
+init();
+draw_map();
+setButton1(dataStore);
+setButton2(dataStore);
 document.getElementById('trainline').addEventListener('change', updateButton, false);
+document.getElementById('save').addEventListener("click", saveLine, false);;

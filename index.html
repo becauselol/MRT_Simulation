@@ -16,153 +16,163 @@
 
 </head>
 <!-- Set class to official for more formal font; unofficial for informal font -->
-<body class="official bgColor0">
-	<p id="time"></p>
-	<!-- Tab links -->
-	<div class="tab">
-		
-		<button class="tablinks" onclick="tabswitch(event, 'MRT Map')" id = "defaultOpen">MRT Map</button>
-		<button class="tablinks" onclick="tabswitch(event, 'Edge Map')">Edge Map</button>
+<body>
 
-	</div>
-	
-	<!-- Tab content -->
-	<div id="MRT Map" class="tabcontent">
+	<div class = "wrapper">
+		<p id="time"></p>
+		<!-- Tab links -->
+		<!-- <div class="tab">
+			
+			<button class="tablinks" onclick="tabswitch(event, 'MRT Map')" id = "defaultOpen">MRT Map</button>
+			<button class="tablinks" onclick="tabswitch(event, 'Edge Map')">Edge Map</button>
+
+		</div> -->
+		
+		<!-- Tab content -->
 		<h3>MRT Map</h3>
-		<canvas id="myCanvas" height="560" width="980">
-		</canvas>
-	</div>
-	
-	<div id="Edge Map" class="tabcontent">
-		<h3>Edge Map</h3>
-		<canvas id="heatCanvas" height="560" width="980">
-		</canvas>
-	</div>
-	<button class="button" onclick="toggleSim()">Start/Pause</button>
-	<button class="button" onclick="resetSim()">Reset</button>
-	<button class="button" onclick="downloadStationRunData()">Download Station Data</button>
-	<button class="button" onclick="downloadTrainRunData()">Download Train Data</button>
-	<!-- <button class="button" onclick="downloadRunData()">Download All Data</button> too much data to handle--> 
-	
-	<!-- Create new line -->
-	<button onclick="newLine()">Add New Line</button>
+		<div id="MRT Map" class="mrtcontainer">
+			
+			<canvas id="myCanvas" class = "canvas" height="620" width="1000" >
+			</canvas>
+		</div>
+		
+		<!-- <div id="Edge Map" class="tabcontent">
+			<h3>Edge Map</h3>
+			<canvas id="heatCanvas" height="560" width="980">
+			</canvas>
+		</div> -->
+		<button class="button" onclick="toggleSim()">Start/Pause</button>
+		<button class="button" onclick="resetSim()">Reset</button>
+		<button class="button" onclick="downloadStationRunData()">Download Station Data</button>
+		<button class="button" onclick="downloadTrainRunData()">Download Train Data</button>
 
-	<div class = "newlinebox" id = "newline">
+		<!-- <button class="button" onclick="downloadRunData()">Download All Data</button> too much data to handle--> 
+		
+		<!-- Create new line -->
+		<button class ="button" onclick="newLine()">Add New Line</button>
 
-		<label class = "textinput" for="name">Name of new line:</label>
-		<input type="text" id="name" name="name" placeholder="not an existing line">
-		<label class = "textinput" for="colour">Colour of new line:</label>
-		<input  type="text" id="colour" name="colour" placeholder="not an existing colour">
+		<div class = "newlinebox" id = "newline">
 
-		<div class="container">
-			<div class = "right">
-			  <button class="previous" type="button">Previous</button>
-			  <button class="next" type="button"  name="next" onclick = "replace('newline', 'newlineNxt')" >Next</button>
+			<label class = "textinput" for="name">Name of new line:</label>
+			<input type="text" id="name" name="name" placeholder="not an existing line">
+			<label class = "textinput" for="colour">Colour of new line:</label>
+			<input  type="text" id="colour" name="colour" placeholder="not an existing colour">
 
+			<div class="container">
+				<div class = "right">
+					
+				<button class="previous" type="button">Previous</button>
+				<button class="next" type="button"  name="next" onclick = "replace('newline', 'newlineNxt')" >Next</button>
+
+				</div>
 			</div>
+
+
 		</div>
 
 
-	</div>
+		<div class = "newlineboxnxt" id = "newlineNxt">
+			<b id = "linename"></b>
+			<label class = "textinput" for="frmstn">From station:</label>
+			<input type="text" id="frmstn" name="frmstn" >
+			<label class = "textinput" for="tostn">To station:</label>
+			<input  type="text" id="tostn" name="tostn">
 
+			<div class="container">
+				<div class = "right">
+				<button class="previous" type="button" id = "previous" onclick = "replace('newlineNxt', 'newline')">Previous</button>
+				<button class="next" type="button"  id="next" onclick = "newLineUpdate()">Next</button>
+				<button class = "save" type = "button" id = "save" >Save</button>
 
-	<div class = "newlineboxnxt" id = "newlineNxt">
-
-		<label class = "textinput" for="frmstn">From station:</label>
-		<input type="text" id="frmstn" name="frmstn" >
-		<label class = "textinput" for="tostn">To station:</label>
-		<input  type="text" id="tostn" name="tostn">
-
-		<div class="container">
-			<div class = "right">
-			  <button class="previous" type="button" onclick = "replace('newlineNxt', 'newline')">Previous</button>
-			  <button class="next" type="button"  name="next">Next</button>
-
+				</div>
 			</div>
+
+		</div>
+		
+
+		<h3 style="position:relative;top:80%; font-size:25px">Simulation Parameters</h3>
+
+		<div class="inputcontainer">
+			<label for="trainline">Choose a line:</label>
+			<select id = "trainline" ></select>
+			<h4>Interarrival time of trains</h4>
+			
+			
+			<span class='number-wrapper'>
+				<input type="number" class="input" id = "arrtime">
+			</span>
+
+			
+		</div>
+		<div class="inputcontainer">
+			<h4>Capacity of trains</h4>
+			<span class='number-wrapper'>
+				<input type="number" class="input" id = "traincap">
+			</span>
+
+		</div>
+		<div class="inputcontainer">
+			<label for="trainstn">Choose a station:</label>
+			<select id = "trainstn" ></select>
+			<h4>Spawn rate at stations</h4>
+			<span class='number-wrapper'>
+				<input type="number" class="input" id = "spawnrate">
+			</span>
+
+		</div>
+		<button class="button" onclick="updateParameters()">Update</button>
+		
+		<h3 style="position:relative;top:90%; font-size:25px">Graphs</h3>
+	
+
+
+
+	
+
+		<!-- Add in Charts -->
+
+		<div>
+			<!-- filter Charts -->
+			<label for="select">Choose a line to plot:</label>
+			<select id = "select" ></select>
+			<div class="chart" id="chart1"></div>
+			<div class="chart" id="chartRed"></div>
+			<div class="chart" id="chartPurple"></div>
+			<div class="chart" id="chartTravelTime"></div>
+			<div class="chart" id="chartstation1"></div>
+			<div class="chart" id="chartstation2"></div>
+			<div class="chart" id="chartstation3"></div>
+			<div class="chart" id="chartstation4"></div>
+			<div class="chart" id="chartstation5"></div>
 		</div>
 
-	</div>
-	
-
-	<h3 style="position:relative;top:80%; font-size:25px">Simulation Parameters</h3>
-
-	<div class="inputcontainer">
-		<label for="trainline">Choose a line:</label>
-		<select id = "trainline" ></select>
-		<h4>Interarrival time of trains</h4>
 		
+
+		<!-- Anything below this line should be a popup window or dialog or a late-loading library -->
+
+		<script type="text/javascript" src="classes/utilityLogic/processor.js"></script>
+		<script type="text/javascript" src="classes/utilityLogic/compactData.js"></script>
+		<script type="text/javascript" src="classes/utilityLogic/drawer.js"></script>
+		<script type="text/javascript" src="classes/utilityLogic/dataStore.js"></script>
+		<script type="text/javascript" src="classes/utilityLogic/modifiedDataStore.js"></script>
+		<script type="text/javascript" src="classes/utilityLogic/PlotGraph.js"></script>
+		<script type="text/javascript" src="classes/utilityLogic/expDist.js"></script>
+
+		<script type="text/javascript" src="classes/metroLogic/commuterGraph.js"></script>
+		<script type="text/javascript" src="classes/metroLogic/commuter.js"></script>
+		<script type="text/javascript" src="classes/metroLogic/station.js"></script>
+		<script type="text/javascript" src="classes/metroLogic/train.js"></script>
+		<script type="text/javascript" src="classes/metroLogic/metro.js"></script>
+
+		<script type="text/javascript" src="classes/styleLogic/mrtTab.js"></script>
+		<script type="text/javascript" src="classes/styleLogic/button.js"></script>
+
+
+		<script type="text/javascript" src="src/station_data.js"></script>
+		<script type="text/javascript" src="src/spawn_data.js"></script>
+		<script type="text/javascript" src="src/script.js"></script>
 		
-		<span class='number-wrapper' id = "arrtime">
-			  <input type="number" class="input" id = "arrtime">
-		</span>
-
-		
+		<!-- Anything below this line should be a popup window or dialog or a late-loading library -->
 	</div>
-	<div class="inputcontainer">
-		<h4>Capacity of trains</h4>
-		<span class='number-wrapper'>
-			<input type="number" class="input" id = "traincap">
-	  	</span>
-
-	</div>
-	<div >
-		<label for="trainstn">Choose a station:</label>
-		<select id = "trainstn" ></select>
-		<h4>Spawn rate at stations</h4>
-		<span class='number-wrapper'>
-			<input type="number" class="input" id = "spawnrate">
-	  	</span>
-
-	</div>
-	  
-	<h3 style="position:relative;top:90%; font-size:25px">Graphs</h3>
-	</div>
-
-	<!-- filter Charts -->
-	<label for="select">Choose a line to plot:</label>
-	<select id = "select" ></select>
-
-	</div>
-
-	<!-- Add in Charts -->
-
-
-	<div id="chart1"></div>
-	<div id="chartRed"></div>
-	<div id="chartPurple"></div>
-	<div id="chartTravelTime"></div>
-	<div id="chartstation1"></div>
-	<div id="chartstation2"></div>
-	<div id="chartstation3"></div>
-	<div id="chartstation4"></div>
-	<div id="chartstation5"></div>
-	
-
-	<!-- Anything below this line should be a popup window or dialog or a late-loading library -->
-
-	<script type="text/javascript" src="classes/utilityLogic/processor.js"></script>
-	<script type="text/javascript" src="classes/utilityLogic/compactData.js"></script>
-	<script type="text/javascript" src="classes/utilityLogic/drawer.js"></script>
-	<script type="text/javascript" src="classes/utilityLogic/dataStore.js"></script>
-	<script type="text/javascript" src="classes/utilityLogic/modifiedDataStore.js"></script>
-	<script type="text/javascript" src="classes/utilityLogic/PlotGraph.js"></script>
-	<script type="text/javascript" src="classes/utilityLogic/expDist.js"></script>
-
-	<script type="text/javascript" src="classes/metroLogic/commuterGraph.js"></script>
-	<script type="text/javascript" src="classes/metroLogic/commuter.js"></script>
-	<script type="text/javascript" src="classes/metroLogic/station.js"></script>
-	<script type="text/javascript" src="classes/metroLogic/train.js"></script>
-	<script type="text/javascript" src="classes/metroLogic/metro.js"></script>
-
-	<script type="text/javascript" src="classes/styleLogic/mrtTab.js"></script>
-	<script type="text/javascript" src="classes/styleLogic/button.js"></script>
-
-
-	<script type="text/javascript" src="src/station_data.js"></script>
-	<script type="text/javascript" src="src/spawn_data.js"></script>
-	<script type="text/javascript" src="src/script.js"></script>
-	
-	<!-- Anything below this line should be a popup window or dialog or a late-loading library -->
-
 </body>
 </html>
