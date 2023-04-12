@@ -5,7 +5,7 @@ body {
 } 
 
 * {
-  font-family: 'Helvetica Neue', sans-serif;
+  font-family: 'Helvetica', 'verdana', 'Trebuchet MS', sans-serif;
 }
 
 .wrapper {
@@ -53,12 +53,39 @@ body {
 } */
 
 .mrtcontainer {
-  outline-style: solid;
+  border-style: solid;
   justify-content: center;
   display: flex;
-
+  background-image: url('singapore.png'); 
+  background-repeat: no-repeat;
+  background-size: 1100px 1000px;
+  background-position: center;
   
 }
+
+.mrtheader{
+    padding: 2px;
+    text-align: left;
+    background: #343434;
+    color: white;
+    margin:0 0 0 0;
+    border-style: solid;
+    border-bottom: 0;
+    font-size: 20px;
+    display:relative;
+
+
+
+}
+
+img {
+  width:12%;
+  float: left;
+  margin-top:20px;
+  margin-bottom:0px;
+  margin-left: 10px;
+}
+
 
 .canvas {
   padding: 0;
@@ -163,7 +190,7 @@ select:focus{
 
 /* New line style */
 
-.newlinebox {
+/* .newlinebox {
   width: 350px;
   padding: 30px;
   border: 2px solid gray;
@@ -171,16 +198,16 @@ select:focus{
   justify-content: space-between;
   flex-direction: column;
   display: none;
-}
+} */
 
 .newlineboxnxt {
   width: 350px;
   padding: 30px;
-  border: 2px solid gray;
   margin: 30px;
   justify-content: space-between;
   flex-direction: column;
   display: none;
+
 }
 
 .textinput{
@@ -249,16 +276,70 @@ select:focus{
 .button {
   margin-top: 20px;
   transition-duration: 0.4s;
-  border-radius: 4px;
+  border-radius: 6px;
+  border-color: #131313;
+  ;
   background-color: #131313;
   color: white;
+  padding: 4px;
   }
   
   .button:hover {
-    background-color: #a8a9a8; 
-    color: white;
+    background-color: #c0c2c0; 
+    color: black;
   }
 
   .chart{
     margin-top: 10px;
+    border-style: solid;
+    width: min-content;
+    margin-left: auto;
+    margin-right: auto;
+    display:flex;
   }
+
+  /* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 4; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  /* overflow: auto; /*Enable scroll if needed*/
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #212121;
+  margin: 0 auto;
+  padding: 30px;
+  border: 4px solid #505050;
+  border-radius: 10px;
+  color: white;
+  width: 40%;
+  height: auto;
+  
+  /* flex-direction: column; */
+
+
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}

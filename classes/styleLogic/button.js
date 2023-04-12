@@ -45,7 +45,7 @@ function replace( hide, show ) {
 function newLine() {
     var x = document.getElementById("newline");
     console.log(x.style.display)
-    if (x.style.display === "none") {
+    if (x.style.display == "none") {
       x.style.display = "flex";
     } else {
       x.style.display = "none";

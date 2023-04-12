@@ -20,6 +20,7 @@ var inputPara = {trainCap:0, interArrival: 0, spawnRate :0 };
 
 const inputFrom = document.getElementById("frmstn");
 const inputTo = document.getElementById("tostn");
+const inputTime = document.getElementById("timeT");
 var newLineArr = []
 var allNewLines = {}
 
@@ -63,6 +64,15 @@ function init() {
 	trainCapacity.value = 0;
 	interArrival.value = 0;
 	spawnRate.value = 0;
+
+	// init graphs
+	plotter.filterBtn(dataStore)
+	plotter.filterBtnstn(dataStore)
+	plotter.plotLineWaitTimes("chart1", dataStore, metro.metroLineColours);
+	plotter.plotChosenLineWaitTimes("chart2", dataStore, plotter.getChosenLine());
+	plotter.plotTravelTimes("chartTravelTime", dataStore);
+	plotter.initStationCommCount("chartstation1", dataStore, "station1");
+	plotter.initStationCommCount("chartstation2", dataStore, "station2");
 	
 }
 
@@ -85,24 +95,38 @@ function newLineUpdate(){
 	// when next clicked save content
 	var stn_i1 = document.getElementById("frmstn").value;
 	var stn_i2 = document.getElementById("tostn").value;
-	console.log(stn_i1, stn_i2);
+	var time = document.getElementById("timeT").value;
 
-	newLineArr.push([stn_i1,stn_i2]);
+	console.log(stn_i1, stn_i2, time);
+
+	newLineArr.push([stn_i1,stn_i2, time]);
 	console.log(newLineArr);
 	// refresh input
 	inputFrom.value = "";
 	inputTo.value = "";
+	inputTime.value = "";
 
 }
 
 function saveLine(){
 	// take arr and convert to string
 	//Make new line key
-	allNewLines[getLineName()] = null
-	for (var stnPair in newLineArr) {
-		allNewLines.push(stnPair.join(","))
+	var lineName = getLineName()
+	var colour = document.getElementById("colour").value
+
+	allNewLines[lineName] = []
+	console.log(newLineArr)
+	allNewLines[lineName].push(colour)
+	for (const stnPair of newLineArr) {
+
+
+		allNewLines[lineName].push(stnPair.join(","))
+		console.log(allNewLines)
 	}
+	newLineArr = []
 	// add to main dictionary
+	allNewLines[lineName] = allNewLines[lineName].join("\n")
+	console.log(allNewLines[lineName])
   }
 
 function getLineName(){
@@ -110,6 +134,8 @@ function getLineName(){
 
 	 return newLineName
 }
+
+
 
 function draw_map() {
 		  document.getElementById("time").textContent =
@@ -144,26 +170,23 @@ function draw_map() {
 
 //update graph
 function updateGraph(){
-	plotter.plotChosenLineWaitTimes("chartRed", dataStore, plotter.getChosenLine());
+	plotter.plotChosenLineWaitTimes("chart2", dataStore, plotter.getChosenLine());
 }
 
-document.getElementById('select').addEventListener('change', updateGraph, false);
+// document.getElementById('select').addEventListener('change', updateGraph, false);
 
 function toggleSim() {
 	isRunning = !isRunning
 	console.log(`is running: ${isRunning}`)
     if (!isRunning) {
-		plotter.filterBtn(dataStore)
-        plotter.plotLineWaitTimes("chart1", dataStore, metro.metroLineColours)
-        //plotter.plotChosenLineWaitTimes("chartRed", dataStore, plotter.getChosenLine())
-        plotter.plotChosenLineWaitTimes("chartPurple", dataStore, "ewl")
-        plotter.plotTravelTimes("chartTravelTime", dataStore)
-        plotter.initStationCommCount("chartstation1", dataStore, "station1")
-		plotter.initStationCommCount("chartstation2", dataStore, "station2")
+		updateGraph();
+        plotter.plotLineWaitTimes("chart1", dataStore, metro.metroLineColours);
+        plotter.plotTravelTimes("chartTravelTime", dataStore);
+        plotter.initStationCommCount("chartstation1", dataStore, "station1");
+		plotter.initStationCommCount("chartstation2", dataStore, "station2");
 		// plotter.initStationTrainCommCount("chartstation3", dataStore, "station3")
 		// plotter.initStationCommCount("chartstation4", dataStore, "station4")
 		// plotter.initStationCommCount("chartstation5", dataStore, "station5")
-		//plotter.updateGraph(plotter.plotChosenLineWaitTimes("chartRed", dataStore, plotter.getChosenLine()))
     }
 }
 

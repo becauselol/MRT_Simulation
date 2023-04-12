@@ -29,7 +29,11 @@
 		</div> -->
 		
 		<!-- Tab content -->
-		<h3>MRT Map</h3>
+		<div class="mrtheader">
+			<img src ="styles/logo.png">
+			<h3>MRT Map</h3>
+		</div>
+		
 		<div id="MRT Map" class="mrtcontainer">
 			
 			<canvas id="myCanvas" class = "canvas" height="620" width="1000" >
@@ -49,45 +53,56 @@
 		<!-- <button class="button" onclick="downloadRunData()">Download All Data</button> too much data to handle--> 
 		
 		<!-- Create new line -->
-		<button class ="button" onclick="newLine()">Add New Line</button>
+		<button class ="button" id="newlinebtn">Add New Line</button>
 
-		<div class = "newlinebox" id = "newline">
+		<!-- The Modal -->
+		<div id="myModal" class="modal">
 
-			<label class = "textinput" for="name">Name of new line:</label>
-			<input type="text" id="name" name="name" placeholder="not an existing line">
-			<label class = "textinput" for="colour">Colour of new line:</label>
-			<input  type="text" id="colour" name="colour" placeholder="not an existing colour">
+			<!-- Modal content -->
+			<div class="modal-content">
+				<span class="close" >&times;</span>
+				
+				<div class = "newlineboxnxt" id = "newline">
 
-			<div class="container">
-				<div class = "right">
-					
-				<button class="previous" type="button">Previous</button>
-				<button class="next" type="button"  name="next" onclick = "replace('newline', 'newlineNxt')" >Next</button>
-
+					<label class = "textinput" for="name">Name of new line:</label>
+					<input type="text" id="name" name="name" placeholder="not an existing line">
+					<label class = "textinput" for="colour">Colour of new line:</label>
+					<input  type="text" id="colour" name="colour" placeholder="not an existing colour">
+		
+					<div class="container">
+						<div class = "right">
+						<button class="next" type="button"  name="next" onclick = "replace('newline', 'newlineNxt')" >Next</button>
+		
+						</div>
+					</div>
+		
+		
+				</div>
+		
+		
+				<div class = "newlineboxnxt" id = "newlineNxt">
+					<b id = "linename"></b>
+					<label class = "textinput" for="frmstn">From station:</label>
+					<input type="text" id="frmstn" name="frmstn" >
+					<label class = "textinput" for="tostn">To station:</label>
+					<input  type="text" id="tostn" name="tostn">
+					<label class = "textinput" for="timeT">Time:</label>
+					<input  type="text" id="timeT" name="timeT">
+		
+					<div class="container">
+						<div class = "right">
+						<button class="next" type="button"  id="next" onclick = "newLineUpdate()">Next</button>
+						<button class = "save" type = "button" id = "save" onclick = "newLineUpdate();replace('newlineNxt', 'newline')">Save</button>
+		
+						</div>
+					</div>
+		
 				</div>
 			</div>
 
-
 		</div>
 
-
-		<div class = "newlineboxnxt" id = "newlineNxt">
-			<b id = "linename"></b>
-			<label class = "textinput" for="frmstn">From station:</label>
-			<input type="text" id="frmstn" name="frmstn" >
-			<label class = "textinput" for="tostn">To station:</label>
-			<input  type="text" id="tostn" name="tostn">
-
-			<div class="container">
-				<div class = "right">
-				<button class="previous" type="button" id = "previous" onclick = "replace('newlineNxt', 'newline')">Previous</button>
-				<button class="next" type="button"  id="next" onclick = "newLineUpdate()">Next</button>
-				<button class = "save" type = "button" id = "save" >Save</button>
-
-				</div>
-			</div>
-
-		</div>
+		
 		
 
 		<h3 style="position:relative;top:80%; font-size:25px">Simulation Parameters</h3>
@@ -134,16 +149,15 @@
 		<div>
 			<!-- filter Charts -->
 			<label for="select">Choose a line to plot:</label>
-			<select id = "select" ></select>
+			<select id = "select" onchange = "updateGraph()"></select>
+			<label for="select">Choose a station to plot:</label>
+			<select id = "chartstn" onchange = "updateGraph()"></select>
 			<div class="chart" id="chart1"></div>
-			<div class="chart" id="chartRed"></div>
-			<div class="chart" id="chartPurple"></div>
+			<div class="chart" id="chart2"></div>
 			<div class="chart" id="chartTravelTime"></div>
 			<div class="chart" id="chartstation1"></div>
 			<div class="chart" id="chartstation2"></div>
-			<div class="chart" id="chartstation3"></div>
-			<div class="chart" id="chartstation4"></div>
-			<div class="chart" id="chartstation5"></div>
+
 		</div>
 
 		

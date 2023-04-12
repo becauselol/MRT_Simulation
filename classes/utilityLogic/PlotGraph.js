@@ -15,6 +15,20 @@ class Plotter {
     }
   }
 
+  filterBtnstn(dataStore){
+    var select = document.getElementById("chartstn");
+    var data = dataStore.nameMap
+    console.log(data)
+    for(const [key, value] of Object.entries(data))
+    {
+        var option = document.createElement("OPTION"),
+            txt = document.createTextNode(value);
+        option.appendChild(txt);
+        option.setAttribute("value",value);
+        select.insertBefore(option,select.lastChild);
+    }
+  }
+
   getChosenLine(){
     var select = document.getElementById('select');
     var chosenLine = select.options[select.selectedIndex].text;
@@ -37,8 +51,12 @@ class Plotter {
           zeroline: false
         },
         boxmode: 'group',
-        plot_bgcolor:"#E5E4E2",
-        paper_bgcolor:"#E5E4E2"
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        font: {
+          size: 14,
+          color: '#ffffff'
+        }
     };
     for (const [line, data] of Object.entries(dataStore.lineWaitTimes)) {
       var line_data ={
@@ -71,7 +89,13 @@ class Plotter {
           title: 'waiting time',
           zeroline: false
         },
-        boxmode: 'group'
+        boxmode: 'group',
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        font: {
+          size: 14,
+          color: '#ffffff'
+        }
     };
 
     for (const stationId of dataStore.lineStations[line]) {
@@ -125,7 +149,16 @@ class Plotter {
       }
     ];
 
-    Plotly.newPlot(plotId, data);
+    var layout = {
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      plot_bgcolor: 'rgba(0,0,0,0)',
+      font: {
+        size: 14,
+        color: '#ffffff'
+      }
+    }
+
+    Plotly.newPlot(plotId, data, layout);
   }
 
   initStationCommCount(plotId, dataStore, stationId) {
@@ -135,7 +168,14 @@ class Plotter {
         traceorder: 'reversed',
         font: {size: 16},
         yref: 'paper'
-      }};
+      },
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      plot_bgcolor: 'rgba(0,0,0,0)',
+      font: {
+        size: 14,
+        color: '#ffffff'
+      }
+    };
     Plotly.newPlot(plotId, [{
       mode: 'lines+markers',
       line: {shape: 'hv'},
