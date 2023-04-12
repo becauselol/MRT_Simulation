@@ -1,4 +1,4 @@
-class StatCompact {
+module.exports = class StatCompact {
     constructor() {
         this.freq = {}
         this.keys = []
@@ -139,20 +139,3 @@ class StatCompact {
     }
 }
 
-
-
-
-class FakeLineData {
-	constructor() {
-		this.stations = 31;
-		this.line = "ccl";
-
-		// use Object.keys(obj.store) to iterate through, or just use obj.lines
-		this.store = [];
-
-		for (var i = 0; i < this.stations; i++) {
-			this.store.push(new StatCompact());
-			this.store[i].fillRandomNumbers(20);
-		}
-	}
-}
