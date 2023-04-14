@@ -23,12 +23,12 @@ class MapDrawer {
      * Draws a station in the canvas context
      * @param {Station} station - station object to be drawn
      * */
-    drawStation(station) {
+    drawStation(station, colour) {
         this.ctx.beginPath();
         this.ctx.arc(station.coords.x, station.coords.y, 5, 0, 2 * Math.PI, false);
         this.ctx.lineWidth = 3;
         // line color
-        this.ctx.strokeStyle = 'gray';
+        this.ctx.strokeStyle = colour;
         this.ctx.stroke();
         this.ctx.closePath();
     }
@@ -69,10 +69,19 @@ class MapDrawer {
     }
 
     /**
+     * Takes a value from 0 to 1 and converts it to a HSL colour to input into the map
+     * Taken from: https://stackoverflow.com/questions/12875486/what-is-the-algorithm-to-create-colors-for-a-heatmap
+     * */
+    heatMapColorforValue(value){
+        var h = (1.0 - value) * 240
+        return "hsl(" + h + ", 100%, 50%)";
+    }
+
+    /**
      * Draws the whole MetroGraph in the canvas context
      * @param {MetroGraph} metroGraph - draws the metroGraph as required
      * */
-    drawMap(metroGraph) {
+    drawMap(metroGraph, display="default", mode="transit") {
         this.ctx.clearRect(0, 0, this.width, this.height);
         // console.log("words?")
         //Iterate over all the objects and draw them as required
@@ -81,7 +90,12 @@ class MapDrawer {
             var curr = metroGraph.stationDict[stationId]
             var nextId = curr.getNeighbourId(lineCode, "FW")
             var next = metroGraph.stationDict[nextId]
-            var colour = metroGraph.metroLineColours[lineCode]
+            if (display == "stationColour") {
+                var colour = "black"
+            } else {
+                var colour = metroGraph.metroLineColours[lineCode]
+            }
+            
             
             // utilizes the linked list concept to draw the lines
             while (next !== undefined) {
@@ -92,13 +106,31 @@ class MapDrawer {
             }
         }
 
-        for (const [stationId, station] of Object.entries(metroGraph.stationDict)) {
-            this.drawStation(station);
+        if (display == "stationColour" ){
+            var stationMinMax = metroGraph.getStationCountMinMax(mode)
+            var min = stationMinMax[0]
+            var max = stationMinMax[1]
         }
 
-        for (const [trainId, train] of Object.entries(metroGraph.trainDict)) {
-            this.drawTrain(train);
+        for (const [stationId, station] of Object.entries(metroGraph.stationDict)) {
+            if (display == "stationColour") {
+                if (mode == "total") {
+                    var count = station.getCommuterCount()
+                } else {
+                    var count = station.commuters[mode].length
+                }
+
+                var heatScale = ((count - min) / (max - min)).toFixed(6);
+                var colour = this.heatMapColorforValue(heatScale);
+            } else {
+                var colour = "gray"
+            }
+            this.drawStation(station, colour);
         }
+
+        // for (const [trainId, train] of Object.entries(metroGraph.trainDict)) {
+        //     this.drawTrain(train);
+        // }
     }
 
     drawDisplay(metroGraph, pos) {

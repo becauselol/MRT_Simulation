@@ -152,11 +152,11 @@ function draw_map() {
 			metro.simStep(timestep, dataStore, csvDataStore);
 
 			// draw map
-			drawer.drawMap(metro);
+			drawer.drawMap(metro, "stationColour");
 
 		} else {
 			// if it is paused, just draw the map with no additional input
-			drawer.drawMap(metro);
+			drawer.drawMap(metro, "stationColour");
 			
 		}
 

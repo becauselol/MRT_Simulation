@@ -250,6 +250,24 @@ class Metro {
        	return duration
 	}
 
+	getStationCountMinMax(mode = "transit") {
+		var min = Number.MAX_SAFE_INTEGER;
+		var max = Number.MIN_SAFE_INTEGER;
+
+		for (const [stationId, station] of Object.entries(this.stationDict)) {
+			if (mode == "total") {
+				max = Math.max(max, station.commuters["terminating"].length + station.commuters["transit"].length)
+				min = Math.min(min, station.commuters["terminating"].length + station.commuters["transit"].length)
+			} else {
+				max = Math.max(max, station.commuters[mode].length)
+				min = Math.min(min, station.commuters[mode].length)
+			}
+		}
+			
+
+		return [min, max]
+	}
+
 	placeTrainAtStart(lineCode, capacity) {
 		this.trainCount++
 		var stationId = this.metroLineStartStation[lineCode]
