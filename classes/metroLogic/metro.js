@@ -487,34 +487,31 @@ class Metro {
 
 		// var pre_count = this.stationCommCountUpdate(station, "pre_spawn")
 		// console.debug(station.id, this.hour)
-		// console.debug(`spawning for ${station.id}`)
-		if (!(this.hour in station.spawnRate)) {
-			return {}
-		}
 		var count = 0
+
+		var spawnedCommuters = []
+
 		// console.debug(`actually spawning for ${station.id}`)
-		for (const [destId, rate] of Object.entries(station.spawnRate[this.hour])) {
-			if (!(destId in station.nextSpawn)) {
-				station.nextSpawn[destId] = this.sysTime - timestep + randomExponential(rate)
+		for (const [destId, rates] of Object.entries(station.spawnRate)) {
+			var rate = rates[this.hour]
+			if (rate == 0) {
+				continue
 			}
-			while (this.sysTime > station.nextSpawn[destId]) {
+			var numberToSpawn = randomPoisson(rate*timestep)
+			count = count + numberToSpawn
+
+			for (var i = 0; i < numberToSpawn; i++) {
 				var comm = new Commuter(
 					station.id,
 					destId,
-					parseFloat(station.nextSpawn[destId].toFixed(2))
+					this.sysTime
 				)
-
-				// the board/alight
-				if (station.commuters["transit"] === undefined) {
-					station.commuters["transit"] = []
-				}
-				station.commuters["transit"].push(comm)
-
-				station.nextSpawn[destId] += randomExponential(rate)
-
-				count++
+				spawnedCommuters.push(comm)
 			}
 		}
+
+		shuffle(spawnedCommuters)
+		station.commuters["transit"].push(...spawnedCommuters)
 		// if (count > 0) {
 		// 	console.debug(`time ${this.sysTime.toFixed(2)}: spawning ${count} passengers at ${station.name}`)
 		// }

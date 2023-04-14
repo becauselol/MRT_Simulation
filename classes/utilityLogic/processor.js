@@ -67,13 +67,14 @@ class InputProcessor {
 			}
 
 			var sourceStation = this.stationDict[sourceId]
-			// console.debug(sourceId)
-			if (!(hour in sourceStation.spawnRate)) {
-				sourceStation.spawnRate[hour] = {}
+
+			if (!(destId in sourceStation.spawnRate)) {
+				sourceStation.spawnRate[destId] = new Array(25); 
+				for (let i=0; i<25; ++i) sourceStation.spawnRate[destId][i] = 0;
 			}
 
 			// we go by the minute
-			sourceStation.spawnRate[hour][destId] = parseFloat((rate/60).toFixed(6))
+			sourceStation.spawnRate[destId][hour] = parseFloat((rate/60).toFixed(6))
 		}
 	}
 

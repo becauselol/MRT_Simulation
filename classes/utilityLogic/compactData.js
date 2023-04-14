@@ -137,6 +137,10 @@ class StatCompact {
     getNineFigureArray() {
         return [this.getMean(), this.getStd(), this.getMin(), this.q25(), this.getMedian(), this.q75(), this.getMax(), this.count, this.getSum()]
     }
+
+    getMeanStdCountArray() {
+        return [this.getMean(), this.getStd(), this.count]
+    } 
 }
 
 
