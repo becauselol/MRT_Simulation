@@ -123,6 +123,25 @@ describe("StatCompact", () => {
     })
 
     describe("10 values", () => {
+      test('[1,2,3,4]', () => {
+        var testCompact = new StatCompact();
+        for (var i=1; i <= 4; i++) {
+          testCompact.addValue(i);
+        }
+        expect(testCompact.getMedian()).toBe(2.5)
+        expect(testCompact.q25()).toBe(1.5)
+        expect(testCompact.q75()).toBe(3.5)
+      })
+
+      test('[1,2,3,4,5,6]', () => {
+        var testCompact = new StatCompact();
+        for (var i=1; i <= 6; i++) {
+          testCompact.addValue(i);
+        }
+        expect(testCompact.getMedian()).toBe(3.5)
+        expect(testCompact.q25()).toBe(2)
+        expect(testCompact.q75()).toBe(5)
+      })
       test('median should be 3', () => {
         var testCompact = new StatCompact();
         for (var i=1; i <= 4; i++) {
