@@ -96,7 +96,6 @@ class MapDrawer {
                 var colour = metroGraph.metroLineColours[lineCode]
             }
             
-            
             // utilizes the linked list concept to draw the lines
             while (next !== undefined) {
                 this.drawEdge(curr, next, colour);
@@ -128,9 +127,12 @@ class MapDrawer {
             this.drawStation(station, colour);
         }
 
-        // for (const [trainId, train] of Object.entries(metroGraph.trainDict)) {
-        //     this.drawTrain(train);
-        // }
+        if (display != "stationColour") {
+            for (const [trainId, train] of Object.entries(metroGraph.trainDict)) {
+                this.drawTrain(train);
+            }
+        }
+        
     }
 
     drawDisplay(metroGraph, pos) {
