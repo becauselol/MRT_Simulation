@@ -180,6 +180,15 @@ class Plotter {
         font: {size: 16},
         yref: 'paper'
       },
+      title : "No. of people over time (in station)",
+      yaxis: {
+        title: 'No. of people',
+        zeroline: false
+      },
+      xaxis: {
+        title: 'Time (min)',
+        zeroline: false
+      },
       paper_bgcolor: 'rgba(0,0,0,0)',
       plot_bgcolor: 'rgba(0,0,0,0)',
       font: {
