@@ -264,3 +264,5 @@ setButton1(dataStore); //set line dropdown selection (inputer parameters)
 setButton2(dataStore); //set station dropdown selection (input parameters)
 document.getElementById('trainline').addEventListener('change', updateButton, false); //change stn button based on selection
 document.getElementById('save').addEventListener("click", saveLine, false); //save new line input
+
+//test 
