@@ -1,7 +1,7 @@
 class Plotter {
   constructor() {}
   
-  
+  // adding options to drop down selection
   filterBtn(dataStore){
     var select = document.getElementById("select");
     var data = dataStore.getLineCodeArray()
@@ -29,12 +29,15 @@ class Plotter {
     }
   }
 
+  //get user's line selection
+
   getChosenLine(){
     var select = document.getElementById('select');
     var chosenLine = select.options[select.selectedIndex].text;
     return chosenLine
   }
 
+  // get user's station selection
   getChosenStn(id){
     var select = document.getElementById(id);
     var chosenStn = select.options[select.selectedIndex].text;
@@ -43,10 +46,7 @@ class Plotter {
     return chosenStn
   }
 
-//   layout= {
-//     plot_bgcolor:"black",
-//     paper_bgcolor:"#FFF3"
-// }
+
 
   plotLineWaitTimes(plotId, dataStore, line_colour) {
     var plot_data = []

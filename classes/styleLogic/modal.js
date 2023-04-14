@@ -25,6 +25,9 @@
 // // Get the element with id="defaultOpen" and click on it (so default open)
 // document.getElementById("defaultOpen").click();
 
+// create modal for new line button
+
+
 // Get the modal
 var modal = document.getElementById("myModal");
 

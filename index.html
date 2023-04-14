@@ -27,7 +27,7 @@
 
 		</div> -->
 		
-		<!-- Tab content -->
+		<!-- Mrt map -->
 		<div class="mrtheader">
 			<img src ="styles/logo.png">
 			<h3>MRT Map</h3>
@@ -35,24 +35,18 @@
 		
 		<div id="MRT Map" class="mrtcontainer">
 			<p id="time"></p>
-
 			<canvas id="myCanvas" class = "canvas" height="620" width="1000" >
 			</canvas>
-			
-			
-
 		</div>
 		
-		<!-- <div id="Edge Map" class="tabcontent">
-			<h3>Edge Map</h3>
-			<canvas id="heatCanvas" height="560" width="980">
-			</canvas>
-		</div> -->
+		<!-- buttons for visual changes to map -->
 		<div class="btn-group">
 
 			<label class="checkbox">
 				<input type="checkbox" name="checkbox" value="text" id = "checkedge">Edge Colour
 			  </label>
+			
+			<!-- toggle heatmap selection -->
 			<label class="checkbox">
 				<input type="checkbox" name="checkbox" value="text" id = "check-heat-stn">Station Heatmap
 				<input type="range" min="0" max="1" step="0.05" value="0" class = "slider"  oninput="rangeValue1.innerText = this.value">
@@ -73,10 +67,6 @@
 			<label class="checkbox">
 				<input type="checkbox" name="checkbox" value="text" id = "drawstn">Station
 			</label>
-			<!-- <div class="slider">
-				<input type="range" min="0" max="1" step="0.05" value="0"   oninput="rangeValue.innerText = this.value">
-				<label id="rangeValue">0</label>
-			</div> -->
 
 			<p class = "p">
 				Copyright &copy; 2023 by Team SMAT. All
@@ -144,15 +134,15 @@
 
 		
 		
-
+		<!-- input simulation parameters -->
 		<h3 style="position:relative;top:80%; font-size:25px">Simulation Parameters</h3>
 
 		<div class="inputcontainer">
 			<label for="trainline">Choose a line:</label>
+			<!-- dropdown selection -->
 			<select id = "trainline" ></select>
 			<h4>Interarrival time of trains</h4>
-			
-			
+			<!-- number input -->
 			<span class='number-wrapper'>
 				<input type="number" class="input" id = "arrtime">
 			</span>
@@ -175,6 +165,8 @@
 			</span>
 
 		</div>
+
+		<!-- update input parameters -->
 		<button class="button" onclick="updateParameters()">Update</button>
 		
 		<h3 style="position:relative;top:90%; font-size:25px">Graphs</h3>
@@ -187,28 +179,30 @@
 		<!-- Add in Charts -->
 
 		<div class = "chartbg">
-			<!-- filter Charts -->
-
-
 			<div class="chart" id="chart1"></div>
-			<!-- <label for="select">Choose a line to plot:</label>
-			<select id = "select" onchange = "updateGraph()"></select> -->
+			
 			<div class="chartline" >
+				<!-- filter for chart -->
 				<label for="select">Choose a line to plot:</label>
 				<select id = "select" onchange = "updateGraph()"></select>
+				<!-- plot chart -->
 				<div id="chart2"></div>
 			</div>
 			<div class="chart" id="chartTravelTime"></div>
 
 			<div class="chartcomp">
 				<div class="chartcompare" >
+					<!-- filter for chart -->
 					<label for="select">Choose a station to plot:</label>
 					<select id = "selectstn1" onchange = "updateGraph()"></select>
+					<!-- plot chart -->
 					<div id="chartstation1"></div>
 				</div>
 				<div class="chartcompare" >
+					<!-- filter for chart -->
 					<label for="select">Choose a station to plot:</label>
 					<select id = "selectstn2" onchange = "updateGraph()"></select>
+					<!-- plot chart -->
 					<div id="chartstation2"></div>
 				</div>
 			</div>
@@ -236,7 +230,7 @@
 		<script type="text/javascript" src="classes/metroLogic/train.js"></script>
 		<script type="text/javascript" src="classes/metroLogic/metro.js"></script>
 
-		<script type="text/javascript" src="classes/styleLogic/mrtTab.js"></script>
+		<script type="text/javascript" src="classes/styleLogic/modal.js"></script>
 		<script type="text/javascript" src="classes/styleLogic/button.js"></script>
 
 

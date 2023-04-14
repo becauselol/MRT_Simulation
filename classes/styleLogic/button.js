@@ -1,3 +1,6 @@
+// make buttons for input parameter
+
+// for line dropdown selection
 function setButton1(dataStore){
 
     var selectL = document.getElementById("trainline");
@@ -17,7 +20,7 @@ function setButton1(dataStore){
 
 }
 
-
+// for station dropdown selection
 function setButton2(dataStore){
     var selectL = document.getElementById("trainline");
     var selectS = document.getElementById("trainstn");
@@ -35,6 +38,7 @@ function setButton2(dataStore){
 
 }
 
+// replace current div with another div
 function replace( hide, show ) {
     document.getElementById(hide).style.display="none";
     document.getElementById(show).style.display="flex";
@@ -42,14 +46,14 @@ function replace( hide, show ) {
   }
 
 
-function newLine() {
-    var x = document.getElementById("newline");
-    console.log(x.style.display)
-    if (x.style.display == "none") {
-      x.style.display = "flex";
-    } else {
-      x.style.display = "none";
+// function newLine() {
+//     var x = document.getElementById("newline");
+//     console.log(x.style.display)
+//     if (x.style.display == "none") {
+//       x.style.display = "flex";
+//     } else {
+//       x.style.display = "none";
 
-    }
-  }
+//     }
+//   }
 

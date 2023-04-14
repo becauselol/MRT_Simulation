@@ -2,7 +2,7 @@ let canvas = document.getElementById("myCanvas")
 let ctx = canvas.getContext('2d')
 
 var startHour = 6
-var endHour = 25
+var endHour = 24
 
 var isRunning = false;
 // var creatorMode = false;
@@ -13,11 +13,13 @@ var maxY = 540;
 var fps = 10; // frames per real time second // FPS needs to be at least 5 and all waitTimes of trains and edge weights must be at least 1
 var timestep = 1/fps;
 
+// input parameters from simulation
 const trainCapacity = document.getElementById("traincap");
 const interArrival = document.getElementById("arrtime");
 const spawnRate = document.getElementById("spawnrate");
-var inputPara = {trainCap:0, interArrival: 0, spawnRate :0 };
+var inputPara = {trainCap:0, interArrival: 0, spawnRate :0 }; // dictionary for all input parameters
 
+// new line parameters from simulation
 const inputFrom = document.getElementById("frmstn");
 const inputTo = document.getElementById("tostn");
 const inputTime = document.getElementById("timeT");
@@ -65,27 +67,29 @@ function init() {
 	interArrival.value = 0;
 	spawnRate.value = 0;
 
-	// init graphs
+	// init graph filter button with train stns and lines
 	plotter.filterBtn(dataStore)
 	plotter.filterBtnstn(dataStore, "selectstn1")
 	plotter.filterBtnstn(dataStore, "selectstn2")
+
+	// init graphs
 	plotter.plotLineWaitTimes("chart1", dataStore, metro.metroLineColours);
 	plotter.plotChosenLineWaitTimes("chart2", dataStore, plotter.getChosenLine());
 	plotter.plotTravelTimes("chartTravelTime", dataStore);
 	plotter.initStationCommCount("chartstation1", dataStore, plotter.getChosenStn("selectstn1"));
 	plotter.initStationCommCount("chartstation2", dataStore, plotter.getChosenStn( "selectstn2"));
-	// plotter.initStationCommCount("chartstation2", dataStore, "station2");
 	
 }
 
+// to change station button based on line chosen by user for parameter input
 function updateButton(){
 
 	document.getElementById("trainstn").innerHTML = "" ;
 	setButton2(dataStore)
 }
 
+// update simulation parameters with user's new inputs
 function updateParameters(){
-	// console.log(trainCapacity.value, interArrival.value, spawnRate.value);
 	inputPara.interArrival = interArrival.value;
 	inputPara.spawnRate = spawnRate.value;
 	inputPara.trainCap = trainCapacity.value;
@@ -94,48 +98,51 @@ function updateParameters(){
 }
 
 function newLineUpdate(){
-	// when next clicked save content
+	// when next clicked save values into array
 	var stn_i1 = document.getElementById("frmstn").value;
 	var stn_i2 = document.getElementById("tostn").value;
 	var time = document.getElementById("timeT").value;
 
-	// console.log(stn_i1, stn_i2, time);
-
 	newLineArr.push([stn_i1,stn_i2, time]);
-	// console.log(newLineArr);
-	// refresh input
+
+	// refresh/re-initialise input values
 	inputFrom.value = "";
 	inputTo.value = "";
 	inputTime.value = "";
 
 }
 
+// get new line name  
+function getLineName(){
+	var newLineName = document.getElementById("name").value
+
+	return newLineName
+}
+
 function saveLine(){
-	// take arr and convert to string
-	//Make new line key
+	
+	// get line name and colour
 	var lineName = getLineName()
 	var colour = document.getElementById("colour").value
 
+	// Make new line key
 	allNewLines[lineName] = []
-	console.log(newLineArr)
+
+	// add color into dictionary 
 	allNewLines[lineName].push(colour)
 	for (const stnPair of newLineArr) {
 
-
+		// take stn arr and convert to string
 		allNewLines[lineName].push(stnPair.join(","))
-		console.log(allNewLines)
 	}
-	newLineArr = []
+	newLineArr = [] //empty out stn array 
+
 	// add to main dictionary
 	allNewLines[lineName] = allNewLines[lineName].join("\n")
-	console.log(allNewLines[lineName])
+	// console.log(allNewLines[lineName])
   }
 
-function getLineName(){
-	 var newLineName = document.getElementById("name").value
 
-	 return newLineName
-}
 
 
 
@@ -184,12 +191,12 @@ function updateGraph(){
 	plotter.initStationCommCount("chartstation2", dataStore, plotter.getChosenStn( "selectstn2"));
 }
 
-// document.getElementById('select').addEventListener('change', updateGraph, false);
 
 function toggleSim() {
 	isRunning = !isRunning
 	console.log(`is running: ${isRunning}`)
     if (!isRunning) {
+
 		updateGraph();
         plotter.plotLineWaitTimes("chart1", dataStore, metro.metroLineColours);
         plotter.plotTravelTimes("chartTravelTime", dataStore);
@@ -198,8 +205,6 @@ function toggleSim() {
 }
 
 function resetSim() {
-	// update the variables
-	// document.getElementById("traincap").value = '';
 
 	// init the functions
 	init()
@@ -255,7 +260,7 @@ function downloadTrainRunData() {
 // Ready, set, go
 init();
 draw_map();
-setButton1(dataStore);
-setButton2(dataStore);
-document.getElementById('trainline').addEventListener('change', updateButton, false);
-document.getElementById('save').addEventListener("click", saveLine, false);;
+setButton1(dataStore); //set line dropdown selection (inputer parameters)
+setButton2(dataStore); //set station dropdown selection (input parameters)
+document.getElementById('trainline').addEventListener('change', updateButton, false); //change stn button based on selection
+document.getElementById('save').addEventListener("click", saveLine, false); //save new line input
