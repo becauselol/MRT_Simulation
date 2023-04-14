@@ -121,12 +121,17 @@ class CSVDataStore {
 		}
 	}
 
-	writeStationCSVString() {
+	writeStationCSVString(verbose=false) {
 		var headers = ["hour", "stationName", "tapIn", "tapOut"]
-		var sevenFigures = ["mean", "sd", "min", "q1", "median", "q3", "max", "count", "total"]
+		if (verbose) {
+			var header_figures = ["mean", "sd", "min", "q1", "median", "q3", "max", "count", "total"]
+		} else {
+			var header_figures = ["mean", "sd", "count"]
+		}
+		
 		var stats = ["alightCount", "boardCount", "waitTime", "stationCount"]
 		for (const s of stats) {
-			for (const f of sevenFigures) {
+			for (const f of header_figures) {
 				headers.push(s + "_" + f)
 			}
 		}
@@ -136,10 +141,19 @@ class CSVDataStore {
 			for (const [stationId, stationData] of Object.entries(stationDict)) {
 				var row_data = [hour, this.nameMap[stationId], stationData.tapIn, stationData.tapOut]
 
-				row_data.push(...stationData.alightCount.getNineFigureArray())
-				row_data.push(...stationData.boardCount.getNineFigureArray())
-				row_data.push(...stationData.waitTime.getNineFigureArray())
-				row_data.push(...stationData.stationCount.getNineFigureArray())
+				if (verbose) {
+					row_data.push(...stationData.alightCount.getNineFigureArray())
+					row_data.push(...stationData.boardCount.getNineFigureArray())
+					row_data.push(...stationData.waitTime.getNineFigureArray())
+					row_data.push(...stationData.stationCount.getNineFigureArray())
+				} else {
+					row_data.push(...stationData.alightCount.getMeanStdCountArray())
+					row_data.push(...stationData.boardCount.getMeanStdCountArray())
+					row_data.push(...stationData.waitTime.getMeanStdCountArray())
+					row_data.push(...stationData.stationCount.getMeanStdCountArray())
+				}
+
+				
 				lineData.push(row_data.join(","))
 			}
 			
@@ -148,12 +162,18 @@ class CSVDataStore {
 		return lineData.join("\n")
 	}
 
-	writeTrainCSVString() {
+	writeTrainCSVString(verbose=false) {
 		var headers = ["hour", "stationName", "line", "direction"]
-		var sevenFigures = ["mean", "sd", "min", "q1", "median", "q3", "max", "count", "total"]
+
+		if (verbose) {
+			var header_figures = ["mean", "sd", "min", "q1", "median", "q3", "max", "count", "total"]
+		} else {
+			var header_figures = ["mean", "sd", "count"]
+		}
+
 		var stats = ["alightCount", "boardCount", "waitTime", "trainCount"]
 		for (const s of stats) {
-			for (const f of sevenFigures) {
+			for (const f of header_figures) {
 				headers.push(s + "_" + f)
 			}
 		}
@@ -165,10 +185,17 @@ class CSVDataStore {
 					for (const [direction, trainData] of Object.entries(directionDict)) {
 						var row_data = [hour, this.nameMap[stationId], line, direction]
 
-						row_data.push(...trainData.alightCount.getNineFigureArray())
-						row_data.push(...trainData.boardCount.getNineFigureArray())
-						row_data.push(...trainData.waitTime.getNineFigureArray())
-						row_data.push(...trainData.trainCount.getNineFigureArray())
+						if (verbose) {
+							row_data.push(...trainData.alightCount.getNineFigureArray())
+							row_data.push(...trainData.boardCount.getNineFigureArray())
+							row_data.push(...trainData.waitTime.getNineFigureArray())
+							row_data.push(...trainData.trainCount.getNineFigureArray())
+						} else {
+							row_data.push(...trainData.alightCount.getMeanStdCountArray())
+							row_data.push(...trainData.boardCount.getMeanStdCountArray())
+							row_data.push(...trainData.waitTime.getMeanStdCountArray())
+							row_data.push(...trainData.trainCount.getMeanStdCountArray())
+						}
 						lineData.push(row_data.join(","))
 					}
 				}

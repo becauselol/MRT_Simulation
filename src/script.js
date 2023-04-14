@@ -2,7 +2,7 @@ let canvas = document.getElementById("myCanvas")
 let ctx = canvas.getContext('2d')
 
 var startHour = 6
-var endHour = 24
+var endHour = 25
 
 var isRunning = false;
 // var creatorMode = false;
