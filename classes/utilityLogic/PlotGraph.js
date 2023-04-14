@@ -15,8 +15,8 @@ class Plotter {
     }
   }
 
-  filterBtnstn(dataStore){
-    var select = document.getElementById("chartstn");
+  filterBtnstn(dataStore,element){
+    var select = document.getElementById(element);
     var data = dataStore.nameMap
     console.log(data)
     for(const [key, value] of Object.entries(data))
@@ -35,10 +35,18 @@ class Plotter {
     return chosenLine
   }
 
-  layout= {
-    plot_bgcolor:"black",
-    paper_bgcolor:"#FFF3"
-}
+  getChosenStn(id){
+    var select = document.getElementById(id);
+    var chosenStn = select.options[select.selectedIndex].text;
+    
+
+    return chosenStn
+  }
+
+//   layout= {
+//     plot_bgcolor:"black",
+//     paper_bgcolor:"#FFF3"
+// }
 
   plotLineWaitTimes(plotId, dataStore, line_colour) {
     var plot_data = []
@@ -161,7 +169,10 @@ class Plotter {
     Plotly.newPlot(plotId, data, layout);
   }
 
-  initStationCommCount(plotId, dataStore, stationId) {
+  initStationCommCount(plotId, dataStore, stationName) {
+    var stationId = Object.keys(dataStore.nameMap).find(key => dataStore.nameMap[key] === stationName)
+    
+    console.log(stationId)
     var layout = {
       legend: {
         y: 0.5,

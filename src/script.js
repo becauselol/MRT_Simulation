@@ -67,12 +67,14 @@ function init() {
 
 	// init graphs
 	plotter.filterBtn(dataStore)
-	plotter.filterBtnstn(dataStore)
+	plotter.filterBtnstn(dataStore, "selectstn1")
+	plotter.filterBtnstn(dataStore, "selectstn2")
 	plotter.plotLineWaitTimes("chart1", dataStore, metro.metroLineColours);
 	plotter.plotChosenLineWaitTimes("chart2", dataStore, plotter.getChosenLine());
 	plotter.plotTravelTimes("chartTravelTime", dataStore);
-	plotter.initStationCommCount("chartstation1", dataStore, "station1");
-	plotter.initStationCommCount("chartstation2", dataStore, "station2");
+	plotter.initStationCommCount("chartstation1", dataStore, plotter.getChosenStn("selectstn1"));
+	plotter.initStationCommCount("chartstation2", dataStore, plotter.getChosenStn( "selectstn2"));
+	// plotter.initStationCommCount("chartstation2", dataStore, "station2");
 	
 }
 
@@ -171,6 +173,8 @@ function draw_map() {
 //update graph
 function updateGraph(){
 	plotter.plotChosenLineWaitTimes("chart2", dataStore, plotter.getChosenLine());
+	plotter.initStationCommCount("chartstation1", dataStore, plotter.getChosenStn( "selectstn1"));
+	plotter.initStationCommCount("chartstation2", dataStore, plotter.getChosenStn( "selectstn2"));
 }
 
 // document.getElementById('select').addEventListener('change', updateGraph, false);
@@ -182,11 +186,7 @@ function toggleSim() {
 		updateGraph();
         plotter.plotLineWaitTimes("chart1", dataStore, metro.metroLineColours);
         plotter.plotTravelTimes("chartTravelTime", dataStore);
-        plotter.initStationCommCount("chartstation1", dataStore, "station1");
-		plotter.initStationCommCount("chartstation2", dataStore, "station2");
-		// plotter.initStationTrainCommCount("chartstation3", dataStore, "station3")
-		// plotter.initStationCommCount("chartstation4", dataStore, "station4")
-		// plotter.initStationCommCount("chartstation5", dataStore, "station5")
+
     }
 }
 

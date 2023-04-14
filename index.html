@@ -19,7 +19,6 @@
 <body>
 
 	<div class = "wrapper">
-		<p id="time"></p>
 		<!-- Tab links -->
 		<!-- <div class="tab">
 			
@@ -35,9 +34,12 @@
 		</div>
 		
 		<div id="MRT Map" class="mrtcontainer">
-			
+			<p id="time"></p>
 			<canvas id="myCanvas" class = "canvas" height="620" width="1000" >
 			</canvas>
+			
+			
+
 		</div>
 		
 		<!-- <div id="Edge Map" class="tabcontent">
@@ -146,17 +148,35 @@
 
 		<!-- Add in Charts -->
 
-		<div>
+		<div class = "chartbg">
 			<!-- filter Charts -->
-			<label for="select">Choose a line to plot:</label>
-			<select id = "select" onchange = "updateGraph()"></select>
-			<label for="select">Choose a station to plot:</label>
-			<select id = "chartstn" onchange = "updateGraph()"></select>
+
+
 			<div class="chart" id="chart1"></div>
-			<div class="chart" id="chart2"></div>
+			<!-- <label for="select">Choose a line to plot:</label>
+			<select id = "select" onchange = "updateGraph()"></select> -->
+			<div class="chartline" >
+				<label for="select">Choose a line to plot:</label>
+				<select id = "select" onchange = "updateGraph()"></select>
+				<div id="chart2"></div>
+			</div>
 			<div class="chart" id="chartTravelTime"></div>
-			<div class="chart" id="chartstation1"></div>
-			<div class="chart" id="chartstation2"></div>
+
+			<div class="chartcomp">
+				<div class="chartcompare" >
+					<label for="select">Choose a station to plot:</label>
+					<select id = "selectstn1" onchange = "updateGraph()"></select>
+					<div id="chartstation1"></div>
+				</div>
+				<div class="chartcompare" >
+					<label for="select">Choose a station to plot:</label>
+					<select id = "selectstn2" onchange = "updateGraph()"></select>
+					<div id="chartstation2"></div>
+				</div>
+			</div>
+			
+
+			
 
 		</div>
 

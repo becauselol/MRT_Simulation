@@ -63,6 +63,7 @@ body {
   
 }
 
+
 .mrtheader{
     padding: 2px;
     text-align: left;
@@ -86,6 +87,11 @@ img {
   margin-left: 10px;
 }
 
+p{
+  position: absolute;
+  text-align: left;
+
+}
 
 .canvas {
   padding: 0;
@@ -180,8 +186,9 @@ input[type=number]::-webkit-outer-spin-button {
 select{
   border:none;
   padding: 10px 20px;
-  display:relative;
+  display:block;
   border-radius:5px;
+  margin: 5px;
 }
 
 select:focus{
@@ -295,7 +302,8 @@ select:focus{
     width: min-content;
     margin-left: auto;
     margin-right: auto;
-    display:flex;
+    display:relative;
+
   }
 
   /* The Modal (background) */
@@ -343,3 +351,37 @@ select:focus{
   text-decoration: none;
   cursor: pointer;
 }
+
+
+
+.chartcompare{
+  display: inline-block;
+  border-style: solid;
+  vertical-align: middle;
+  width: 500px;
+  height:500px;
+  text-align:left;
+  padding: 5px;
+}
+
+.chartcomp{
+  text-align: center;
+  margin-top: 10px;
+}
+
+.chartline{
+  margin-top: 10px;
+  border-style: solid;
+  width:700px;
+  margin-left: auto;
+  margin-right: auto;
+  display:relative;
+  padding: 5px;
+
+}
+
+
+/* .chartbg{
+  background-color: #383838;
+
+}  */
