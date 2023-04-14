@@ -23,7 +23,7 @@ class MapDrawer {
      * Draws a station in the canvas context
      * @param {Station} station - station object to be drawn
      * */
-    drawStation(station, colour) {
+    drawStation(station, colour="gray") {
         this.ctx.beginPath();
         this.ctx.arc(station.coords.x, station.coords.y, 5, 0, 2 * Math.PI, false);
         this.ctx.lineWidth = 3;
@@ -37,18 +37,13 @@ class MapDrawer {
      * Draws a Train in the canvas context
      * @param {Train} train - train object to be drawn
      * */
-    drawTrain(train) {
+    drawTrain(train, colour = "black") {
         //train codethis.
         this.ctx.beginPath();
         this.ctx.arc(train.coords.x, train.coords.y, 1, 0, 2*Math.PI, true);
         this.ctx.lineWidth = 5;
         // line color
-        if (train.direction == "FW") {
-            this.ctx.strokeStyle = 'black';
-        } else {
-            this.ctx.strokeStyle = 'turquoise';
-        }
-
+        this.ctx.strokeStyle = colour
         this.ctx.stroke();
         this.ctx.closePath();
     }
@@ -90,7 +85,7 @@ class MapDrawer {
             var curr = metroGraph.stationDict[stationId]
             var nextId = curr.getNeighbourId(lineCode, "FW")
             var next = metroGraph.stationDict[nextId]
-            if (display == "stationColour") {
+            if (display == "stationColour" || display == "trainColour") {
                 var colour = "black"
             } else {
                 var colour = metroGraph.metroLineColours[lineCode]
@@ -127,10 +122,24 @@ class MapDrawer {
             this.drawStation(station, colour);
         }
 
-        if (display != "stationColour") {
-            for (const [trainId, train] of Object.entries(metroGraph.trainDict)) {
-                this.drawTrain(train);
-            }
+
+        
+        switch(display) {
+            case "stationColour":
+                break;
+            case "trainColour":
+                for (const [trainId, train] of Object.entries(metroGraph.trainDict)) {
+                    var count = train.getCommuterCount()
+                    var heatScale = (count/train.capacity).toFixed(6);
+                    var colour = this.heatMapColorforValue(heatScale);
+                    this.drawTrain(train, colour);
+                }
+                break;
+            default:
+                for (const [trainId, train] of Object.entries(metroGraph.trainDict)) {
+                    this.drawTrain(train);
+                }
+                break;
         }
         
     }
