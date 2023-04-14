@@ -76,7 +76,7 @@ class MapDrawer {
      * Draws the whole MetroGraph in the canvas context
      * @param {MetroGraph} metroGraph - draws the metroGraph as required
      * */
-    drawMap(metroGraph, display="default", mode="transit") {
+    drawMap(metroGraph, drawStataions=true, drawTrains=true, stationHeatColour=false, edgeBlackColour=false, trainHeatColour=false, mode="transit") {
         this.ctx.clearRect(0, 0, this.width, this.height);
         // console.log("words?")
         //Iterate over all the objects and draw them as required
@@ -85,7 +85,7 @@ class MapDrawer {
             var curr = metroGraph.stationDict[stationId]
             var nextId = curr.getNeighbourId(lineCode, "FW")
             var next = metroGraph.stationDict[nextId]
-            if (display == "stationColour" || display == "trainColour") {
+            if (edgeBlackColour) {
                 var colour = "black"
             } else {
                 var colour = metroGraph.metroLineColours[lineCode]
@@ -100,46 +100,44 @@ class MapDrawer {
             }
         }
 
-        if (display == "stationColour" ){
-            var stationMinMax = metroGraph.getStationCountMinMax(mode)
-            var min = stationMinMax[0]
-            var max = stationMinMax[1]
-        }
-
-        for (const [stationId, station] of Object.entries(metroGraph.stationDict)) {
-            if (display == "stationColour") {
-                if (mode == "total") {
-                    var count = station.getCommuterCount()
-                } else {
-                    var count = station.commuters[mode].length
-                }
-
-                var heatScale = ((count - min) / (max - min)).toFixed(6);
-                var colour = this.heatMapColorforValue(heatScale);
-            } else {
-                var colour = "gray"
+        if (drawStations) {
+            if (stationHeatColour){
+                var stationMinMax = metroGraph.getStationCountMinMax(mode)
+                var min = stationMinMax[0]
+                var max = stationMinMax[1]
             }
-            this.drawStation(station, colour);
+
+            for (const [stationId, station] of Object.entries(metroGraph.stationDict)) {
+                if (stationHeatColour) {
+                    if (mode == "total") {
+                        var count = station.getCommuterCount()
+                    } else {
+                        var count = station.commuters[mode].length
+                    }
+
+                    var heatScale = ((count - min) / (max - min)).toFixed(6);
+                    var colour = this.heatMapColorforValue(heatScale);
+                } else {
+                    var colour = "gray"
+                }
+                this.drawStation(station, colour);
+            }
         }
 
-
-        
-        switch(display) {
-            case "stationColour":
-                break;
-            case "trainColour":
-                for (const [trainId, train] of Object.entries(metroGraph.trainDict)) {
+        if (drawStations) {
+            for (const [trainId, train] of Object.entries(metroGraph.trainDict)) {
+                if (trainHeatColour) {
                     var count = train.getCommuterCount()
-                    var heatScale = (count/train.capacity).toFixed(6);
+                    var heatScale = (count/(0.8*train.capacity)).toFixed(6);
+                    if (heatScale > 1) {
+                        heatScale = 1;
+                    }
                     var colour = this.heatMapColorforValue(heatScale);
                     this.drawTrain(train, colour);
-                }
-                break;
-            default:
-                for (const [trainId, train] of Object.entries(metroGraph.trainDict)) {
+                } else {
                     this.drawTrain(train);
                 }
-                break;
+            }
         }
         
     }
