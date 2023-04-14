@@ -1,5 +1,9 @@
 class InputProcessor {
 	constructor() {
+		this.init()
+	}
+
+	init() {
 		this.edgeMap = {}
 		this.stationList = []
 		this.stationDict = {}
@@ -177,7 +181,7 @@ class InputProcessor {
 			metroGraph.addStation(station)
 		}
 
-		metro.metroLineStartStation = this.metroLineStartStation
+		metroGraph.metroLineStartStation = this.metroLineStartStation
 		metroGraph.metroLineColours = this.edgeColours
 	}
 

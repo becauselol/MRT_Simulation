@@ -15,13 +15,38 @@ class Plotter {
     }
   }
 
+  filterBtnstn(dataStore,element){
+    var select = document.getElementById(element);
+    var data = dataStore.nameMap
+    console.log(data)
+    for(const [key, value] of Object.entries(data))
+    {
+        var option = document.createElement("OPTION"),
+            txt = document.createTextNode(value);
+        option.appendChild(txt);
+        option.setAttribute("value",value);
+        select.insertBefore(option,select.lastChild);
+    }
+  }
+
   getChosenLine(){
     var select = document.getElementById('select');
     var chosenLine = select.options[select.selectedIndex].text;
     return chosenLine
   }
 
+  getChosenStn(id){
+    var select = document.getElementById(id);
+    var chosenStn = select.options[select.selectedIndex].text;
+    
 
+    return chosenStn
+  }
+
+//   layout= {
+//     plot_bgcolor:"black",
+//     paper_bgcolor:"#FFF3"
+// }
 
   plotLineWaitTimes(plotId, dataStore, line_colour) {
     var plot_data = []
@@ -33,7 +58,13 @@ class Plotter {
           title: 'waiting time',
           zeroline: false
         },
-        boxmode: 'group'
+        boxmode: 'group',
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        font: {
+          size: 14,
+          color: '#ffffff'
+        }
     };
     for (const [line, data] of Object.entries(dataStore.lineWaitTimes)) {
       var line_data ={
@@ -66,7 +97,13 @@ class Plotter {
           title: 'waiting time',
           zeroline: false
         },
-        boxmode: 'group'
+        boxmode: 'group',
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        font: {
+          size: 14,
+          color: '#ffffff'
+        }
     };
 
     for (const stationId of dataStore.lineStations[line]) {
@@ -120,17 +157,45 @@ class Plotter {
       }
     ];
 
-    Plotly.newPlot(plotId, data);
+    var layout = {
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      plot_bgcolor: 'rgba(0,0,0,0)',
+      font: {
+        size: 14,
+        color: '#ffffff'
+      }
+    }
+
+    Plotly.newPlot(plotId, data, layout);
   }
 
-  initStationCommCount(plotId, dataStore, stationId) {
+  initStationCommCount(plotId, dataStore, stationName) {
+    var stationId = Object.keys(dataStore.nameMap).find(key => dataStore.nameMap[key] === stationName)
+    
+    console.log(stationId)
     var layout = {
       legend: {
         y: 0.5,
         traceorder: 'reversed',
         font: {size: 16},
         yref: 'paper'
-      }};
+      },
+      title : "No. of people over time (in station)",
+      yaxis: {
+        title: 'No. of people',
+        zeroline: false
+      },
+      xaxis: {
+        title: 'Time (min)',
+        zeroline: false
+      },
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      plot_bgcolor: 'rgba(0,0,0,0)',
+      font: {
+        size: 14,
+        color: '#ffffff'
+      }
+    };
     Plotly.newPlot(plotId, [{
       mode: 'lines+markers',
       line: {shape: 'hv'},

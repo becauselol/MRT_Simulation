@@ -38,7 +38,9 @@ class TrainDataStore {
 }
 
 class CSVDataStore {
-	constructor(stationDict, min_hour, max_hour) {
+	constructor() {}
+
+	init(stationDict, min_hour, max_hour) {
 		this.data = {}
 		this.trainData = {}
 		this.nameMap = {}
@@ -58,7 +60,7 @@ class CSVDataStore {
 					}
 				}
 			}
-		}	
+		}
 	}
 
 	updateTapIn(hour, stationId, count) {
