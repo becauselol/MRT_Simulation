@@ -60,6 +60,7 @@ body {
   background-repeat: no-repeat;
   background-size: 1100px 1000px;
   background-position: center;
+  border-bottom:0;
   
 }
 
@@ -385,3 +386,81 @@ select:focus{
   background-color: #383838;
 
 }  */
+
+.btn-group{
+  background-color:#343434;
+  border: solid white;
+  height:fit-content;
+  border-top: 0;
+  text-align: right;
+
+}
+
+.checkbox {
+  border: 1px solid #666;
+  color: #000;
+  text-align: center;
+  display: inline-block;
+  cursor: pointer;
+  transition-duration: 0.4s;
+  /* border-radius: 10px; */
+  font-size: 14px;
+  background-color: #343434;
+  color: white;
+  padding: 10px;
+  float: right;
+
+
+}
+
+/* Clear floats (clearfix hack) */
+.btn-group:after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.btn-group .checkbox:not(:last-child) {
+  border-right: none; /* Prevent double borders */
+}
+
+/* Add a background color on hover */
+.btn-group .checkbox:hover {
+  background-color: #c0c2c0;
+}
+
+.btn-group .p{
+  margin-left: 8px;
+  margin-top: 8px;
+  font-size: 11px;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 60px;
+  height: 10px;
+  border-radius: 5px;  
+  background: #000000;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%; 
+  background: #212121;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #212121;
+  cursor: pointer;
+}

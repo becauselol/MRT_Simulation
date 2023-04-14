@@ -85,11 +85,11 @@ function updateButton(){
 }
 
 function updateParameters(){
-	console.log(trainCapacity.value, interArrival.value, spawnRate.value);
+	// console.log(trainCapacity.value, interArrival.value, spawnRate.value);
 	inputPara.interArrival = interArrival.value;
 	inputPara.spawnRate = spawnRate.value;
 	inputPara.trainCap = trainCapacity.value;
-	console.log(inputPara)
+	// console.log(inputPara)
 
 }
 
@@ -99,10 +99,10 @@ function newLineUpdate(){
 	var stn_i2 = document.getElementById("tostn").value;
 	var time = document.getElementById("timeT").value;
 
-	console.log(stn_i1, stn_i2, time);
+	// console.log(stn_i1, stn_i2, time);
 
 	newLineArr.push([stn_i1,stn_i2, time]);
-	console.log(newLineArr);
+	// console.log(newLineArr);
 	// refresh input
 	inputFrom.value = "";
 	inputTo.value = "";
@@ -140,23 +140,30 @@ function getLineName(){
 
 
 function draw_map() {
-		  document.getElementById("time").textContent =
-		    "Current time is " +
-		    metro.sysTime.toFixed(2) +
-		    " minutes or " +
-		    (metro.sysTime / 60).toFixed(2) +
-		    " hours";
+		document.getElementById("time").textContent =
+		"Current time is " +
+		metro.sysTime.toFixed(2) +
+		" minutes or " +
+		(metro.sysTime / 60).toFixed(2) +
+		" hours";
+
+		var edgeCheck = document.getElementById("checkedge").checked
+		var heat_stnCheck = document.getElementById("check-heat-stn").checked
+		var heat_trainCheck = document.getElementById("check-heat-train").checked
+		var drawStn = document.getElementById("drawstn").checked
+		var drawTrain = document.getElementById("drawtrain").checked
 
 		if (isRunning) {
 			// take a simulation step
 			metro.simStep(timestep, dataStore, csvDataStore);
 
 			// draw map
-			drawer.drawMap(metro);
+			drawer.drawMap(metro, drawStn, drawTrain, heat_stnCheck, edgeCheck, heat_trainCheck );
+			
 
 		} else {
 			// if it is paused, just draw the map with no additional input
-			drawer.drawMap(metro);
+			drawer.drawMap(metro, drawStn, drawTrain, heat_stnCheck, edgeCheck, heat_trainCheck );
 			
 		}
 

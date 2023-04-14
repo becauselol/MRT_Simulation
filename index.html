@@ -35,6 +35,7 @@
 		
 		<div id="MRT Map" class="mrtcontainer">
 			<p id="time"></p>
+
 			<canvas id="myCanvas" class = "canvas" height="620" width="1000" >
 			</canvas>
 			
@@ -47,6 +48,43 @@
 			<canvas id="heatCanvas" height="560" width="980">
 			</canvas>
 		</div> -->
+		<div class="btn-group">
+
+			<label class="checkbox">
+				<input type="checkbox" name="checkbox" value="text" id = "checkedge">Edge Colour
+			  </label>
+			<label class="checkbox">
+				<input type="checkbox" name="checkbox" value="text" id = "check-heat-stn">Station Heatmap
+				<input type="range" min="0" max="1" step="0.05" value="0" class = "slider"  oninput="rangeValue1.innerText = this.value">
+				<label id="rangeValue1">0</label>
+
+			</label>
+			<label class="checkbox">
+				<input type="checkbox" name="checkbox" value="text" id = "check-heat-train">Train Heatmap
+				<input type="range" min="0" max="1" step="0.05" value="0" class = "slider"  oninput="rangeValue2.innerText = this.value">
+				<span id="rangeValue2">0</span>
+			</label>
+
+			<!-- toggle train & stn visual -->
+			<label class="checkbox">
+				<input type="checkbox" name="checkbox" value="text" id = "drawtrain">Train
+			</label>
+
+			<label class="checkbox">
+				<input type="checkbox" name="checkbox" value="text" id = "drawstn">Station
+			</label>
+			<!-- <div class="slider">
+				<input type="range" min="0" max="1" step="0.05" value="0"   oninput="rangeValue.innerText = this.value">
+				<label id="rangeValue">0</label>
+			</div> -->
+
+			<p class = "p">
+				Copyright &copy; 2023 by Team SMAT. All
+				rights reserved.
+			</p>
+
+		</div>
+
 		<button class="button" onclick="toggleSim()">Start/Pause</button>
 		<button class="button" onclick="resetSim()">Reset</button>
 		<button class="button" onclick="downloadStationRunData()">Download Station Data</button>
