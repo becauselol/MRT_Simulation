@@ -85,11 +85,11 @@ function updateButton(){
 }
 
 function updateParameters(){
-	console.log(trainCapacity.value, interArrival.value, spawnRate.value);
+	// console.log(trainCapacity.value, interArrival.value, spawnRate.value);
 	inputPara.interArrival = interArrival.value;
 	inputPara.spawnRate = spawnRate.value;
 	inputPara.trainCap = trainCapacity.value;
-	console.log(inputPara)
+	// console.log(inputPara)
 
 }
 
@@ -99,10 +99,10 @@ function newLineUpdate(){
 	var stn_i2 = document.getElementById("tostn").value;
 	var time = document.getElementById("timeT").value;
 
-	console.log(stn_i1, stn_i2, time);
+	// console.log(stn_i1, stn_i2, time);
 
 	newLineArr.push([stn_i1,stn_i2, time]);
-	console.log(newLineArr);
+	// console.log(newLineArr);
 	// refresh input
 	inputFrom.value = "";
 	inputTo.value = "";
