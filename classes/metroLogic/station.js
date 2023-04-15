@@ -14,7 +14,7 @@ class Station {
 	* @param {number} spawnNo - the max number of Commuters that can be spawned
 	* @param {float} spawnProb - the probability of spawning commuters in a single frame
 	*/
-	constructor(id, x, y, name="", codes = [], waitTime=1) {
+	constructor(id, x, y, name="", codes = [], waitTime=0.42) {
 		this.id = id;
 		this.coords = {
 			"x": x,
