@@ -94,6 +94,14 @@ class InputProcessor {
 		}
 	}
 
+	edgeStringLineDuration(lineName) {
+		var sum = 0
+		for (const [key, arr] of Object.entries(this.edgeMap[lineName])) {
+			sum += arr[2]
+		}
+		return sum
+	}
+
 	parseEdgeStringDict(edgeDict) {
 		for (const [lineName, edgeString] of Object.entries(edgeDict)) {
 			this.parseEdgeString(lineName, edgeString)
@@ -139,7 +147,13 @@ class InputProcessor {
 			}
 
 			//add Station to metroGraph
-			this.stationDict[stationId] = new Station(stationId, x + mapDrawer.x_padding, y + mapDrawer.y_padding, name, codes);
+			if (codes.length > 1) {
+				var waitTime = 0.67
+			} else {
+				var waitTime = 0.42
+			}
+
+			this.stationDict[stationId] = new Station(stationId, x + mapDrawer.x_padding, y + mapDrawer.y_padding, name, codes, waitTime);
 			counter++;
 		}
 	}
@@ -159,8 +173,8 @@ class InputProcessor {
 					this.metroLineStartStation[line] = aId
 				}
 
-				a.addNeighbour(line, "FW", bId, weight)
-				b.addNeighbour(line, "BW", aId, weight)
+				a.addNeighbour(line, "FW", bId, weight - b.waitTime)
+				b.addNeighbour(line, "BW", aId, weight - b.waitTime)
 			}
 		}
 	}

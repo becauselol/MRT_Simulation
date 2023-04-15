@@ -234,6 +234,7 @@ class Metro {
         var next = this.stationDict[nextId]
         
         var duration = 0
+        console.debug(curr.id)
         // utilizes the linked list concept to draw the lines
         while (next !== undefined) {
         	duration += curr.waitTime
@@ -243,10 +244,22 @@ class Metro {
             nextId = curr.getNeighbourId(lineCode, "FW")
             next = this.stationDict[nextId]
         }
+        console.debug(curr.id)
+        console.debug(duration)
+        var nextId = curr.getNeighbourId(lineCode, "BW")
+        var next = this.stationDict[nextId]
+        while (next !== undefined) {
+        	duration += curr.waitTime
+        	duration += curr.getNeighbourWeight(lineCode, "BW")
+
+            curr = next;
+            nextId = curr.getNeighbourId(lineCode, "BW")
+            next = this.stationDict[nextId]
+        }
 
         // complete the full cycle
-        duration = duration * 2
-
+        // duration = duration * 2
+        console.debug(duration)
        	return duration
 	}
 
@@ -342,7 +355,7 @@ class Metro {
 
 		if (!(train.prevId in train.commuters)) {
 			train.commuters[train.prevId] = []
-			train.state = TrainState.BOARDING
+			train.state = TrainState.WAITING
 			return {};
 		}
 
@@ -374,7 +387,7 @@ class Metro {
 		// }
 		
 		// the train is now waiting
-		train.state = TrainState.BOARDING
+		train.state = TrainState.WAITING
 
 		var station_count = this.stationCommCountUpdate(currStation, "post_alight")
 
@@ -441,7 +454,7 @@ class Metro {
 			train.commuters[alightTarget].push(commuter);
 		}
 
-		train.state = TrainState.WAITING
+		train.state = TrainState.MOVING
 		// console.debug("time " + this.sysTime.toFixed(2) + ": " + train.id + " boarding " + board_count + " passengers at station " + currStation.name)
 		var station_count = this.stationCommCountUpdate(currStation, "post_board")
 
@@ -458,9 +471,9 @@ class Metro {
 		train.lambda += timestep
 
 		var currStation = this.stationDict[train.prevId]
-		if (train.lambda >= currStation.waitTime) {
+		if (train.lambda >= currStation.waitTime - timestep) {
 			// console.log("switch to boarding")
-			train.state = TrainState.MOVING;
+			train.state = TrainState.BOARDING;
 			train.lambda = 0
 
 			// get the next place to move to
@@ -489,12 +502,12 @@ class Metro {
 				update = this.trainAlightStep(timestep, train)
 				break;
 
-			case TrainState.BOARDING:
-				update = this.trainBoardStep(timestep, train)
-				break;
-
 			case TrainState.WAITING:
 				update = this.trainWaitStep(timestep, train)
+				break;
+			
+			case TrainState.BOARDING:
+				update = this.trainBoardStep(timestep, train)
 				break;
 		}
 
