@@ -288,7 +288,11 @@ Now that we have established that our simulation is an accurate representation o
 Again we will use PCA to attempt to find out the waiting time and train capacity in relation to hour and direction.
 
 ```{r}
-trainStats <- subset(train,train$stationName==rownames(df))
+trainStats <- data.frame()
+for (i in 1:nrow(df)) {
+  stations <- subset(train,train$stationName==rownames(df)[i])
+  trainStats <- rbind(trainStats,stations)
+}
 trainStats <- aggregate(cbind(alightCount_mean, alightCount_count, boardCount_mean, boardCount_count, waitTime_mean,trainCount_mean) ~ hour+stationName+direction+line,data=trainStats,FUN=mean)
 trainStats <- subset(trainStats,hour!=6)
 trainStats <- subset(trainStats,hour!=24)
@@ -323,7 +327,7 @@ Function `ClusterTrainData` takes in the cluster dataframe as an input and provi
 
 ```{r}
 ClusterTrainData <- function(df) {
-  trainStats <- aggregate(cbind(alightCount_mean, alightCount_count, boardCount_mean, boardCount_count, waitTime_mean,trainCount_mean) ~ hour+stationName+direction+line,data=train,FUN=mean)
+  trainStats <- aggregate(cbind(alightCount_mean, alightCount_count, boardCount_mean, boardCount_count, waitTime_mean,trainCount_mean,trainCount_sd,trainCount_count) ~ hour+stationName+direction+line,data=train,FUN=mean)
   Temp2 <- data.frame()
   for (i in 1:length(rownames(df))) {
     rowname <- as.data.frame(strsplit(rownames(df)[i],","))[1,]
@@ -361,6 +365,29 @@ ggplot(data=Cluster3TrainData,mapping=aes(x=hour,y=trainCount_mean,color=ID))+ge
 ggplot(data=Cluster4TrainData,mapping=aes(x=hour,y=trainCount_mean,color=ID))+geom_point()+geom_line() +
     ggtitle("TrainCount_mean for Cluster 4")
 ```
+
+We can see that Cluster 1-4 differ in terms of the hour and magnitude of the spike in trainCount_mean as well as the average trainCount_mean value.
+
+With each train having a capacity of 1000 commuters, we can set our own threshold trainCount_mean value of about 600. With this value, it is a safe estimate to ensure that no train is ever full at any point within the hour. Any trainCount_mean values above 600 will need to be dealt with by increasing the frequency of trains at those stations so as to reduce congestion. Because of this, we focus our attention to Cluster 1 & 4.
+
+We can see that Cluster 1 receives it's crowd in the morning from 0700h - 0800h, while cluster 4 receives it crowd from 1700h - 1900h. Lets observer the crowds for each station within the cluster at those timings.
+
+```{r}
+subset(Cluster1TrainData,Cluster1TrainData$hour <= 8 & Cluster1TrainData$trainCount_mean>=600)
+```
+
+
+
+In Cluster 1 we can identify a few tracks that require a higher frequency of trains to clear the crowd between hours 0700h - 0800h. These tracks are:
+`Newton DT11/NS21 FW dtl` `Clementi MRT Station EW23 BW ewl` `Serangoon NE12/CC13 BW nel` `Bukit Batok NS2 BW nsl`  `Ang Mo Kio NS16 FW nsl` `Bishan NS17/CC15 FW nsl` `Jurong East NS1/EW24 FW nsl` `Khatib NS14 FW nsl` `Novena NS20 FW nsl` `Toa Payoh NS19 FW nsl`.
+
+```{r}
+subset(Cluster4TrainData, 17 <= Cluster4TrainData$hour & Cluster4TrainData$hour <= 19 & Cluster4TrainData$trainCount_mean>=600)
+```
+
+In Cluster 4 we can identify a few tracks that require a higher frequency of trains to clear the crowd between hours 1700h - 1900h. These tracks are:
+`Newton DT11/NS12 BW dtl` `Clementi MRT Station EW23 FW ewl` `Jurong East NS1/EW24` `Ang Mo Kio NS16 BW nsl` `Khatib NS14 BW nsl` `Toa Payoh NS19 BW nsl` `Bukit Batok NS2 FW nsl`.
+
 
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
