@@ -45,7 +45,7 @@ function replace( hide, show ) {
     document.getElementById("linename").innerHTML = getLineName()
   }
 
-
+// alert when new line added
 function newlinealert() {
     alert("New Line Added\n" +
         "Check simulation!");
