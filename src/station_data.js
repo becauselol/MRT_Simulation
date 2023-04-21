@@ -1,5 +1,5 @@
 var edgeColourString = `ewl,green
-nslA, pink
+nslA,pink
 cgl,green
 dtl,blue
 nsl,red
