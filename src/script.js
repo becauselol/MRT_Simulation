@@ -155,7 +155,7 @@ function draw_map() {
 		" hours";
 
 		var edgeCheck = document.getElementById("checkedge").checked
-		// var heat_stnCheck = document.getElementById("check-heat-stn").checked
+		var heat_stnCheck = document.getElementById("check-heat-stn").checked
 		var heat_trainCheck = document.getElementById("check-heat-train").checked
 		var drawStn = document.getElementById("drawstn").checked
 		var drawTrain = document.getElementById("drawtrain").checked
@@ -165,12 +165,12 @@ function draw_map() {
 			metro.simStep(timestep, dataStore, csvDataStore);
 
 			// draw map
-			drawer.drawMap(metro, drawStn, drawTrain, edgeCheck, heat_trainCheck );
+			drawer.drawMap(metro, drawStn, drawTrain, heat_stnCheck, edgeCheck, heat_trainCheck );
 			
 
 		} else {
 			// if it is paused, just draw the map with no additional input
-			drawer.drawMap(metro, drawStn, drawTrain, edgeCheck, heat_trainCheck );
+			drawer.drawMap(metro, drawStn, drawTrain, heat_stnCheck, edgeCheck, heat_trainCheck );
 			
 		}
 
