@@ -46,6 +46,12 @@ function replace( hide, show ) {
   }
 
 
+function newlinealert() {
+    alert("New Line Added\n" +
+        "Check simulation!");
+}
+
+
 // function newLine() {
 //     var x = document.getElementById("newline");
 //     console.log(x.style.display)

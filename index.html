@@ -47,16 +47,16 @@
 			  </label>
 			
 			<!-- toggle heatmap selection -->
-			<label class="checkbox">
+			<!-- <label class="checkbox">
 				<input type="checkbox" name="checkbox" value="text" id = "check-heat-stn">Station Heatmap
 				<input type="range" min="0" max="1" step="0.05" value="0" class = "slider"  oninput="rangeValue1.innerText = this.value">
 				<label id="rangeValue1">0</label>
 
-			</label>
+			</label> -->
 			<label class="checkbox">
 				<input type="checkbox" name="checkbox" value="text" id = "check-heat-train">Train Heatmap
 				<input type="range" min="0" max="1" step="0.05" value="0" class = "slider"  oninput="rangeValue2.innerText = this.value">
-				<span id="rangeValue2">0</span>
+				<span class = "slider-label" id="rangeValue2">0</span>
 			</label>
 
 			<!-- toggle train & stn visual -->
@@ -122,7 +122,7 @@
 					<div class="container">
 						<div class = "right">
 						<button class="next" type="button"  id="next" onclick = "newLineUpdate()">Next</button>
-						<button class = "save" type = "button" id = "save" onclick = "newLineUpdate();replace('newlineNxt', 'newline')">Save</button>
+						<button class = "save" type = "button" id = "save" onclick = "newLineUpdate(); newlinealert()">Save</button>
 		
 						</div>
 					</div>
