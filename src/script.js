@@ -13,6 +13,12 @@ var maxY = 540;
 var fps = 10; // frames per real time second // FPS needs to be at least 5 and all waitTimes of trains and edge weights must be at least 1
 var timestep = 1/fps;
 
+// default input parameters
+var lineTrainTimes = {}
+for (const lineCode of Object.keys(edgesMap)){
+	lineTrainTimes[lineCode] = 4
+}
+
 // input parameters from simulation
 const trainCapacity = document.getElementById("traincap");
 const interArrival = document.getElementById("arrtime");
