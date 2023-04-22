@@ -77,6 +77,7 @@
 
 		<button class="button" onclick="toggleSim()">Start/Pause</button>
 		<button class="button" onclick="resetSim()">Reset</button>
+		<button class="button" onclick="setDefault()">Set Default</button>
 		<button class="button" onclick="downloadStationRunData()">Download Station Data</button>
 		<button class="button" onclick="downloadTrainRunData()">Download Train Data</button>
 
@@ -98,6 +99,8 @@
 					<input type="text" id="name" name="name" placeholder="not an existing line">
 					<label class = "textinput" for="colour">Colour of new line:</label>
 					<input  type="text" id="colour" name="colour" placeholder="not an existing colour">
+					<label class = "textinput" for="frmstn">Start station:</label>
+					<input type="text" id="startstn" name="startstn" >
 		
 					<div class="container">
 						<div class = "right">
@@ -112,11 +115,10 @@
 		
 				<div class = "newlineboxnxt" id = "newlineNxt">
 					<b id = "linename"></b>
-					<label class = "textinput" for="frmstn">From station:</label>
-					<input type="text" id="frmstn" name="frmstn" >
-					<label class = "textinput" for="tostn">To station:</label>
+					
+					<label class = "textinput" for="tostn">Next station:</label>
 					<input  type="text" id="tostn" name="tostn">
-					<label class = "textinput" for="timeT">Time:</label>
+					<label class = "textinput" for="timeT">Travel time:</label>
 					<input  type="text" id="timeT" name="timeT">
 		
 					<div class="container">
