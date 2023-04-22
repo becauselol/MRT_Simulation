@@ -13,24 +13,41 @@ var maxY = 540;
 var fps = 10; // frames per real time second // FPS needs to be at least 5 and all waitTimes of trains and edge weights must be at least 1
 var timestep = 1/fps;
 
+// default input parameters
+var lineTrainTimes = {}
+for (const lineCode of Object.keys(edgesMap)){
+	lineTrainTimes[lineCode] = 4
+}
+
 // input parameters from simulation
 const trainCapacity = document.getElementById("traincap");
 const interArrival = document.getElementById("arrtime");
 const spawnRate = document.getElementById("spawnrate");
-var inputPara = {trainCap:0, interArrival: 0, spawnRate :0 }; // dictionary for all input parameters
+var inputPara = {trainCap:900, interArrival: 4, spawnRate :0 }; // dictionary for all input parameters
+trainCapacity.value = inputPara.trainCap.toString()
+interArrival.value = inputPara.interArrival.toString()
+spawnRate.value = inputPara.spawnRate
 
 // new line parameters from simulation
 const inputFrom = document.getElementById("frmstn");
 const inputTo = document.getElementById("tostn");
 const inputTime = document.getElementById("timeT");
-var newLineArr = []
+var newLineArr = [[]]
 var allNewLines = {}
 
-
+document.getElementById("drawtrain").checked = true
+document.getElementById("drawstn").checked = true
 //intiialize graph and drawer
 var metro = new Metro("Singapore MRT");
 var drawer = new MapDrawer(ctx, maxX, maxY);
 var processor = new InputProcessor()
+processor.init()
+processor.parseStationString(stationString)
+processor.parseEdgeStringDict(edgesMap)
+processor.parseEdgeColours(edgeColourString)
+processor.setDefaultTrainLineCapacities(inputPara.trainCap)
+processor.setDefaultTrainLinePeriod(inputPara.interArrival)
+
 var dataStore = new DataStore()
 
 var csvDataStore = new CSVDataStore();
@@ -39,15 +56,11 @@ var plotter = new Plotter()
 
 function init() {
 	metro.init("Singapore MRT")
-	processor.init()
-	processor.parseStationString(stationString)
-	processor.parseEdgeStringDict(edgesMap)
-	processor.parseEdgeColours(edgeColourString)
 
 	processor.constructMetroGraph(metro, drawer, spawnDataString)
 
-	for (const lineCode of Object.keys(edgesMap)) {
-		processor.addTrainsWithPeriod(metro, lineCode, 4, 900)
+	for (const lineCode of processor.chosenLines) {
+		processor.addTrainsWithPeriod(metro, lineCode, processor.trainPeriod[lineCode], processor.trainCapacities[lineCode])
 	}
 
 	metro.getPathsFromStartStation();
@@ -60,14 +73,10 @@ function init() {
 
 	metro.hour = startHour
 	metro.sysTime = startHour * 60
-	
-
-	// set parameters to initial
-	trainCapacity.value = 0;
-	interArrival.value = 0;
-	spawnRate.value = 0;
 
 	// init graph filter button with train stns and lines
+	setButton1(dataStore)
+
 	plotter.filterBtn(dataStore)
 	plotter.filterBtnstn(dataStore, "selectstn1")
 	plotter.filterBtnstn(dataStore, "selectstn2")
@@ -85,28 +94,36 @@ function init() {
 function updateButton(){
 
 	document.getElementById("trainstn").innerHTML = "" ;
+	var chosenLine = document.getElementById("trainline").value
+	trainCapacity.value = processor.trainCapacities[chosenLine].toString()
+	interArrival.value = processor.trainPeriod[chosenLine].toString()
 	setButton2(dataStore)
 }
 
 // update simulation parameters with user's new inputs
 function updateParameters(){
+	var chosenLine = document.getElementById("trainline").value
 	inputPara.interArrival = interArrival.value;
 	inputPara.spawnRate = spawnRate.value;
 	inputPara.trainCap = trainCapacity.value;
+	processor.trainPeriod[chosenLine] = parseFloat(interArrival.value);
+	processor.trainCapacities[chosenLine] = parseInt(trainCapacity.value)
 	// console.log(inputPara)
 
 }
 
 function newLineUpdate(){
 	// when next clicked save values into array
-	var stn_i1 = document.getElementById("frmstn").value;
+	// var stn_i1 = document.getElementById("frmstn").value;
 	var stn_i2 = document.getElementById("tostn").value;
 	var time = document.getElementById("timeT").value;
 
-	newLineArr.push([stn_i1,stn_i2, time]);
+	newLineArr[newLineArr.length - 1].push(stn_i2)
+	newLineArr[newLineArr.length - 1].push(time)
+	newLineArr.push([stn_i2]);
 
 	// refresh/re-initialise input values
-	inputFrom.value = "";
+	// inputFrom.value = "";
 	inputTo.value = "";
 	inputTime.value = "";
 
@@ -119,6 +136,13 @@ function getLineName(){
 	return newLineName
 }
 
+function getPrevStn() {
+	if (newLineArr[0].length == 0) {
+		return ""
+	}
+	return newLineArr[newLineArr.length - 1][0]
+}
+
 function saveLine(){
 	
 	// get line name and colour
@@ -126,20 +150,23 @@ function saveLine(){
 	var colour = document.getElementById("colour").value
 
 	// Make new line key
-	allNewLines[lineName] = []
-
+	var temp = []
+	newLineArr.pop()
 	// add color into dictionary 
-	allNewLines[lineName].push(colour)
 	for (const stnPair of newLineArr) {
-
 		// take stn arr and convert to string
-		allNewLines[lineName].push(stnPair.join(","))
+		temp.push(stnPair.join(","))
 	}
-	newLineArr = [] //empty out stn array 
+
+	var newEdgeString = temp.join("\n")
+	processor.parseEdgeString(lineName, newEdgeString)
+	processor.edgeColours[lineName] = colour 
+	processor.chosenLines.push(lineName)
+	processor.trainPeriod[lineName] = inputPara.interArrival
+	processor.trainCapacities[lineName] = inputPara.trainCap
+	newLineArr = [[]] //empty out stn array 
 
 	// add to main dictionary
-	allNewLines[lineName] = allNewLines[lineName].join("\n")
-	// console.log(allNewLines[lineName])
   }
 
 
@@ -159,18 +186,18 @@ function draw_map() {
 		var heat_trainCheck = document.getElementById("check-heat-train").checked
 		var drawStn = document.getElementById("drawstn").checked
 		var drawTrain = document.getElementById("drawtrain").checked
-
+		var heat_train_limit = parseFloat(document.getElementById("heat-train-limit").value)
 		if (isRunning) {
 			// take a simulation step
 			metro.simStep(timestep, dataStore, csvDataStore);
 
 			// draw map
-			drawer.drawMap(metro, drawStn, drawTrain, heat_stnCheck, edgeCheck, heat_trainCheck );
+			drawer.drawMap(metro, drawStn, drawTrain, heat_stnCheck, edgeCheck, heat_trainCheck, heat_train_limit);
 			
 
 		} else {
 			// if it is paused, just draw the map with no additional input
-			drawer.drawMap(metro, drawStn, drawTrain, heat_stnCheck, edgeCheck, heat_trainCheck );
+			drawer.drawMap(metro, drawStn, drawTrain, heat_stnCheck, edgeCheck, heat_trainCheck, heat_train_limit);
 			
 		}
 
@@ -210,6 +237,11 @@ function resetSim() {
 	init()
 }
 
+function setDefault() {
+	processor.chosenLines = [...processor.defaultLines]
+	processor.setDefaultTrainLineCapacities(inputPara.trainCap)
+	processor.setDefaultTrainLinePeriod(inputPara.interArrival)
+}
 function downloadStationRunData() {
 	var zip = new JSZip();
     var csvContent = csvDataStore.writeStationCSVString()
@@ -236,26 +268,6 @@ function downloadTrainRunData() {
     });       
 }
 
-// function downloadRunData() {
-// 	var zip = new JSZip();
-
-// 	var csvContent = csvDataStore.writeStationCSVString()
-        
-//     zip.file("stationData.csv", csvContent);
-
-//     var csvContent = csvDataStore.writeTrainCSVString()
-        
-//     zip.file("trainData.csv", csvContent);
-
-//     zip.generateAsync({
-//         type: "base64"
-//     }).then(function(content) {
-//         window.location.href = "data:application/zip;base64," + content;
-//     });       
-// }
-// function toggleCreate() {
-// 	creatorMode = !creatorMode
-// }
 
 // Ready, set, go
 init();

@@ -1,9 +1,10 @@
 class Plotter {
   constructor() {}
   
-  // adding options to drop down selection
+ 
   filterBtn(dataStore){
     var select = document.getElementById("select");
+    removeOptions(select)
     var data = dataStore.getLineCodeArray()
     for(var i = 0; i < data.length; i++)
     {
@@ -17,6 +18,7 @@ class Plotter {
 
   filterBtnstn(dataStore,element){
     var select = document.getElementById(element);
+    removeOptions(select)
     var data = dataStore.nameMap
     console.log(data)
     for(const [key, value] of Object.entries(data))

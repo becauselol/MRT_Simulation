@@ -4,6 +4,8 @@ class InputProcessor {
 	}
 
 	init() {
+		this.defaultLines = ["nsl", "ccl", "nel", "dtl", "tel", "cgl", "ewl"]
+		this.chosenLines = ["nsl", "ccl", "nel", "dtl", "tel", "cgl", "ewl"]
 		this.edgeMap = {}
 		this.stationList = []
 		this.stationDict = {}
@@ -11,6 +13,20 @@ class InputProcessor {
 		this.codeStationRef = {}
 		this.metroLineStartStation = {}
 		this.spawnData = {}
+	}
+
+	setDefaultTrainLineCapacities(capacity) {
+		this.trainCapacities = {}
+		for (const line of this.chosenLines) {
+			this.trainCapacities[line] = capacity
+		}
+	}
+
+	setDefaultTrainLinePeriod(period) {
+		this.trainPeriod = {}
+		for (const line of this.chosenLines) {
+			this.trainPeriod[line] = period
+		}
 	}
 
 	parseStationString(stationString) {
@@ -159,7 +175,8 @@ class InputProcessor {
 	}
 
 	constructEdges() {
-		for (const [line, edges] of Object.entries(this.edgeMap)) {
+		for (const line of this.chosenLines) {
+			var edges = this.edgeMap[line]
 			for (var idx=0; idx < edges.length; idx++) {
 				//get stationId
 				var aId = this.codeStationRef[edges[idx][0]];
@@ -185,6 +202,7 @@ class InputProcessor {
 	 * @param {MapDrawer} mapDrawer - mapDrawer object to reference for the canvas size
 	 * */
 	constructMetroGraph(metroGraph, mapDrawer, spawnDataString) {
+		this.metroLineStartStation = {}
 		// construct the stations
 		this.constructStationDict(mapDrawer);
 
