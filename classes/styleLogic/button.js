@@ -53,6 +53,7 @@ function replace( hide, show ) {
     document.getElementById("prevstn").innerHTML = "previous station: " + getPrevStn()
   }
 
+
  // adding options to drop down selection
 function removeOptions(selectElement) {
      var i, L = selectElement.options.length - 1;
@@ -60,6 +61,14 @@ function removeOptions(selectElement) {
         selectElement.remove(i);
      }
   }
+
+// alert when new line added
+function newlinealert() {
+    alert("New Line Added\n" +
+        "Check simulation!");
+}
+
+
 // function newLine() {
 //     var x = document.getElementById("newline");
 //     console.log(x.style.display)

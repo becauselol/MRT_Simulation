@@ -37,6 +37,9 @@ var btn = document.getElementById("newlinebtn");
 // Get the <span> element that closes the modal
 var span = document.getElementsByClassName("close")[0];
 
+// Get the <span> element that closes the modal
+var savebtn = document.getElementById("save");
+
 // When the user clicks the button, open the modal 
 btn.onclick = function() {
   modal.style.display = "block";
@@ -47,6 +50,15 @@ btn.onclick = function() {
 // When the user clicks on <span> (x), close the modal
 span.onclick = function() {
   modal.style.display = "none";
+
+}
+
+// When the user clicks save btn, close modal
+// When the user clicks on <span> (x), close the modal
+savebtn.onclick = function() {
+  modal.style.display = "none";
+  newLineUpdate(); 
+  newlinealert();
 
 }
 
