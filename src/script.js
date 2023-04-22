@@ -32,7 +32,7 @@ spawnRate.value = inputPara.spawnRate
 const inputFrom = document.getElementById("frmstn");
 const inputTo = document.getElementById("tostn");
 const inputTime = document.getElementById("timeT");
-var newLineArr = []
+var newLineArr = [[]]
 var allNewLines = {}
 
 
@@ -44,8 +44,8 @@ processor.init()
 processor.parseStationString(stationString)
 processor.parseEdgeStringDict(edgesMap)
 processor.parseEdgeColours(edgeColourString)
-processor.setDefaultTrainLineCapacities(900)
-processor.setDefaultTrainLinePeriod(4)
+processor.setDefaultTrainLineCapacities(inputPara.trainCap)
+processor.setDefaultTrainLinePeriod(inputPara.interArrival)
 
 var dataStore = new DataStore()
 
@@ -121,7 +121,9 @@ function newLineUpdate(){
 	var stn_i2 = document.getElementById("tostn").value;
 	var time = document.getElementById("timeT").value;
 
-	newLineArr.push([stn_i1,stn_i2, time]);
+	newLineArr[newLineArr.length - 1].push(stn_i2)
+	newLineArr[newLineArr.length - 1].push(time)
+	newLineArr.push([stn_i2]);
 
 	// refresh/re-initialise input values
 	// inputFrom.value = "";
@@ -137,6 +139,13 @@ function getLineName(){
 	return newLineName
 }
 
+function getPrevStn() {
+	if (newLineArr[0].length == 0) {
+		return ""
+	}
+	return newLineArr[newLineArr.length - 1][0]
+}
+
 function saveLine(){
 	
 	// get line name and colour
@@ -144,20 +153,23 @@ function saveLine(){
 	var colour = document.getElementById("colour").value
 
 	// Make new line key
-	allNewLines[lineName] = []
-
+	var temp = []
+	newLineArr.pop()
 	// add color into dictionary 
-	allNewLines[lineName].push(colour)
 	for (const stnPair of newLineArr) {
-
 		// take stn arr and convert to string
-		allNewLines[lineName].push(stnPair.join(","))
+		temp.push(stnPair.join(","))
 	}
-	newLineArr = [] //empty out stn array 
+
+	var newEdgeString = temp.join("\n")
+	processor.parseEdgeString(lineName, newEdgeString)
+	processor.edgeColours[lineName] = colour 
+	processor.chosenLines.push(lineName)
+	processor.trainPeriod[lineName] = inputPara.interArrival
+	processor.trainCapacities[lineName] = inputPara.trainCap
+	newLineArr = [[]] //empty out stn array 
 
 	// add to main dictionary
-	allNewLines[lineName] = allNewLines[lineName].join("\n")
-	// console.log(allNewLines[lineName])
   }
 
 
@@ -259,26 +271,6 @@ function downloadTrainRunData() {
     });       
 }
 
-// function downloadRunData() {
-// 	var zip = new JSZip();
-
-// 	var csvContent = csvDataStore.writeStationCSVString()
-        
-//     zip.file("stationData.csv", csvContent);
-
-//     var csvContent = csvDataStore.writeTrainCSVString()
-        
-//     zip.file("trainData.csv", csvContent);
-
-//     zip.generateAsync({
-//         type: "base64"
-//     }).then(function(content) {
-//         window.location.href = "data:application/zip;base64," + content;
-//     });       
-// }
-// function toggleCreate() {
-// 	creatorMode = !creatorMode
-// }
 
 // Ready, set, go
 init();

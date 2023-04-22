@@ -104,7 +104,7 @@
 		
 					<div class="container">
 						<div class = "right">
-						<button class="next" type="button"  name="next" onclick = "replace('newline', 'newlineNxt')" >Next</button>
+						<button class="next" type="button"  name="next" onclick = "setNewLineInit()" >Next</button>
 		
 						</div>
 					</div>
@@ -115,7 +115,7 @@
 		
 				<div class = "newlineboxnxt" id = "newlineNxt">
 					<b id = "linename"></b>
-					
+					<b id = "prevstn"></b>
 					<label class = "textinput" for="tostn">Next station:</label>
 					<input  type="text" id="tostn" name="tostn">
 					<label class = "textinput" for="timeT">Travel time:</label>
@@ -123,8 +123,8 @@
 		
 					<div class="container">
 						<div class = "right">
-						<button class="next" type="button"  id="next" onclick = "newLineUpdate()">Next</button>
-						<button class = "save" type = "button" id = "save" onclick = "newLineUpdate();replace('newlineNxt', 'newline')">Save</button>
+						<button class="next" type="button"  id="next" onclick = "newLineUpdate();replace('newlineNxt', 'newlineNxt')">Next</button>
+						<button class = "save" type = "button" id = "save" onclick = "newLineUpdate()">Save</button>
 		
 						</div>
 					</div>

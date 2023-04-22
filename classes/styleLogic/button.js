@@ -38,11 +38,19 @@ function setButton2(dataStore){
 
 }
 
+function setNewLineInit() {
+    var startStation = document.getElementById("startstn").value
+    var colour = document.getElementById("colour").value
+    newLineArr[0].push(startStation)
+
+    replace('newline', 'newlineNxt')
+}
 // replace current div with another div
 function replace( hide, show ) {
     document.getElementById(hide).style.display="none";
     document.getElementById(show).style.display="flex";
     document.getElementById("linename").innerHTML = getLineName()
+    document.getElementById("prevstn").innerHTML = getPrevStn()
   }
 
 
