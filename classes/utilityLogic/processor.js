@@ -4,11 +4,14 @@ class InputProcessor {
 	}
 
 	init() {
+		this.defaultLines = ["nsl", "ccl", "nel", "dtl", "tel", "cgl", "ewl"]
+		this.chosenLines = ["nsl", "ccl", "nel", "dtl", "tel", "cgl", "ewl"]
 		this.edgeMap = {}
 		this.stationList = []
 		this.stationDict = {}
 		this.edgeColours = {}
 		this.codeStationRef = {}
+		this.allCodeMap = {}
 		this.metroLineStartStation = {}
 		this.spawnData = {}
 	}
@@ -53,28 +56,23 @@ class InputProcessor {
 			row[0] = parseFloat(row[0]);
 			row[3] = parseFloat(row[3]);
 
-			row[1] = row[1].split("/")[0]
-			row[2] = row[2].split("/")[0]
 			// console.debug(row)
 
 			var hour = row[0]
 			var rate = row[3]
-			var sourceId = this.codeStationRef[row[1]]
-			var destId = this.codeStationRef[row[2]]
+			var sourceId = row[1].split("/").sort().join("/")
+			var destId = row[2].split("/").sort().join("/")
 
-			if (sourceId === undefined || destId === undefined) {
-				continue;
+			if (!(sourceId in this.spawnData)){
+				this.spawnData[sourceId] = {}
 			}
-
-			var sourceStation = this.stationDict[sourceId]
-
-			if (!(destId in sourceStation.spawnRate)) {
-				sourceStation.spawnRate[destId] = new Array(25); 
-				for (let i=0; i<25; ++i) sourceStation.spawnRate[destId][i] = 0;
+			if (!(destId in this.spawnData[sourceId])) {
+				this.spawnData[sourceId][destId] = new Array(25); 
+				for (let i=0; i<25; ++i) this.spawnData[sourceId][destId][i] = 0;
 			}
 
 			// we go by the minute
-			sourceStation.spawnRate[destId][hour] = parseFloat((rate/60).toFixed(6))
+			this.spawnData[sourceId][destId][hour] = parseFloat((rate/60).toFixed(6))
 		}
 	}
 
@@ -142,6 +140,7 @@ class InputProcessor {
 			var all_codes = name.split(" ").slice(-1)[0];
 			var codes = all_codes.split("/");
 			var stationId = "station" + counter
+			this.allCodeMap[stationId] = codes.sort().join("/")
 			for (const c of codes) {
 				this.codeStationRef[c] = stationId
 			}
@@ -158,8 +157,56 @@ class InputProcessor {
 		}
 	}
 
+	addSpawnData() {
+		for (const [sourceId, sourceStation] of Object.entries(this.stationDict)) {
+			var sourceSpawnData = this.spawnData[this.allCodeMap[sourceId]]
+			if (sourceSpawnData === undefined) {
+				var codes = this.allCodeMap[sourceId]
+				var found = false 
+				for (const key of Object.keys(this.spawnData)) {
+					for (const c in codes.split("/")) {
+						if (key.includes(c)) {
+							var chosen_key = key 
+							found = true
+							break
+						}
+					}
+					if(found){
+						break;
+					}
+				}
+				sourceSpawnData = this.spawnData[chosen_key]
+			}
+			for (const [destId, destStation] of Object.entries(this.stationDict)) {
+				if (destId == sourceId) {
+					continue;
+				}
+				var data = sourceSpawnData[this.allCodeMap[destId]]
+				if (data === undefined) {
+					var codes = this.allCodeMap[destId]
+					var found = false
+					for (const key of Object.keys(sourceSpawnData)) {
+						for (const c in codes.split("/")) {
+							if (key.includes(c)) {
+								var chosen_key = key 
+								found = true;
+								break
+							}
+						}
+						if (found) {
+							break;
+						}
+					}
+					data = sourceSpawnData[chosen_key]
+				}
+				sourceStation.spawnRate[destId] = data
+			}
+		}
+	}
+
 	constructEdges() {
-		for (const [line, edges] of Object.entries(this.edgeMap)) {
+		for (const line of this.chosenLines) {
+			var edges = this.edgeMap[line]
 			for (var idx=0; idx < edges.length; idx++) {
 				//get stationId
 				var aId = this.codeStationRef[edges[idx][0]];
@@ -187,8 +234,7 @@ class InputProcessor {
 	constructMetroGraph(metroGraph, mapDrawer, spawnDataString) {
 		// construct the stations
 		this.constructStationDict(mapDrawer);
-
-		this.parseSpawnDataString(spawnDataString)
+		this.addSpawnData();
 		// construct the map paths
 		this.constructEdges();
 

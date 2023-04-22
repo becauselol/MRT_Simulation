@@ -37,6 +37,12 @@ var allNewLines = {}
 var metro = new Metro("Singapore MRT");
 var drawer = new MapDrawer(ctx, maxX, maxY);
 var processor = new InputProcessor()
+processor.init()
+processor.parseStationString(stationString)
+processor.parseEdgeStringDict(edgesMap)
+processor.parseEdgeColours(edgeColourString)
+processor.parseSpawnDataString(spawnDataString)
+
 var dataStore = new DataStore()
 
 var csvDataStore = new CSVDataStore();
@@ -45,10 +51,7 @@ var plotter = new Plotter()
 
 function init() {
 	metro.init("Singapore MRT")
-	processor.init()
-	processor.parseStationString(stationString)
-	processor.parseEdgeStringDict(edgesMap)
-	processor.parseEdgeColours(edgeColourString)
+
 
 	processor.constructMetroGraph(metro, drawer, spawnDataString)
 
