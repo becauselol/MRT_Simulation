@@ -1,7 +1,7 @@
 class Plotter {
   constructor() {}
   
- // set up graph filter button with line names
+  // set up graph filter button with line names
   filterBtn(dataStore){
     // get dropdown html element
     var select = document.getElementById("select");

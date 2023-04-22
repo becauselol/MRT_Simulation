@@ -95,14 +95,17 @@
 				<span class="close" >&times;</span>
 				
 				<div class = "newlineboxnxt" id = "newline">
-
+					<!-- New line name text input -->
 					<label class = "textinput" for="name">Name of new line:</label>
 					<input type="text" id="name" name="name" placeholder="not an existing line">
+					<!-- Line colour input -->
 					<label class = "textinput" for="colour">Colour of new line:</label>
 					<input  type="text" id="colour" name="colour" placeholder="not an existing colour">
+					<!-- Input first station -->
 					<label class = "textinput" for="frmstn">Start station:</label>
 					<input type="text" id="startstn" name="startstn" >
-		
+					
+					<!-- Next button -->
 					<div class="container">
 						<div class = "right">
 						<button class="next" type="button"  name="next" onclick = "setNewLineInit()" >Next</button>
@@ -113,18 +116,23 @@
 		
 				</div>
 		
-		
+				<!-- Input new line stations -->
 				<div class = "newlineboxnxt" id = "newlineNxt">
 					<b id = "linename"></b>
 					<b id = "prevstn"></b>
+					<!-- Next station text input -->
 					<label class = "textinput" for="tostn">Next station:</label>
 					<input  type="text" id="tostn" name="tostn">
+					<!-- Time taken to travel between next station and previous station -->
 					<label class = "textinput" for="timeT">Travel time:</label>
 					<input  type="text" id="timeT" name="timeT">
-		
+					
+					<!-- Next and Save button -->
 					<div class="container">
 						<div class = "right">
+						<!-- If 'next' clicked, continue to add more stations -->
 						<button class="next" type="button"  id="next" onclick = "newLineUpdate();replace('newlineNxt', 'newlineNxt')">Next</button>
+						<!-- when clicked save new line info -->
 						<button class = "save" type = "button" id = "save" onclick = "newLineUpdate()">Save</button>
 		
 						</div>
@@ -180,7 +188,6 @@
 	
 
 		<!-- Add in Charts -->
-
 		<div class = "chartbg">
 			<div class="chart" id="chart1"></div>
 			
@@ -209,10 +216,6 @@
 					<div id="chartstation2"></div>
 				</div>
 			</div>
-			
-
-			
-
 		</div>
 
 		
