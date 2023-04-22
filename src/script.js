@@ -35,7 +35,8 @@ const inputTime = document.getElementById("timeT");
 var newLineArr = [[]]
 var allNewLines = {}
 
-
+document.getElementById("drawtrain").checked = true
+document.getElementById("drawstn").checked = true
 //intiialize graph and drawer
 var metro = new Metro("Singapore MRT");
 var drawer = new MapDrawer(ctx, maxX, maxY);
@@ -185,18 +186,18 @@ function draw_map() {
 		var heat_trainCheck = document.getElementById("check-heat-train").checked
 		var drawStn = document.getElementById("drawstn").checked
 		var drawTrain = document.getElementById("drawtrain").checked
-
+		var heat_train_limit = parseFloat(document.getElementById("heat-train-limit").value)
 		if (isRunning) {
 			// take a simulation step
 			metro.simStep(timestep, dataStore, csvDataStore);
 
 			// draw map
-			drawer.drawMap(metro, drawStn, drawTrain, heat_stnCheck, edgeCheck, heat_trainCheck );
+			drawer.drawMap(metro, drawStn, drawTrain, heat_stnCheck, edgeCheck, heat_trainCheck, heat_train_limit);
 			
 
 		} else {
 			// if it is paused, just draw the map with no additional input
-			drawer.drawMap(metro, drawStn, drawTrain, heat_stnCheck, edgeCheck, heat_trainCheck );
+			drawer.drawMap(metro, drawStn, drawTrain, heat_stnCheck, edgeCheck, heat_trainCheck, heat_train_limit);
 			
 		}
 

@@ -76,7 +76,7 @@ class MapDrawer {
      * Draws the whole MetroGraph in the canvas context
      * @param {MetroGraph} metroGraph - draws the metroGraph as required
      * */
-    drawMap(metroGraph, drawStations=true, drawTrains=true, stationHeatColour=false, edgeBlackColour=false, trainHeatColour=false, mode="transit") {
+    drawMap(metroGraph, drawStations=true, drawTrains=true, stationHeatColour=false, edgeBlackColour=false, trainHeatColour=false, trainCapacityLimit=0.8, mode="transit") {
         this.ctx.clearRect(0, 0, this.width, this.height);
         // console.log("words?")
         //Iterate over all the objects and draw them as required
@@ -128,7 +128,7 @@ class MapDrawer {
             for (const [trainId, train] of Object.entries(metroGraph.trainDict)) {
                 if (trainHeatColour) {
                     var count = train.getCommuterCount()
-                    var heatScale = (count/(0.8*train.capacity)).toFixed(6);
+                    var heatScale = (count/(trainCapacityLimit*train.capacity)).toFixed(6);
                     if (heatScale > 1) {
                         heatScale = 1;
                     }
