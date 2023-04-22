@@ -20,6 +20,12 @@ function setButton1(dataStore){
 
 }
 
+function resetStartModal() {
+  document.getElementById("name").value = ""
+  document.getElementById("colour").value = "#ffffff"
+  document.getElementById("startstn").value = ""
+  newLineArr = [[]]
+}
 
 function setNewLineInit() {
 
@@ -143,7 +149,7 @@ function saveLine(){
     alert("New Line Added\n" +
         "Check simulation!");
     resetStartModal();
-
+    changesMade = true
     return true
     // add to main dictionary
 }

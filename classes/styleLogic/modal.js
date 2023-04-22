@@ -13,14 +13,15 @@ var span = document.getElementsByClassName("close")[0];
 // Get the <span> element that closes the modal
 var savebtn = document.getElementById("save");
 
-function resetStartModal() {
-  document.getElementById("name").value = ""
-  document.getElementById("colour").value = "#ffffff"
-  document.getElementById("startstn").value = ""
-}
+
 
 // When the user clicks the button, open the modal 
 btn.onclick = function() {
+  if(isRunning) {
+    alert("Please pause the simulation to make changes")
+    return
+  }
+  
   modal.style.display = "block";
   replace('newlineNxt', 'newline');
 

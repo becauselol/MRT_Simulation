@@ -5,6 +5,7 @@ var startHour = 6
 var endHour = 25
 
 var isRunning = false;
+var changesMade = false
 // var creatorMode = false;
 
 var maxX = 960;
@@ -102,6 +103,11 @@ function updateButton(){
 }
 
 function setDefaultParameters() {
+	if(isRunning) {
+		alert("Please pause the simulation to make changes")
+		return
+	}
+
 	var chosenLine = document.getElementById("trainline").value
 
 	interArrival.value = inputPara.interArrival
@@ -111,10 +117,17 @@ function setDefaultParameters() {
 	processor.trainCapacities[chosenLine] = parseInt(inputPara.interArrival)
 
 	alert("Default parameters updated for line: " + chosenLine)
+
+	changesMade = true;
 }
 
 // update simulation parameters with user's new inputs
 function updateParameters(){
+	if(isRunning) {
+		alert("Please pause the simulation to make changes")
+		return
+	}
+
 	var chosenLine = document.getElementById("trainline").value
 
 	// check if input parameters are valid
@@ -140,6 +153,7 @@ function updateParameters(){
 	processor.trainCapacities[chosenLine] = parseInt(trainCapacity.value)
 	// console.log(inputPara)
 	alert("Parameters updated for line: " + chosenLine)
+	changesMade = true;
 }
 
 
@@ -191,6 +205,11 @@ function updateGraph(){
 
 
 function toggleSim() {
+	if (!isRunning && changesMade) {
+		alert("Please reset the simulation to reflect the changes")
+		return
+	}
+
 	isRunning = !isRunning
 	console.log(`is running: ${isRunning}`)
     if (!isRunning) {
@@ -203,18 +222,32 @@ function toggleSim() {
 }
 
 function resetSim() {
-
+	if(isRunning) {
+		alert("Please pause the simulation to make changes")
+		return
+	}
 	// init the functions
 	init()
+	changesMade = false
 }
 
 function setDefault() {
+	if(isRunning) {
+		alert("Please pause the simulation to make changes")
+		return
+	}
 	processor.chosenLines = [...processor.defaultLines]
 	processor.setDefaultTrainLineCapacities(inputPara.trainCap)
 	processor.setDefaultTrainLinePeriod(inputPara.interArrival)
+
+	changesMade = true
 }
 
 function downloadStationRunData() {
+	if(isRunning) {
+		alert("Please pause the simulation to download data")
+		return
+	}
 	var zip = new JSZip();
     var csvContent = csvDataStore.writeStationCSVString()
         
@@ -228,6 +261,10 @@ function downloadStationRunData() {
 }
 
 function downloadTrainRunData() {
+	if(isRunning) {
+		alert("Please pause the simulation to download data")
+		return
+	}
 	var zip = new JSZip();
     var csvContent = csvDataStore.writeTrainCSVString()
         
