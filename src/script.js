@@ -84,7 +84,7 @@ function init() {
 	// init graphs
 	plotter.plotLineWaitTimes("chart1", dataStore, metro.metroLineColours);
 	plotter.plotChosenLineWaitTimes("chart2", dataStore, plotter.getChosenLine());
-	plotter.plotTravelTimes("chartTravelTime", dataStore);
+	// plotter.plotTravelTimes("chartTravelTime", dataStore);
 	plotter.initStationCommCount("chartstation1", dataStore, plotter.getChosenStn("selectstn1"));
 	plotter.initStationCommCount("chartstation2", dataStore, plotter.getChosenStn( "selectstn2"));
 	
@@ -226,7 +226,7 @@ function toggleSim() {
 
 		updateGraph();
         plotter.plotLineWaitTimes("chart1", dataStore, metro.metroLineColours);
-        plotter.plotTravelTimes("chartTravelTime", dataStore);
+        // plotter.plotTravelTimes("chartTravelTime", dataStore);
 
     }
 }
