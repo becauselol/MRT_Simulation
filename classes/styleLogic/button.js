@@ -50,7 +50,7 @@ function replace( hide, show ) {
     document.getElementById(hide).style.display="none";
     document.getElementById(show).style.display="flex";
     document.getElementById("linename").innerHTML = getLineName()
-    document.getElementById("prevstn").innerHTML = getPrevStn()
+    document.getElementById("prevstn").innerHTML = "previous station: " + getPrevStn()
   }
 
 
