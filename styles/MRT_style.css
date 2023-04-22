@@ -409,8 +409,6 @@ select:focus{
   color: white;
   padding: 10px;
   float: right;
-
-
 }
 
 /* Clear floats (clearfix hack) */
@@ -463,4 +461,9 @@ select:focus{
   border-radius: 50%;
   background: #212121;
   cursor: pointer;
+}
+
+.slider-label {
+  width: 30px;
+  float: right;
 }
