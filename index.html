@@ -99,9 +99,9 @@
 					<label class = "textinput" for="name">Name of new line:</label>
 					<input type="text" id="name" name="name" placeholder="not an existing line">
 					<label class = "textinput" for="colour">Colour of new line:</label>
-					<input  type="text" id="colour" name="colour" placeholder="not an existing colour">
-					<label class = "textinput" for="frmstn" placeholder="Choose a starting station">Start station:</label>
-					<input type="text" id="startstn" name="startstn" >
+					<input  type="color" id="colour" name="colour" placeholder="not an existing colour">
+					<label class = "textinput" for="frmstn">Start station:</label>
+					<input type="text" id="startstn" name="startstn" placeholder="Choose a starting station">
 		
 					<div class="container">
 						<div class = "right">
@@ -124,8 +124,8 @@
 		
 					<div class="container">
 						<div class = "right">
-						<button class="next" type="button"  id="next" onclick = "newLineUpdate();replace('newlineNxt', 'newlineNxt')">Next</button>
-						<button class = "save" type = "button" id = "save" onclick = "newLineUpdate()">Save</button>
+						<button class="next" type="button"  id="next" onclick = "newLineUpdate()">Next</button>
+						<button class = "save" type = "button" id = "save" onclick = "saveLine()">Save</button>
 		
 						</div>
 					</div>

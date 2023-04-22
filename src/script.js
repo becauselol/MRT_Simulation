@@ -109,6 +109,8 @@ function setDefaultParameters() {
 
 	processor.trainPeriod[chosenLine] = parseFloat(inputPara.trainCap);
 	processor.trainCapacities[chosenLine] = parseInt(inputPara.interArrival)
+
+	alert("Default parameters updated for line: " + chosenLine)
 }
 
 // update simulation parameters with user's new inputs
@@ -137,71 +139,8 @@ function updateParameters(){
 	processor.trainPeriod[chosenLine] = parseFloat(interArrival.value);
 	processor.trainCapacities[chosenLine] = parseInt(trainCapacity.value)
 	// console.log(inputPara)
-
+	alert("Parameters updated for line: " + chosenLine)
 }
-
-function newLineUpdate(){
-	// when next clicked save values into array
-	// var stn_i1 = document.getElementById("frmstn").value;
-	var stn_i2 = document.getElementById("tostn").value;
-	var time = document.getElementById("timeT").value;
-
-	newLineArr[newLineArr.length - 1].push(stn_i2)
-	newLineArr[newLineArr.length - 1].push(time)
-	newLineArr.push([stn_i2]);
-
-	// refresh/re-initialise input values
-	// inputFrom.value = "";
-	inputTo.value = "";
-	inputTime.value = "";
-
-}
-
-// get new line name  
-function getLineName(){
-	var newLineName = document.getElementById("name").value
-
-	return newLineName
-}
-
-function getPrevStn() {
-	if (newLineArr[0].length == 0) {
-		return ""
-	}
-	return newLineArr[newLineArr.length - 1][0]
-}
-
-function saveLine(){
-	
-	// get line name and colour
-	var lineName = getLineName()
-	var colour = document.getElementById("colour").value
-
-	// Make new line key
-	var temp = []
-	newLineArr.pop()
-	// add color into dictionary 
-	for (const stnPair of newLineArr) {
-		// take stn arr and convert to string
-		temp.push(stnPair.join(","))
-	}
-
-	var newEdgeString = temp.join("\n")
-	processor.parseEdgeString(lineName, newEdgeString)
-	processor.edgeColours[lineName] = colour 
-	if (!(lineName in processor.chosenLines)) {
-		processor.chosenLines.push(lineName)
-	}
-	processor.trainPeriod[lineName] = inputPara.interArrival
-	processor.trainCapacities[lineName] = inputPara.trainCap
-	newLineArr = [[]] //empty out stn array 
-
-	resetStartModal();
-
-	// add to main dictionary
-  }
-
-
 
 
 
@@ -307,7 +246,6 @@ init();
 draw_map();
 setButton1(dataStore); //set line dropdown selection (inputer parameters)
 // setButton2(dataStore); //set station dropdown selection (input parameters)
-document.getElementById('trainline').addEventListener('change', updateButton, false); //change stn button based on selection
-document.getElementById('save').addEventListener("click", saveLine, false); //save new line input
+
 
 //testing 

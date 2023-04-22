@@ -15,7 +15,7 @@ var savebtn = document.getElementById("save");
 
 function resetStartModal() {
   document.getElementById("name").value = ""
-  document.getElementById("colour").value = ""
+  document.getElementById("colour").value = "#ffffff"
   document.getElementById("startstn").value = ""
 }
 
@@ -35,9 +35,10 @@ span.onclick = function() {
 // When the user clicks save btn, close modal
 // When the user clicks on <span> (x), close the modal
 savebtn.onclick = function() {
-  modal.style.display = "none";
-  newLineUpdate(); 
-  newlinealert();
+  res = saveLine()
+  if (res) {
+    modal.style.display = "none"; 
+  }
 
 }
 
@@ -48,4 +49,3 @@ window.onclick = function(event) {
     resetStartModal()
   }
 }
-
