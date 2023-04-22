@@ -422,7 +422,7 @@ class Metro {
 				console.debug(`seems like train is full on ${trainDirection}`)
 				break;
 			}
-			// console.log(currStation.id, commuter.target, trainDirection)
+
 			if (!Object.keys(this.interchangePaths[currStation.id][commuter.target]).includes(trainDirection)) {
 				continue;
 			}
