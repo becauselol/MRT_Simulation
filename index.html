@@ -56,7 +56,7 @@
 			<label class="checkbox">
 				<input type="checkbox" name="checkbox" value="text" id = "check-heat-train">Train Heatmap
 				<input id="heat-train-limit" type="range" min="0" max="1" step="0.05" value="0.8" class = "slider"  oninput="rangeValue2.innerText = this.value">
-				<span id="rangeValue2">0.8</span>
+				<span class="slider-label" id="rangeValue2">0.8</span>
 
 			</label>
 
@@ -99,9 +99,9 @@
 					<label class = "textinput" for="name">Name of new line:</label>
 					<input type="text" id="name" name="name" placeholder="not an existing line">
 					<label class = "textinput" for="colour">Colour of new line:</label>
-					<input  type="text" id="colour" name="colour" placeholder="not an existing colour">
+					<input  type="color" id="colour" name="colour" placeholder="not an existing colour">
 					<label class = "textinput" for="frmstn">Start station:</label>
-					<input type="text" id="startstn" name="startstn" >
+					<input type="text" id="startstn" name="startstn" placeholder="Choose a starting station">
 		
 					<div class="container">
 						<div class = "right">
@@ -124,8 +124,8 @@
 		
 					<div class="container">
 						<div class = "right">
-						<button class="next" type="button"  id="next" onclick = "newLineUpdate();replace('newlineNxt', 'newlineNxt')">Next</button>
-						<button class = "save" type = "button" id = "save" onclick = "newLineUpdate()">Save</button>
+						<button class="next" type="button"  id="next" onclick = "newLineUpdate()">Next</button>
+						<button class = "save" type = "button" id = "save">Save</button>
 		
 						</div>
 					</div>
@@ -170,6 +170,7 @@
 		</div> -->
 
 		<!-- update input parameters -->
+		<button class="button" onclick="setDefaultParameters()">Default Parameters</button>
 		<button class="button" onclick="updateParameters()">Update</button>
 		
 		<h3 style="position:relative;top:90%; font-size:25px">Graphs</h3>
