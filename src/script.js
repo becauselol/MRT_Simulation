@@ -10,6 +10,9 @@ var isRunning = false;
 var maxX = 960;
 var maxY = 540;
 
+const defaultTrainCap = 900 
+const defaultTrainInterArrival = 4
+
 var fps = 10; // frames per real time second // FPS needs to be at least 5 and all waitTimes of trains and edge weights must be at least 1
 var timestep = 1/fps;
 
@@ -22,7 +25,7 @@ for (const lineCode of Object.keys(edgesMap)){
 // input parameters from simulation
 const trainCapacity = document.getElementById("traincap");
 const interArrival = document.getElementById("arrtime");
-var inputPara = {trainCap:900, interArrival: 4}; // dictionary for all input parameters
+var inputPara = {trainCap:defaultTrainCap, interArrival: defaultTrainInterArrival}; // dictionary for all input parameters
 trainCapacity.value = inputPara.trainCap.toString()
 interArrival.value = inputPara.interArrival.toString()
 
@@ -98,12 +101,39 @@ function updateButton(){
 	// setButton2(dataStore)
 }
 
+function setDefaultParameters() {
+	var chosenLine = document.getElementById("trainline").value
+
+	interArrival.value = inputPara.interArrival
+	trainCapacity.value = inputPara.trainCap
+
+	processor.trainPeriod[chosenLine] = parseFloat(inputPara.trainCap);
+	processor.trainCapacities[chosenLine] = parseInt(inputPara.interArrival)
+}
+
 // update simulation parameters with user's new inputs
 function updateParameters(){
 	var chosenLine = document.getElementById("trainline").value
-	inputPara.interArrival = interArrival.value;
-	inputPara.spawnRate = spawnRate.value;
-	inputPara.trainCap = trainCapacity.value;
+
+	// check if input parameters are valid
+	if (parseFloat(interArrival.value) < 1) {
+		alert("Inter arrival time cannot be less than 1\nSetting to default values")
+		setDefaultParameters()
+		return 
+	}
+	var line_duration = metro.getLineDuration(chosenLine)
+	if (parseFloat(interArrival.value) > line_duration) {
+		alert("Inter arrival time cannot be more than the line duration of " + line_duration + "\nSetting to default values")
+		setDefaultParameters()
+		return 
+	}
+
+	if (parseInt(trainCapacity.value) < 1) {
+		alert("Train capacities must be at least 1\nSetting to default values")
+		setDefaultParameters()
+		return
+	}
+
 	processor.trainPeriod[chosenLine] = parseFloat(interArrival.value);
 	processor.trainCapacities[chosenLine] = parseInt(trainCapacity.value)
 	// console.log(inputPara)
@@ -165,6 +195,8 @@ function saveLine(){
 	processor.trainPeriod[lineName] = inputPara.interArrival
 	processor.trainCapacities[lineName] = inputPara.trainCap
 	newLineArr = [[]] //empty out stn array 
+
+	resetStartModal();
 
 	// add to main dictionary
   }
@@ -242,6 +274,7 @@ function setDefault() {
 	processor.setDefaultTrainLineCapacities(inputPara.trainCap)
 	processor.setDefaultTrainLinePeriod(inputPara.interArrival)
 }
+
 function downloadStationRunData() {
 	var zip = new JSZip();
     var csvContent = csvDataStore.writeStationCSVString()
