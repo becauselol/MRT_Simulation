@@ -1,5 +1,5 @@
 var edgeColourString = `ewl,green
-ewlA, pink
+nslA,pink
 cgl,green
 dtl,blue
 nsl,red
@@ -345,6 +345,8 @@ NS24,NS25,2
 NS25,NS26,2
 NS26,NS27,2
 NS27,NS28,2`,
+	'nslA': `NS13,NS17,10
+NS17,NS22,8`,
 	'tel': `TE1,TE2,3
 TE2,TE3,2
 TE3,TE4,5
