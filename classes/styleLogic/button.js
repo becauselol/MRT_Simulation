@@ -4,7 +4,7 @@
 function setButton1(dataStore){
 
     var selectL = document.getElementById("trainline");
-
+    removeOptions(selectL)
     var data = dataStore.getLineCodeArray();
 
 
@@ -53,7 +53,13 @@ function replace( hide, show ) {
     document.getElementById("prevstn").innerHTML = "previous station: " + getPrevStn()
   }
 
-
+ // adding options to drop down selection
+function removeOptions(selectElement) {
+     var i, L = selectElement.options.length - 1;
+     for(i = L; i >= 0; i--) {
+        selectElement.remove(i);
+     }
+  }
 // function newLine() {
 //     var x = document.getElementById("newline");
 //     console.log(x.style.display)

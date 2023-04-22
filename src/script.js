@@ -80,6 +80,8 @@ function init() {
 	// spawnRate.value = 0;
 
 	// init graph filter button with train stns and lines
+	setButton1(dataStore)
+	
 	plotter.filterBtn(dataStore)
 	plotter.filterBtnstn(dataStore, "selectstn1")
 	plotter.filterBtnstn(dataStore, "selectstn2")
