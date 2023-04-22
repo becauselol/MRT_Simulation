@@ -21,22 +21,22 @@ function setButton1(dataStore){
 }
 
 // for station dropdown selection
-function setButton2(dataStore){
-    var selectL = document.getElementById("trainline");
-    var selectS = document.getElementById("trainstn");
-    var chosenLine = selectL.options[selectL.selectedIndex].text;
-    var dataS = dataStore.lineStations[chosenLine];
-    for(var i = 0; i < dataS.length; i++)
-    {
-        var stationName = dataStore.nameMap[dataS[i]]
-        var option = document.createElement("OPTION"),
-            txt = document.createTextNode(stationName);
-        option.appendChild(txt);
-        option.setAttribute("value",stationName);
-        selectS.insertBefore(option,selectS.lastChild);
-    }
+// function setButton2(dataStore){
+//     var selectL = document.getElementById("trainline");
+//     var selectS = document.getElementById("trainstn");
+//     var chosenLine = selectL.options[selectL.selectedIndex].text;
+//     var dataS = dataStore.lineStations[chosenLine];
+//     for(var i = 0; i < dataS.length; i++)
+//     {
+//         var stationName = dataStore.nameMap[dataS[i]]
+//         var option = document.createElement("OPTION"),
+//             txt = document.createTextNode(stationName);
+//         option.appendChild(txt);
+//         option.setAttribute("value",stationName);
+//         selectS.insertBefore(option,selectS.lastChild);
+//     }
 
-}
+// }
 
 function setNewLineInit() {
     var startStation = document.getElementById("startstn").value

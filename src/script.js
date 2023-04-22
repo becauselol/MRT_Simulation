@@ -22,11 +22,9 @@ for (const lineCode of Object.keys(edgesMap)){
 // input parameters from simulation
 const trainCapacity = document.getElementById("traincap");
 const interArrival = document.getElementById("arrtime");
-const spawnRate = document.getElementById("spawnrate");
-var inputPara = {trainCap:900, interArrival: 4, spawnRate :0 }; // dictionary for all input parameters
+var inputPara = {trainCap:900, interArrival: 4}; // dictionary for all input parameters
 trainCapacity.value = inputPara.trainCap.toString()
 interArrival.value = inputPara.interArrival.toString()
-spawnRate.value = inputPara.spawnRate
 
 // new line parameters from simulation
 const inputFrom = document.getElementById("frmstn");
@@ -97,7 +95,7 @@ function updateButton(){
 	var chosenLine = document.getElementById("trainline").value
 	trainCapacity.value = processor.trainCapacities[chosenLine].toString()
 	interArrival.value = processor.trainPeriod[chosenLine].toString()
-	setButton2(dataStore)
+	// setButton2(dataStore)
 }
 
 // update simulation parameters with user's new inputs
@@ -161,7 +159,9 @@ function saveLine(){
 	var newEdgeString = temp.join("\n")
 	processor.parseEdgeString(lineName, newEdgeString)
 	processor.edgeColours[lineName] = colour 
-	processor.chosenLines.push(lineName)
+	if (!(lineName in processor.chosenLines)) {
+		processor.chosenLines.push(lineName)
+	}
 	processor.trainPeriod[lineName] = inputPara.interArrival
 	processor.trainCapacities[lineName] = inputPara.trainCap
 	newLineArr = [[]] //empty out stn array 
@@ -273,7 +273,7 @@ function downloadTrainRunData() {
 init();
 draw_map();
 setButton1(dataStore); //set line dropdown selection (inputer parameters)
-setButton2(dataStore); //set station dropdown selection (input parameters)
+// setButton2(dataStore); //set station dropdown selection (input parameters)
 document.getElementById('trainline').addEventListener('change', updateButton, false); //change stn button based on selection
 document.getElementById('save').addEventListener("click", saveLine, false); //save new line input
 
