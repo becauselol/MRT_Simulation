@@ -72,16 +72,10 @@ function init() {
 
 	metro.hour = startHour
 	metro.sysTime = startHour * 60
-	
-
-	// // set parameters to initial
-	// trainCapacity.value = 0;
-	// interArrival.value = 0;
-	// spawnRate.value = 0;
 
 	// init graph filter button with train stns and lines
 	setButton1(dataStore)
-	
+
 	plotter.filterBtn(dataStore)
 	plotter.filterBtnstn(dataStore, "selectstn1")
 	plotter.filterBtnstn(dataStore, "selectstn2")
@@ -244,8 +238,8 @@ function resetSim() {
 
 function setDefault() {
 	processor.chosenLines = [...processor.defaultLines]
-	processor.setDefaultTrainLineCapacities()
-	processor.setDefaultTrainLinePeriod()
+	processor.setDefaultTrainLineCapacities(inputPara.trainCap)
+	processor.setDefaultTrainLinePeriod(inputPara.interArrival)
 }
 function downloadStationRunData() {
 	var zip = new JSZip();

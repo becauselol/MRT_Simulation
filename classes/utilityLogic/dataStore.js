@@ -91,6 +91,14 @@ class DataStore {
 	}
 
 	init(metro) {
+		this.waitTimes = {}
+		this.travelTimes = {}
+		this.stationCommuterCount = {}
+		this.stationTrainCommuterCount = {}
+		this.lineWaitTimes = {}
+		this.lineStations = {}
+		this.nameMap = {}
+		
 		var initTrainCount = new TrainCommuterCount(0, "init", 0)
 		var initStationCount = new StationCommuterCount(0, "init", 0)
 

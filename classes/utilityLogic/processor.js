@@ -202,6 +202,7 @@ class InputProcessor {
 	 * @param {MapDrawer} mapDrawer - mapDrawer object to reference for the canvas size
 	 * */
 	constructMetroGraph(metroGraph, mapDrawer, spawnDataString) {
+		this.metroLineStartStation = {}
 		// construct the stations
 		this.constructStationDict(mapDrawer);
 
