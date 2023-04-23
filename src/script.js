@@ -103,6 +103,7 @@ function init() {
 	// init graphs
 	plotter.plotLineWaitTimes("chart1", dataStore, metro.metroLineColours);
 	updateGraph()
+	alert("Simulation is ready to run")
 }
 
 // to change line parameters based on line chosen by user for parameter input
@@ -207,7 +208,6 @@ function resetSim() {
 	// init the classes and variables
 	init()
 	changesMade = false
-	alert("Simulation has been reset and is ready to run")
 }
 
 // set the whole map to be the default
