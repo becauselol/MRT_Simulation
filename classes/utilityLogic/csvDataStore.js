@@ -1,5 +1,3 @@
-// when I say statistics i refer to: total, count, mean, sdev, min, max, median, q1, q3
-
 // data we want to store
 // station
 // hour 

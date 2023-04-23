@@ -229,6 +229,7 @@ function resetSim() {
 	// init the functions
 	init()
 	changesMade = false
+	alert("Simulation has been reset and is ready to run")
 }
 
 function setDefault() {

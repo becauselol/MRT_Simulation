@@ -1,3 +1,9 @@
+// a few classes created to help with easy updating of station/train commuter count
+
+// each class comprises of 
+// the time of event, 
+// the type of event 
+// and the count at that time and event
 class StationCommuterCount {
 	constructor(stationId, time, event, count) {
 		this.stationId = stationId;
@@ -20,7 +26,6 @@ class TrainCommuterCount {
 class TrainCommDF {
 	constructor(stationId) {
 		this.stationId = stationId
-		this.data = []
 		this.time = []
 		this.event = []
 		this.count = []
@@ -30,7 +35,6 @@ class TrainCommDF {
 		this.time.push(trainCommCount.time)
 		this.event.push(trainCommCount.event)
 		this.count.push(trainCommCount.count)
-		// this.data.push([trainCommCount.time, trainCommCount.event, trainCommCount.count])
 	}
 }
 
@@ -38,7 +42,6 @@ class TrainCommDF {
 class StationCommDF {
 	constructor(stationId) {
 		this.stationId = stationId
-		this.data = []
 		this.time = []
 		this.event = []
 		this.count = []
@@ -48,7 +51,6 @@ class StationCommDF {
 		this.time.push(stationCommCount.time)
 		this.event.push(stationCommCount.event)
 		this.count.push(stationCommCount.count)
-		// this.data.push([stationCommCount.time, stationCommCount.event, stationCommCount.count])
 	}
 }
 
