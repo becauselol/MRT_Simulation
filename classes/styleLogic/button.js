@@ -20,6 +20,7 @@ function setButton1(dataStore){
 
 }
 
+// resets the start modal for creating a new line
 function resetStartModal() {
   document.getElementById("name").value = ""
   document.getElementById("colour").value = "#ffffff"
@@ -27,6 +28,9 @@ function resetStartModal() {
   newLineArr = [[]]
 }
 
+// function that is called after the newline modal comes up
+// when we move to next
+// it checks if the names, start stationa nd colour are valid
 function setNewLineInit() {
 
     // check if inputs are ok
@@ -56,31 +60,35 @@ function setNewLineInit() {
         return
     }
 
+    // initialize the first station
     newLineArr[0].push(startStation)
 
+    // move to next modal
     replace('newline', 'newlineNxt')
 
 }
 
+// function creates the new neighbour in the edge
 function newLineUpdate(){
+
     // when next clicked save values into array
-    // var stn_i1 = document.getElementById("frmstn").value;
-    var stn_i2 = document.getElementById("tostn").value.toUpperCase();
+    var toStation = document.getElementById("tostn").value.toUpperCase();
     var time = document.getElementById("timeT").value;
 
-    if (stn_i2 == "" || time == "") {
+    // check for valid inputs
+    if (toStation == "" || time == "") {
         alert("Please fill in all fields")
         replace('newlineNxt', 'newlineNxt')
         return false
     }
 
-    if (!(stn_i2 in processor.codeStationRef)) {
-        alert("Chosen Station " + stn_i2.toUpperCase() + " is not a valid station")
+    if (!(toStation in processor.codeStationRef)) {
+        alert("Chosen Station " + toStation.toUpperCase() + " is not a valid station")
         replace('newlineNxt', 'newlineNxt')
         return false
     }
 
-    if (stn_i2 == getPrevStn()) {
+    if (toStation == getPrevStn()) {
         alert("Next Station cannot go to previous station")
         replace('newlineNxt', 'newlineNxt')
         return false
@@ -92,12 +100,12 @@ function newLineUpdate(){
         return false
     }
 
-    newLineArr[newLineArr.length - 1].push(stn_i2)
+    // add the nextStation in the line
+    newLineArr[newLineArr.length - 1].push(toStation)
     newLineArr[newLineArr.length - 1].push(time)
-    newLineArr.push([stn_i2]);
+    newLineArr.push([toStation]);
 
     // refresh/re-initialise input values
-    // inputFrom.value = "";
     inputTo.value = "";
     inputTime.value = "";
     replace('newlineNxt', 'newlineNxt')
@@ -111,17 +119,22 @@ function getLineName(){
     return newLineName
 }
 
+// gets the previous station in newLineArr
 function getPrevStn() {
-    if (newLineArr[0].length == 0) {
+    // if there is nothing in newLineArr
+    if (newLineArr.length == 0 || newLineArr[0].length == 0) {
+        // return empty
         return ""
     }
     return newLineArr[newLineArr.length - 1][0]
 }
 
+// function to save the line
 function saveLine(){
 
-    res = newLineUpdate()
-    if (!res) {
+    // updates the 
+    var updateOk = newLineUpdate()
+    if (!updateOk) {
         return false
     }
     // get line name and colour
@@ -137,6 +150,7 @@ function saveLine(){
         temp.push(stnPair.join(","))
     }
 
+    // make the newEdgeString
     var newEdgeString = temp.join("\n")
     processor.parseEdgeString(lineName, newEdgeString)
     processor.edgeColours[lineName] = colour 
@@ -170,19 +184,4 @@ function removeOptions(selectElement) {
         selectElement.remove(i);
      }
   }
-
-// alert when new line added
-
-
-
-// function newLine() {
-//     var x = document.getElementById("newline");
-//     console.log(x.style.display)
-//     if (x.style.display == "none") {
-//       x.style.display = "flex";
-//     } else {
-//       x.style.display = "none";
-
-//     }
-//   }
 
