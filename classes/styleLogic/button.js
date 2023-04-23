@@ -2,23 +2,25 @@
 
 // for line dropdown selection
 function setButton1(dataStore){
-
+    // get html element of button
     var selectL = document.getElementById("trainline");
+    // remove all options in dropdown
     removeOptions(selectL)
+    // get all train line names
     var data = dataStore.getLineCodeArray();
-
 
     for(var i = 0; i < data.length; i++)
     {
-        var option = document.createElement("OPTION"),
-            txt = document.createTextNode(data[i]);
-        option.appendChild(txt);
-        option.setAttribute("value",data[i]);
-        selectL.insertBefore(option,selectL.lastChild);
+        var option = document.createElement("OPTION"), // create option of dropdown element
+            txt = document.createTextNode(data[i]); // create text node with line name
+        option.appendChild(txt); // add text node to option
+        option.setAttribute("value",data[i]); // set attribute as value
+        selectL.insertBefore(option,selectL.lastChild); //insert into option
     }
 
 
 }
+
 
 function resetStartModal() {
   document.getElementById("name").value = ""
@@ -61,6 +63,7 @@ function setNewLineInit() {
     replace('newline', 'newlineNxt')
 
 }
+
 
 function newLineUpdate(){
     // when next clicked save values into array
