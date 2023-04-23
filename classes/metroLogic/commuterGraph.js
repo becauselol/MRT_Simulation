@@ -1,4 +1,6 @@
-
+// commuter node that has the original station ID it represents
+// as well as the line code that the specific node represents
+// it represents being at a specific station and waiting at a specific platform
 class CommuterNode {
 	constructor(originalId, id, code) {
 		this.originalId = originalId
@@ -7,6 +9,7 @@ class CommuterNode {
 	} 
 }
 
+// a graph for commuters to find their path between places
 class CommuterGraph {
 	constructor() {
 		this.nodeDict = {}
@@ -14,15 +17,15 @@ class CommuterGraph {
 		this.commuterPaths = {}
 	}
 
+	// Floyd Warshall's Algorithm for finding all pairs shortest path
 	floydWarshall() {
 		var nodeOrder = Object.keys(this.nodeDict)
-		// console.debug(nodeOrder)
-		// nodeOrder = ['station1.red', 'station2.red', 'station2.pur', 'station3.red', 'station3.pur', 'station4.pur', 'station5.pur']
+
 	    this.dist = {};
 	    this.next = {};
 	    this.count = {};
-	    let i = 0;
-	    // console.log(this.dist)
+
+	    // initialization steps
 	    for (const stationId of nodeOrder) {
 	    	this.dist[stationId] = {};
 	    	this.next[stationId] = {};
@@ -33,25 +36,22 @@ class CommuterGraph {
 	    		this.next[stationId][id] = [-1]
 	    		this.count[stationId][id] = 0;
 	    	}
-	    	// console.log(this.dist)
 	    }
-	    // console.log(this.dist)
 
 	    for (const [i, iDict] of Object.entries(this.edgeDict)) {
 	    	for (const [j, weight] of Object.entries(iDict)) {
-	    		// console.log(weight)
 	    		this.dist[i][j] = weight;
 				this.next[i][j] = [-1];
 				this.count[i][j] = 1
 	    	}
-	    	// console.log(this.dist)
 	    }
-	    // console.log(this.dist)
+
 	    for (const i of nodeOrder) {
 	    	this.dist[i][i] = 0;
 	    	this.next[i][i] = [];
 	    }
 
+	    // relaxation of edges to find the paths
 	    for (const k of nodeOrder) {
 	    	for (const i of nodeOrder) {
 	    		for (const j of nodeOrder) {
@@ -68,17 +68,15 @@ class CommuterGraph {
 	    	}
 	    }
 
-	    // subtract all the wait times
 	    console.log("fw done");
 	}
 
 	// function to get the path between stations
 	/* @param {number} startStation - stationId of the station to start search from
 	 * @param {number} targetStation - stationId of the station to target:
-	 * */
-	// Taken from a senior (https://stackoverflow.com/questions/11370041/floyd-warshall-all-shortest-paths)
+	 */
+	// Referenced from stack overflow (https://stackoverflow.com/questions/11370041/floyd-warshall-all-shortest-paths)
 	getPathsToStation(i, j, it=0) {
-		// have to search for the indices, unfortunately
 		var allPaths = [];
 		if (this.next[i][j].length == 0) {
 			return allPaths
@@ -104,6 +102,7 @@ class CommuterGraph {
 			}
 		}
 
+		// this removes any duplicate paths
 		if (it == 0) {
 			var temp = []
 			var check = new Set()
@@ -118,7 +117,7 @@ class CommuterGraph {
 		return allPaths
 	}
 
-	// //get all path pairs and store them as commuterPaths
+	//get all path pairs and store them as commuterPaths
 	getAllPathPairs() {
 		var station_ids = Object.keys(this.nodeDict)
 		const N = station_ids.length;

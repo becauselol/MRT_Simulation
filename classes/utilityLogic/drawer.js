@@ -9,6 +9,8 @@ class MapDrawer {
      * @param {Context} ctx - Provides the context class to draw the map with
      * @param {integer} width - width of the canvas element
      * @param {integer} height - height of the canvas element
+     * @param {integer} x_padding - padding of the canvas on the x side
+     * @param {integer} y_padding - padding of the canvas on the y side
      * */
 	constructor(ctx, width, height, x_padding=10, y_padding=10) {
         this.ctx = ctx;
@@ -16,14 +18,15 @@ class MapDrawer {
         this.height = height;
         this.x_padding = x_padding;
         this.y_padding = y_padding;
-        this.HOVER_RADIUS = 10;
 	}
 
     /**
      * Draws a station in the canvas context
      * @param {Station} station - station object to be drawn
+     * @param {String} colour - the colour to draw the station with
      * */
     drawStation(station, colour="gray") {
+        // draws a hollow circle to represent the station
         this.ctx.beginPath();
         this.ctx.arc(station.coords.x, station.coords.y, 5, 0, 2 * Math.PI, false);
         this.ctx.lineWidth = 3;
@@ -36,9 +39,10 @@ class MapDrawer {
     /**
      * Draws a Train in the canvas context
      * @param {Train} train - train object to be drawn
+     * @param {String} colour - the colour to draw the train with
      * */
     drawTrain(train, colour = "black") {
-        //train codethis.
+        // draws a circle to represent the train
         this.ctx.beginPath();
         this.ctx.arc(train.coords.x, train.coords.y, 1, 0, 2*Math.PI, true);
         this.ctx.lineWidth = 5;
@@ -50,9 +54,11 @@ class MapDrawer {
 
     /**
      * Draws an Edge in the canvas context
-     * @param {Edge} edge - edge object to be drawn
+     * @param {Station} station1 - the station to draw the edge from
+     * @param {Station} station2 - the station to draw the edge to
+     * @param {String} colour - the colour to draw the edge
      * */
-    drawEdge(station1, station2, colour) {
+    drawEdge(station1, station2, colour = "black") {
         this.ctx.beginPath();
         this.ctx.moveTo(station1.coords.x, station1.coords.y);
         this.ctx.lineTo(station2.coords.x, station2.coords.y);
@@ -75,12 +81,26 @@ class MapDrawer {
     /**
      * Draws the whole MetroGraph in the canvas context
      * @param {MetroGraph} metroGraph - draws the metroGraph as required
+     * @param {bool} drawStations - whether to draw stations
+     * @param {bool} drawTrains - whether to draw trains
+     * @param {bool} stationHeatColour - whether to draw the heatmap of station commuters
+     * @param {bool} edgeBlackColour - whether to draw all edges as black
+     * @param {bool} trainHeatColour - whether to draw the heatmap of train commuters
+     * @param {Float} trainCapacityLimit - number between 0 to 1 to determine which level of capacity is critical
+     * @param {String} mode - the type of commuter count at stations to consider ("total", "transit", "terminating") (not in use)
      * */
-    drawMap(metroGraph, drawStations=true, drawTrains=true, stationHeatColour=false, edgeBlackColour=false, trainHeatColour=false, trainCapacityLimit=0.8, mode="transit") {
+    drawMap(metroGraph, 
+        drawStations=true, 
+        drawTrains=true, 
+        stationHeatColour=false, 
+        edgeBlackColour=false, 
+        trainHeatColour=false, 
+        trainCapacityLimit=0.8, 
+        mode="transit") {
+
         this.ctx.clearRect(0, 0, this.width, this.height);
-        // console.log("words?")
-        //Iterate over all the objects and draw them as required
-        // console.log(metroGraph)
+        
+        // draws all the edges of each line
         for (const [lineCode, stationId] of Object.entries(metroGraph.metroLineStartStation)) {
             var curr = metroGraph.stationDict[stationId]
             var nextId = curr.getNeighbourId(lineCode, "FW")
@@ -100,6 +120,7 @@ class MapDrawer {
             }
         }
 
+        // draws the stations as required depending on the various boolean conditions
         if (drawStations) {
             if (stationHeatColour){
                 var stationMinMax = metroGraph.getStationCountMinMax(mode)
@@ -115,6 +136,7 @@ class MapDrawer {
                         var count = station.commuters[mode].length
                     }
 
+                    // min-max scaling for the heat colour value
                     var heatScale = ((count - min) / (max - min)).toFixed(6);
                     var colour = this.heatMapColorforValue(heatScale);
                 } else {
@@ -124,10 +146,13 @@ class MapDrawer {
             }
         }
 
+        // draws the trains as required depending on the various boolean conditions
         if (drawTrains) {
             for (const [trainId, train] of Object.entries(metroGraph.trainDict)) {
                 if (trainHeatColour) {
                     var count = train.getCommuterCount()
+                    
+                    // scaling for the heat colour value
                     var heatScale = (count/(trainCapacityLimit*train.capacity)).toFixed(6);
                     if (heatScale > 1) {
                         heatScale = 1;
@@ -140,24 +165,5 @@ class MapDrawer {
             }
         }
         
-    }
-
-    drawDisplay(metroGraph, pos) {
-        // tell the browser we're handling this event
-        // console.log(pos)
-        var mouseX = pos.x
-        var mouseY = pos.y
-
-        this.drawMap(metroGraph);
-        for (const [stationId, station] of Object.entries(metroGraph.stationDict)) {
-            var h = station
-            var dx = mouseX - h.coords.x;
-            var dy = mouseY - h.coords.y;
-            if (dx * dx + dy * dy < this.HOVER_RADIUS * this.HOVER_RADIUS) {
-                // console.log("true")
-                ctx.font = "20px Verdana";
-                ctx.fillText(station.getCommuterCount(), h.coords.x - 20, h.coords.y - 15);
-            }
-        } 
     }
 }

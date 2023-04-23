@@ -1,5 +1,6 @@
 // Exponential random number generator
 // Time until next arrival
+// uses the inverse transform method
 function randomExponential(rate, randomUniform = undefined) {
   // http://en.wikipedia.org/wiki/Exponential_distribution#Generating_exponential_variates
   rate = rate || 1;
@@ -13,6 +14,8 @@ function randomExponential(rate, randomUniform = undefined) {
   return -Math.log(U)/rate;
 }
 
+//Poisson Random number generator
+// uses the inverse transform method
 function randomPoisson(rate) {
   var t = randomExponential(rate);
   var i = 0;
@@ -24,6 +27,7 @@ function randomPoisson(rate) {
   return i
 }
 
+// function to shuffle an array of values
 function shuffle(array) {
   let currentIndex = array.length,  randomIndex;
 

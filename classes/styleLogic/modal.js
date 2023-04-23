@@ -14,7 +14,6 @@ var span = document.getElementsByClassName("close")[0];
 var savebtn = document.getElementById("save");
 
 
-
 // When the user clicks the button, open the modal 
 btn.onclick = function() {
   if(isRunning) {
@@ -36,8 +35,8 @@ span.onclick = function() {
 // When the user clicks save btn, close modal
 // When the user clicks on <span> (x), close the modal
 savebtn.onclick = function() {
-  res = saveLine()
-  if (res) {
+  var saveOk = saveLine()
+  if (saveOk) {
     modal.style.display = "none"; 
   }
 

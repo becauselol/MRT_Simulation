@@ -1,3 +1,5 @@
+// class used to process the input data
+// things like the spawn string, edges string and station string
 class InputProcessor {
 	constructor() {
 		this.init()
@@ -15,21 +17,26 @@ class InputProcessor {
 		this.spawnData = {}
 	}
 
-	setDefaultTrainLineCapacities(capacity) {
+	// sets train capacities
+	setDefaultTrainLineCapacities(capacity=900) {
 		this.trainCapacities = {}
 		for (const line of this.chosenLines) {
 			this.trainCapacities[line] = capacity
 		}
 	}
 
-	setDefaultTrainLinePeriod(period) {
+	// sets train line interarrival
+	setDefaultTrainLinePeriod(period=4) {
 		this.trainPeriod = {}
 		for (const line of this.chosenLines) {
 			this.trainPeriod[line] = period
 		}
 	}
 
+	// parses the station string
 	parseStationString(stationString) {
+		// we want to find the min and max lat long
+		// this is for scaling later when we want to draw the map
 		this.min_lat = Number.MAX_SAFE_INTEGER;
 		this.min_long = Number.MAX_SAFE_INTEGER;
 		this.max_lat = Number.MIN_SAFE_INTEGER;
@@ -58,19 +65,18 @@ class InputProcessor {
 
 	parseSpawnDataString(spawnDataString) {
 		var spawnArr = spawnDataString.split("\n");
-		// console.debug(this.codeStationRef)
+
 		for (var idx=0; idx < spawnArr.length; idx++) {
 			// split the string by commas to get each individual detail
-			// Converts the original values to ["name code", lat, long]
+			// Converts the original values to [hour, fromStation, toStation, rate per hour]
 			let row = spawnArr[idx].split(",")
 
 			
+			row[0] = parseFloat(row[0]); // hour
+			row[3] = parseFloat(row[3]); // rate per hour
 
-			row[0] = parseFloat(row[0]);
-			row[3] = parseFloat(row[3]);
-
-			row[1] = row[1].split("/")[0]
-			row[2] = row[2].split("/")[0]
+			row[1] = row[1].split("/")[0] // fromStation
+			row[2] = row[2].split("/")[0] // toStation
 			// console.debug(row)
 
 			var hour = row[0]
@@ -78,18 +84,20 @@ class InputProcessor {
 			var sourceId = this.codeStationRef[row[1]]
 			var destId = this.codeStationRef[row[2]]
 
+			// checks if the sourceId and StationId exist
 			if (sourceId === undefined || destId === undefined) {
 				continue;
 			}
 
 			var sourceStation = this.stationDict[sourceId]
 
+			// initialize the spawnRate array if not there
 			if (!(destId in sourceStation.spawnRate)) {
 				sourceStation.spawnRate[destId] = new Array(25); 
 				for (let i=0; i<25; ++i) sourceStation.spawnRate[destId][i] = 0;
 			}
 
-			// we go by the minute
+			// we change the rate to be rate per minute
 			sourceStation.spawnRate[destId][hour] = parseFloat((rate/60).toFixed(6))
 		}
 	}
@@ -110,6 +118,7 @@ class InputProcessor {
 		}
 	}
 
+	// helper function to just find out the line duration (not used in code)
 	edgeStringLineDuration(lineName) {
 		var sum = 0
 		for (const [key, arr] of Object.entries(this.edgeMap[lineName])) {
@@ -118,6 +127,8 @@ class InputProcessor {
 		return sum
 	}
 
+	// for each edgeString in the EdgeStringDict
+	// we parse the edgeString
 	parseEdgeStringDict(edgeDict) {
 		for (const [lineName, edgeString] of Object.entries(edgeDict)) {
 			this.parseEdgeString(lineName, edgeString)
@@ -163,24 +174,37 @@ class InputProcessor {
 			}
 
 			//add Station to metroGraph
+			// we empirically saw that stations that had an interchange had 
+			// trains wait for 40s (about 0.67 min)
+			// and stations with no interchanges:
+			// trains wait for around 25s (about 0.42 min)
 			if (codes.length > 1) {
 				var waitTime = 0.67
 			} else {
 				var waitTime = 0.42
 			}
 
+			//create the station in the stationDict
 			this.stationDict[stationId] = new Station(stationId, x + mapDrawer.x_padding, y + mapDrawer.y_padding, name, codes, waitTime);
 			counter++;
 		}
 	}
 
+	// construct the edges based on the edge data
+	// adds the edge information to each station
 	constructEdges() {
+		// for each line 
 		for (const line of this.chosenLines) {
+			//retrieve the edges data
 			var edges = this.edgeMap[line]
+
+			// for each edge
 			for (var idx=0; idx < edges.length; idx++) {
-				//get stationId
+				//get stationIds
 				var aId = this.codeStationRef[edges[idx][0]];
 				var bId = this.codeStationRef[edges[idx][1]];
+
+				// get stations and weights
 				var a = this.stationDict[aId]
 				var b = this.stationDict[bId]
 				var weight = edges[idx][2];
@@ -190,6 +214,7 @@ class InputProcessor {
 					this.metroLineStartStation[line] = aId
 				}
 
+				// add neighbour to thr stations
 				a.addNeighbour(line, "FW", bId, weight - b.waitTime)
 				b.addNeighbour(line, "BW", aId, weight - b.waitTime)
 			}
@@ -200,35 +225,49 @@ class InputProcessor {
 	/* Construct a new metroGraph
 	 * @param {MetroGraph} metroGraph - the metroGraph object to add the station and paths to
 	 * @param {MapDrawer} mapDrawer - mapDrawer object to reference for the canvas size
+	 * @param {String} spawnDataString - the string of all the relevant spawning information
 	 * */
 	constructMetroGraph(metroGraph, mapDrawer, spawnDataString) {
+		// empties the metroLineStartStation Object
 		this.metroLineStartStation = {}
+
 		// construct the stations
 		this.constructStationDict(mapDrawer);
 
+		// parse the spawnDataString
 		this.parseSpawnDataString(spawnDataString)
-		// construct the map paths
+
+		// construct the map paths using the edgedata
 		this.constructEdges();
 
+		// add all the stations to metroGraph
 		for (const [key, station] of Object.entries(this.stationDict)) {
 			metroGraph.addStation(station)
 		}
 
+		// set the metroLineStartStation and metroLineColours
 		metroGraph.metroLineStartStation = this.metroLineStartStation
 		metroGraph.metroLineColours = this.edgeColours
 	}
 
+	// function that places the train on a specific line with a defined period and capacity
 	addTrainsWithPeriod(metroGraph, lineCode, period, capacity) {
+
+		// calculate how many trains we need to place
 		console.debug(`placing trains for line ${lineCode}`)
 		var duration = metroGraph.getLineDuration(lineCode)
 		var maxTrains = Math.floor(duration / period)
 
+
 		console.debug(`Placing ${maxTrains} trains`)
 		var trainPlaced = 0
 
+		// calculate the interval that we will place trains at
 		var interval = (duration / maxTrains).toFixed(10)
 		console.debug(`Interval to place trains at: ${interval}`)
 		var overall_lag = 0
+
+		// start placing trains one by one and moving forward by a certain interval
 		while (trainPlaced < maxTrains) {
 			metroGraph.placeTrainAtStart(lineCode, capacity)
 
@@ -237,11 +276,14 @@ class InputProcessor {
 				metroGraph.onlyTrainSimStep(0.01)
 			}
 			overall_lag += (metroGraph.sysTime - interval)
-			// console.debug(`time ${metroGraph.sysTime.toFixed(2)}: train placed and progressed ${metroGraph.sysTime.toFixed(2)} with interval ${interval}`)
-			// reset the systime
+			
+			// reset the systime before placing the next train
 			metroGraph.sysTime = 0
 			trainPlaced++
 		}
+
+		// the overall difference in accuracy between what we expected
+		// and what was actually placed
 		console.debug(`overall lag: ${overall_lag}`)
 	}
 	

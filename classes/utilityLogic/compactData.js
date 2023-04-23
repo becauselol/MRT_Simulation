@@ -1,13 +1,15 @@
+// class created for efficient storage of data
+// stores data as frequencies instead of a whole list of data
 class StatCompact {
     constructor() {
-        this.freq = {}
-        this.keys = []
-        this.mean = 0
-        this.var = 0
-        this.min = Number.MAX_SAFE_INTEGER
-        this.max = Number.MIN_SAFE_INTEGER
-        this.sum = 0
-        this.count = 0
+        this.freq = {} // frequency counts of different keys
+        this.keys = [] // stores the keys in sorted order, allows for iteration
+        this.mean = 0 // mean of the data
+        this.var = 0 // variance of the data
+        this.min = Number.MAX_SAFE_INTEGER // minimum of the data
+        this.max = Number.MIN_SAFE_INTEGER // maximum of the data
+        this.sum = 0 // sum of all values in the dataset
+        this.count = 0 // counts the number of datapoints
     }
 
     // binary search to find and insert
@@ -32,9 +34,12 @@ class StatCompact {
         }
     }
 
+    // adds a value to statcompact
+    // updates the mean and sd recursively
     addValue(value) {
         this.count++
         this.sum += value
+
         // add to the frequency
         if (!(value in this.freq)) {
             this.freq[value] = 0
@@ -42,6 +47,7 @@ class StatCompact {
             this.keys.splice(insertPos, 0, value)
         }
         this.freq[value]++
+
         //update the various statistics
         var old_mean = this.mean
         this.mean = old_mean + (value - old_mean) / this.count;
@@ -60,37 +66,21 @@ class StatCompact {
         }
     }
 
-    getSum() {
-        return this.sum
-    }
-    getMean() {
-        return this.mean;
-    }
+    // getter methods
+    getSum() {return this.sum}
+    getMean() {return this.mean;}
+    getVar() {return this.count > 1 ? this.var : 0;}
+    getStd() {return this.count > 1 ? Math.pow(this.var, 0.5) : 0}
+    getMin() {return this.count > 0 ? this.min : 0;}
+    getMax() {return this.count > 0 ? this.max : 0;}
+    getMedian() {return this.quantile(0.5);}
+    q25() {return this.quantile(.25)}
+    q75() {return this.quantile(.75)}
 
-    getVar() {
-        return this.count > 1 ? this.var : 0;
-    }
-
-    getStd() {
-        return this.count > 1 ? Math.pow(this.var, 0.5) : 0
-    }
-
-    getMin() {
-        return this.count > 0 ? this.min : 0;
-    }
-
-    getMax() {
-        return this.count > 0 ? this.max : 0;
-    }
-
-    getMedian() {
-        return this.quantile(0.5);
-    }
-
-    // broken quantile function. does not work as intended
-    // [1,2,3,4,5,6,7]
-    // median =
+    // function to determine various quantile statistics
+    // semi works(?) so not very reliable
     quantile(q) {
+        // determine the necessary frequency count
         const pos = (this.count+1) * q;
         if (Number.isInteger(pos)) {
             var upper_pos = pos;
@@ -102,6 +92,10 @@ class StatCompact {
         var tot = 0;
         var upper_med = null 
         var lower_med = null
+
+        // iterates through the keys until the frequency count is 
+        // past a certain threshold based on the chosen quantile
+        // then calculates the median based on the keys
         for(var i=0; i < this.keys.length; i++){
             tot += this.freq[this.keys[i]];
             if(upper_med == null && upper_pos <= tot) { 
@@ -116,47 +110,30 @@ class StatCompact {
                 break;
             }
         }
-        // console.debug(lower_med, upper_med)
         return  upper_pos != lower_pos ? (upper_med + lower_med)/2 : lower_med
     }
 
-    q25() {
-        return this.quantile(.25)
-    }
-
-    q75() {
-        return this.quantile(.75)
-    }
-
-    fillRandomNumbers(n=10) {
-        for(var i = 0 ; i < n; i++) {
-            this.addValue(Math.floor(Math.random() * 10))
-        }
-    }
-
+    // returns detailed statistics
     getNineFigureArray() {
-        return [this.getMean(), this.getStd(), this.getMin(), this.q25(), this.getMedian(), this.q75(), this.getMax(), this.count, this.getSum()]
+        return [
+            this.getMean(), 
+            this.getStd(), 
+            this.getMin(), 
+            this.q25(), 
+            this.getMedian(), 
+            this.q75(), 
+            this.getMax(), 
+            this.count, 
+            this.getSum()]
     }
 
+    //returns succinct statistics
     getMeanStdCountArray() {
-        return [this.getMean(), this.getStd(), this.count]
+        return [
+            this.getMean(), 
+            this.getStd(), 
+            this.count]
     } 
 }
 
 
-
-
-class FakeLineData {
-	constructor() {
-		this.stations = 31;
-		this.line = "ccl";
-
-		// use Object.keys(obj.store) to iterate through, or just use obj.lines
-		this.store = [];
-
-		for (var i = 0; i < this.stations; i++) {
-			this.store.push(new StatCompact());
-			this.store[i].fillRandomNumbers(20);
-		}
-	}
-}
