@@ -5,10 +5,14 @@ var startHour = 6
 var endHour = 25
 
 var isRunning = false;
+var changesMade = false
 // var creatorMode = false;
 
 var maxX = 960;
 var maxY = 540;
+
+const defaultTrainCap = 900 
+const defaultTrainInterArrival = 4
 
 var fps = 10; // frames per real time second // FPS needs to be at least 5 and all waitTimes of trains and edge weights must be at least 1
 var timestep = 1/fps;
@@ -22,11 +26,9 @@ for (const lineCode of Object.keys(edgesMap)){
 // input parameters from simulation
 const trainCapacity = document.getElementById("traincap");
 const interArrival = document.getElementById("arrtime");
-const spawnRate = document.getElementById("spawnrate");
-var inputPara = {trainCap:900, interArrival: 4, spawnRate :0 }; // dictionary for all input parameters
+var inputPara = {trainCap:defaultTrainCap, interArrival: defaultTrainInterArrival}; // dictionary for all input parameters
 trainCapacity.value = inputPara.trainCap.toString()
 interArrival.value = inputPara.interArrival.toString()
-spawnRate.value = inputPara.spawnRate
 
 // new line parameters from simulation
 const inputFrom = document.getElementById("frmstn");
@@ -97,79 +99,62 @@ function updateButton(){
 	var chosenLine = document.getElementById("trainline").value
 	trainCapacity.value = processor.trainCapacities[chosenLine].toString()
 	interArrival.value = processor.trainPeriod[chosenLine].toString()
-	setButton2(dataStore)
+	// setButton2(dataStore)
+}
+
+function setDefaultParameters() {
+	if(isRunning) {
+		alert("Please pause the simulation to make changes")
+		return
+	}
+
+	var chosenLine = document.getElementById("trainline").value
+
+	interArrival.value = inputPara.interArrival
+	trainCapacity.value = inputPara.trainCap
+
+	processor.trainPeriod[chosenLine] = parseFloat(inputPara.trainCap);
+	processor.trainCapacities[chosenLine] = parseInt(inputPara.interArrival)
+
+	alert("Default parameters updated for line: " + chosenLine)
+
+	changesMade = true;
 }
 
 // update simulation parameters with user's new inputs
 function updateParameters(){
+	if(isRunning) {
+		alert("Please pause the simulation to make changes")
+		return
+	}
+
 	var chosenLine = document.getElementById("trainline").value
-	inputPara.interArrival = interArrival.value;
-	inputPara.spawnRate = spawnRate.value;
-	inputPara.trainCap = trainCapacity.value;
+
+	// check if input parameters are valid
+	if (parseFloat(interArrival.value) < 1) {
+		alert("Inter arrival time cannot be less than 1\nSetting to default values")
+		setDefaultParameters()
+		return 
+	}
+	var line_duration = metro.getLineDuration(chosenLine)
+	if (parseFloat(interArrival.value) > line_duration) {
+		alert("Inter arrival time cannot be more than the line duration of " + line_duration + "\nSetting to default values")
+		setDefaultParameters()
+		return 
+	}
+
+	if (parseInt(trainCapacity.value) < 1) {
+		alert("Train capacities must be at least 1\nSetting to default values")
+		setDefaultParameters()
+		return
+	}
+
 	processor.trainPeriod[chosenLine] = parseFloat(interArrival.value);
 	processor.trainCapacities[chosenLine] = parseInt(trainCapacity.value)
 	// console.log(inputPara)
-
+	alert("Parameters updated for line: " + chosenLine)
+	changesMade = true;
 }
-
-function newLineUpdate(){
-	// when next clicked save values into array
-	// var stn_i1 = document.getElementById("frmstn").value;
-	var stn_i2 = document.getElementById("tostn").value;
-	var time = document.getElementById("timeT").value;
-
-	newLineArr[newLineArr.length - 1].push(stn_i2)
-	newLineArr[newLineArr.length - 1].push(time)
-	newLineArr.push([stn_i2]);
-
-	// refresh/re-initialise input values
-	// inputFrom.value = "";
-	inputTo.value = "";
-	inputTime.value = "";
-
-}
-
-// get new line name  
-function getLineName(){
-	var newLineName = document.getElementById("name").value
-
-	return newLineName
-}
-
-function getPrevStn() {
-	if (newLineArr[0].length == 0) {
-		return ""
-	}
-	return newLineArr[newLineArr.length - 1][0]
-}
-
-function saveLine(){
-	
-	// get line name and colour
-	var lineName = getLineName()
-	var colour = document.getElementById("colour").value
-
-	// Make new line key
-	var temp = []
-	newLineArr.pop()
-	// add color into dictionary 
-	for (const stnPair of newLineArr) {
-		// take stn arr and convert to string
-		temp.push(stnPair.join(","))
-	}
-
-	var newEdgeString = temp.join("\n")
-	processor.parseEdgeString(lineName, newEdgeString)
-	processor.edgeColours[lineName] = colour 
-	processor.chosenLines.push(lineName)
-	processor.trainPeriod[lineName] = inputPara.interArrival
-	processor.trainCapacities[lineName] = inputPara.trainCap
-	newLineArr = [[]] //empty out stn array 
-
-	// add to main dictionary
-  }
-
-
 
 
 
@@ -220,6 +205,11 @@ function updateGraph(){
 
 
 function toggleSim() {
+	if (!isRunning && changesMade) {
+		alert("Please reset the simulation to reflect the changes")
+		return
+	}
+
 	isRunning = !isRunning
 	console.log(`is running: ${isRunning}`)
     if (!isRunning) {
@@ -232,17 +222,32 @@ function toggleSim() {
 }
 
 function resetSim() {
-
+	if(isRunning) {
+		alert("Please pause the simulation to make changes")
+		return
+	}
 	// init the functions
 	init()
+	changesMade = false
 }
 
 function setDefault() {
+	if(isRunning) {
+		alert("Please pause the simulation to make changes")
+		return
+	}
 	processor.chosenLines = [...processor.defaultLines]
 	processor.setDefaultTrainLineCapacities(inputPara.trainCap)
 	processor.setDefaultTrainLinePeriod(inputPara.interArrival)
+
+	changesMade = true
 }
+
 function downloadStationRunData() {
+	if(isRunning) {
+		alert("Please pause the simulation to download data")
+		return
+	}
 	var zip = new JSZip();
     var csvContent = csvDataStore.writeStationCSVString()
         
@@ -256,6 +261,10 @@ function downloadStationRunData() {
 }
 
 function downloadTrainRunData() {
+	if(isRunning) {
+		alert("Please pause the simulation to download data")
+		return
+	}
 	var zip = new JSZip();
     var csvContent = csvDataStore.writeTrainCSVString()
         
@@ -273,8 +282,7 @@ function downloadTrainRunData() {
 init();
 draw_map();
 setButton1(dataStore); //set line dropdown selection (inputer parameters)
-setButton2(dataStore); //set station dropdown selection (input parameters)
-document.getElementById('trainline').addEventListener('change', updateButton, false); //change stn button based on selection
-document.getElementById('save').addEventListener("click", saveLine, false); //save new line input
+// setButton2(dataStore); //set station dropdown selection (input parameters)
+
 
 //testing 
