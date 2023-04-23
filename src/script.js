@@ -240,7 +240,12 @@ function setDefault() {
 	processor.chosenLines = [...processor.defaultLines]
 	processor.setDefaultTrainLineCapacities(inputPara.trainCap)
 	processor.setDefaultTrainLinePeriod(inputPara.interArrival)
+	
+	var chosenLine = document.getElementById("trainline").value
 
+	interArrival.value = inputPara.interArrival
+	trainCapacity.value = inputPara.trainCap
+	alert("Default parameters set for all lines and all new lines are removed")
 	changesMade = true
 }
 

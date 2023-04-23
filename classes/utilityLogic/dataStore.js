@@ -22,7 +22,7 @@ class TrainCommuterCount {
 	}
 }
 
-// helps with plotting
+// dataframe to store all the datapoints of train commuter counts
 class TrainCommDF {
 	constructor(stationId) {
 		this.stationId = stationId
@@ -31,6 +31,7 @@ class TrainCommDF {
 		this.count = []
 	}
 
+	// method to add data from the trainCommCount object
 	addData(trainCommCount) {
 		this.time.push(trainCommCount.time)
 		this.event.push(trainCommCount.event)
@@ -38,7 +39,7 @@ class TrainCommDF {
 	}
 }
 
-// helps with plotting
+// dataframe to store all the datapoints of station commuter counts
 class StationCommDF {
 	constructor(stationId) {
 		this.stationId = stationId
@@ -47,6 +48,7 @@ class StationCommDF {
 		this.count = []
 	}
 
+	// method to add data from the stationCommCount object
 	addData(stationCommCount) {
 		this.time.push(stationCommCount.time)
 		this.event.push(stationCommCount.event)
@@ -54,6 +56,8 @@ class StationCommDF {
 	}
 }
 
+// structure to store the wait time updates of a specific
+// station, line and direction
 class WaitTimeUpdate {
 	constructor(stationId, lineCode, direction) {
 		this.stationId = stationId;
@@ -62,17 +66,20 @@ class WaitTimeUpdate {
 		this.update = []
 	}
 
+	// method to add to the update
 	addUpdate(value) {
 		this.update.push(value)
 	}
 }
 
+// class to store the travel time updates from an origin to a target
 class TravelTimeUpdate {
 	constructor(targetId) {
 		this.targetId = targetId;
 		this.update = {}
 	}
 
+	// method to add to the update
 	addUpdate(originId, value) {
 		if (!(originId in this.update)) {
 			this.update[originId] = []
@@ -81,8 +88,10 @@ class TravelTimeUpdate {
 	}
 }
 
+// DataStore class to store all the data from one simulation run of the system
 class DataStore {
 	constructor() {
+		// the various statistics we want to keep track of
 		this.waitTimes = {}
 		this.travelTimes = {}
 		this.stationCommuterCount = {}
@@ -92,6 +101,7 @@ class DataStore {
 		this.nameMap = {}
 	}
 
+	// initialization method that needs to be called to reset datastore
 	init(metro) {
 		this.waitTimes = {}
 		this.travelTimes = {}
@@ -105,14 +115,20 @@ class DataStore {
 		var initStationCount = new StationCommuterCount(0, "init", 0)
 
 		console.debug("initializing data store")
+		// intiializes all the data we need for each station
 		for (const [stationId, station] of Object.entries(metro.stationDict)) {
+			// stores the name to know how to map
 			this.nameMap[stationId] = station.name
+
+			// station commuter count
 			this.stationCommuterCount[stationId] = new StationCommDF(stationId)
 			this.stationCommuterCount[stationId].addData(initStationCount)
 
+			// train commuter count as well
 			this.stationTrainCommuterCount[stationId] = new TrainCommDF(stationId)
 			this.stationTrainCommuterCount[stationId].addData(initTrainCount)
 
+			// waitTimes and travel times storage data using StatCompact
 			this.waitTimes[stationId] = {}
 			this.travelTimes[stationId] = {}
 			for (const targetId of Object.keys(metro.stationDict)) {
@@ -127,26 +143,32 @@ class DataStore {
 			}
 		}
 
+		// and for each linecode and path we also have 
+		// an overall StatCompact to keep track of wait times
 		for (const [lineCode, paths] of Object.entries(metro.metroPaths)) {
 			this.lineWaitTimes[lineCode] = new StatCompact()
 			this.lineStations[lineCode] = [...paths["FW"]]
 		}
 	}
 
+	// returns the lines that the datastore is using
 	getLineCodeArray() {
 		return Object.keys(this.lineStations)
 	}
 
+	// updates the train count based on the trainCommCount update
 	updateTrainCount(trainCommCount) {
 		var stationId = trainCommCount.stationId
 		this.stationTrainCommuterCount[stationId].addData(trainCommCount)
 	} 
 
+	// updates the station count based on the stationCommCount update
 	updateStationCount(stationCommCount) {
 		var stationId = stationCommCount.stationId
 		this.stationCommuterCount[stationId].addData(stationCommCount)
 	}
 
+	// updates the wait times based on the waitTimeUpdate
 	updateWaitTime(waitTimeUpdate) {
 		var stationId = waitTimeUpdate.stationId
 		var lineCode = waitTimeUpdate.lineCode
@@ -156,6 +178,7 @@ class DataStore {
 		}
 	}
 
+	// updates the travel times based on the travelTimeUpdate
 	updateTravelTime(travelTimeUpdate) {
 		var targetId = travelTimeUpdate.targetId
 		for (const [originId, update] of Object.entries(travelTimeUpdate.update)) {
@@ -165,23 +188,28 @@ class DataStore {
 		}
 	}
 
+	// general update function
 	update(update) {
+		// if no updates return
 		if (update === undefined || Object.keys(update).length == 0) {
 			return;
 		}
-		for (const [key, value] of Object.entries(update)) {
+
+		// otherwise for each packet of update
+		// we use the key to determine which statistic to update
+		for (const [key, updatePacket] of Object.entries(update)) {
 			switch (key) {
 				case "train_count":
-					this.updateTrainCount(value)
+					this.updateTrainCount(updatePacket)
 					break;
 				case "station_count":
-					this.updateStationCount(value)
+					this.updateStationCount(updatePacket)
 					break;
 				case "wait_time":
-					this.updateWaitTime(value)
+					this.updateWaitTime(updatePacket)
 					break;
 				case "travel_time":
-					this.updateTravelTime(value)
+					this.updateTravelTime(updatePacket)
 					break;
 			}
 		}
