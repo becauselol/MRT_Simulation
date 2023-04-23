@@ -188,8 +188,16 @@
 			
 			<div class="chartline" >
 				<!-- filter for chart -->
-				<label for="select">Choose a line to plot:</label>
-				<select id = "select" onchange = "updateGraph()"></select>
+				<div class="inlineselect">
+					<div class="selectgroup">
+						<label for="select">Choose a line to plot:</label>
+						<select id = "select" onchange = "updateGraph()"></select>
+					</div>
+					<div class="selectgroup">
+						<label for="select">Choose a hour to plot:</label>
+						<select id = "selecthour" onchange = "updateGraph()"></select>
+					</div>
+				</div>
 				<!-- plot chart -->
 				<div id="chart2"></div>
 			</div>

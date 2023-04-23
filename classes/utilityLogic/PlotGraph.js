@@ -20,6 +20,31 @@ class Plotter {
     }
   }
 
+  // set up graph filter button with hour numbers
+  filterHourBtn(){
+    // get dropdown html element
+    var select = document.getElementById("selecthour");
+    // clear current dropdown options
+    removeOptions(select)
+
+    var i = "all";
+    var option = document.createElement("OPTION"); // get option html element
+    var txt = document.createTextNode(i); // create node with line name
+    option.appendChild(txt); // add into option
+    option.setAttribute("value",i); // set html attribute as value
+    select.insertBefore(option,select.lastChild); // insert into dropdown menu
+
+    // add line names to dropdown menu as options
+    for(var i = 6; i < 26; i++)
+    {
+        var option = document.createElement("OPTION"); // get option html element
+        var txt = document.createTextNode(i); // create node with line name
+        option.appendChild(txt); // add into option
+        option.setAttribute("value",i); // set html attribute as value
+        select.insertBefore(option,select.lastChild); // insert into dropdown menu
+    }
+  }
+
   // set up graph filter button with station names
   filterBtnstn(dataStore,element){
     // get dropdown html element
@@ -49,6 +74,16 @@ class Plotter {
     var chosenLine = select.options[select.selectedIndex].text;
 
     return chosenLine
+  }
+
+  //get user's hour selection
+  getChosenHour(){
+    // get html element of line filter button
+    var select = document.getElementById('selecthour');
+    // get text of selected option
+    var chosenHour = select.options[select.selectedIndex].text;
+
+    return chosenHour
   }
 
   // get user's station selection
@@ -106,7 +141,7 @@ class Plotter {
   }
 
   // plot boxplot of selected line wait time
-  plotChosenLineWaitTimes(plotId, dataStore, line) {
+  plotChosenLineWaitTimes(plotId, dataStore, csvDataStore, line, hour) {
     var plot_data = [] // initialise empty array for data
 
     // set layout for plot
@@ -129,7 +164,12 @@ class Plotter {
 
     // for each station obtain values for boxplot and add into array
     for (const stationId of dataStore.lineStations[line]) {
-      var data = dataStore.waitTimes[stationId][line]
+      if (hour == "all") {
+        var data = dataStore.waitTimes[stationId][line]
+      } else {
+        var data = csvDataStore.data[hour][stationId].waitTime
+      }
+      
       var line_data ={
         "type": "box", 
         "name" : dataStore.nameMap[stationId], 

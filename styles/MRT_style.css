@@ -353,7 +353,13 @@ select:focus{
   cursor: pointer;
 }
 
-
+.selectgroup {
+  padding:10px;
+}
+.inlineselect{
+  display: inline-flex;
+  padding: 5px;
+}
 
 .chartcompare{
   display: inline-block;

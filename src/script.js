@@ -96,15 +96,13 @@ function init() {
 
 	// create the buttons for the plotter
 	plotter.filterBtn(dataStore)
+	plotter.filterHourBtn()
 	plotter.filterBtnstn(dataStore, "selectstn1")
 	plotter.filterBtnstn(dataStore, "selectstn2")
 
 	// init graphs
 	plotter.plotLineWaitTimes("chart1", dataStore, metro.metroLineColours);
-	plotter.plotChosenLineWaitTimes("chart2", dataStore, plotter.getChosenLine());
-	plotter.initStationCommCount("chartstation1", dataStore, plotter.getChosenStn("selectstn1"));
-	plotter.initStationCommCount("chartstation2", dataStore, plotter.getChosenStn( "selectstn2"));
-	
+	updateGraph()
 }
 
 // to change line parameters based on line chosen by user for parameter input
@@ -173,7 +171,7 @@ function updateParameters(){
 
 //update graph
 function updateGraph(){
-	plotter.plotChosenLineWaitTimes("chart2", dataStore, plotter.getChosenLine());
+	plotter.plotChosenLineWaitTimes("chart2", dataStore, csvDataStore, plotter.getChosenLine(), plotter.getChosenHour());
 	plotter.initStationCommCount("chartstation1", dataStore, plotter.getChosenStn( "selectstn1"));
 	plotter.initStationCommCount("chartstation2", dataStore, plotter.getChosenStn( "selectstn2"));
 }

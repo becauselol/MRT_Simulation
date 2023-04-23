@@ -418,7 +418,6 @@ class Metro {
 
 		// we need to alight all commuters on the train and 
 		// move them to the station it has reached
-		// board the passengers
 		var currStation = this.stationDict[train.prevId]
 
 		if (!(train.prevId in train.commuters)) {
@@ -599,6 +598,7 @@ class Metro {
 		return update
 	}
 
+	/*STATION RELATEDs*/
 	// simulation step to spawn people
 	stationSimStepSpawn(timestep, station) {
 
