@@ -148,49 +148,6 @@ class Plotter {
 
   }
 
-  // plotTravelTimes(plotId, dataStore) {
-  //   var labels = Object.keys(dataStore.travelTimes)
-
-  //   var zData = []
-  //   for (const iId of labels) {
-  //     zData.push([])
-  //     var row = zData[zData.length - 1]
-
-  //     for (const jId of labels) {
-  //       var val
-  //       if (iId == jId) {
-  //         val = null
-  //       } else {
-  //         val = dataStore.travelTimes[iId][jId].getMean()
-  //         if (val == 0) {
-  //           val = null
-  //         }
-  //       }
-  //       row.push(val)
-  //     }
-  //   }
-  //   var data = [
-  //     {
-  //       z: zData,
-  //       x: labels,
-  //       y: labels,
-  //       type: 'heatmap',
-  //       hoverongaps: false
-  //     }
-  //   ];
-
-  //   var layout = {
-  //     paper_bgcolor: 'rgba(0,0,0,0)',
-  //     plot_bgcolor: 'rgba(0,0,0,0)',
-  //     font: {
-  //       size: 14,
-  //       color: '#ffffff'
-  //     }
-  //   }
-
-  //   Plotly.newPlot(plotId, data, layout);
-  // }
-
   // plot no. of people at a station (time-series)
   initStationCommCount(plotId, dataStore, stationName) {
     // identify stationId from selected station name
