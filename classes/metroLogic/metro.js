@@ -1,3 +1,4 @@
+// class that represents the whole metro system
 class Metro {
 	// initializer of metro
 	constructor(name) {
