@@ -113,8 +113,8 @@ function setDefaultParameters() {
 	interArrival.value = inputPara.interArrival
 	trainCapacity.value = inputPara.trainCap
 
-	processor.trainPeriod[chosenLine] = parseFloat(inputPara.trainCap);
-	processor.trainCapacities[chosenLine] = parseInt(inputPara.interArrival)
+	processor.trainPeriod[chosenLine] = parseFloat(inputPara.interArrival);
+	processor.trainCapacities[chosenLine] = parseInt(inputPara.trainCap)
 
 	alert("Default parameters updated for line: " + chosenLine)
 
